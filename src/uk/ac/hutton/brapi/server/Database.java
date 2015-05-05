@@ -1,4 +1,4 @@
-package brapi.server;
+package uk.ac.hutton.brapi.server;
 
 import javax.naming.*;
 import javax.sql.*;

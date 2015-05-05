@@ -1,8 +1,6 @@
-package brapi.server;
+package uk.ac.hutton.brapi.server;
 
 import java.sql.*;
-
-import brapi.resource.*;
 
 import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
@@ -40,12 +38,12 @@ public class GermplasmServerResource extends ServerResource
 			resultSet.first();
 
 			// Set the Germplasm bean using the data returned from the database
-			Germplasm germplasm = new Germplasm();
+			uk.ac.hutton.brapi.resource.Germplasm germplasm = new uk.ac.hutton.brapi.resource.Germplasm();
 			germplasm.setId(resultSet.getInt("id"));
 			germplasm.setGermplasmName(resultSet.getString("number"));
 			germplasm.setTaxonId(resultSet.getInt("taxonomy_id"));
 
-			return new JacksonRepresentation<Germplasm>(germplasm);
+			return new JacksonRepresentation<uk.ac.hutton.brapi.resource.Germplasm>(germplasm);
 		}
 		catch (SQLException e)
 		{

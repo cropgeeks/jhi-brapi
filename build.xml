@@ -50,7 +50,7 @@
 				<exclude name="**/*Test.class"/>
 			</fileset>
 			<manifest>
-				<attribute name="Main-Class" value="uk.ac.jhi.brapi.server.Brapi"/>
+				<attribute name="Main-Class" value="uk.ac.hutton.brapi.server.Brapi"/>
 				<attribute name="Class-Path" value="${jar.classpath}"/>
 				<attribute name="Implementation-Version" value="${i4j.version}"/>
 			</manifest>

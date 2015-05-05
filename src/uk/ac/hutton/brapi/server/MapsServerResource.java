@@ -1,10 +1,9 @@
-package brapi.server;
+package uk.ac.hutton.brapi.server;
 
 import java.sql.*;
 import java.util.*;
 
-import brapi.resource.Map;
-import brapi.resource.*;
+import uk.ac.hutton.brapi.resource.Map;
 
 import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
@@ -28,9 +27,9 @@ public class MapsServerResource extends ServerResource
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
 		{
 			PreparedStatement statement = con.prepareStatement(mapsQuery);
-			Maps maps = getMapsFromResultSet(statement.executeQuery());
+			uk.ac.hutton.brapi.resource.Maps maps = getMapsFromResultSet(statement.executeQuery());
 
-			return new JacksonRepresentation<Maps>(maps);
+			return new JacksonRepresentation<uk.ac.hutton.brapi.resource.Maps>(maps);
 		}
 		catch (SQLException e)
 		{
@@ -48,7 +47,7 @@ public class MapsServerResource extends ServerResource
 	 * @return Maps 	(a wrapper around a List of Map objects)
 	 * @throws SQLException
 	 */
-	private Maps getMapsFromResultSet(ResultSet resultSet) throws SQLException
+	private uk.ac.hutton.brapi.resource.Maps getMapsFromResultSet(ResultSet resultSet) throws SQLException
 	{
 		List<Map> resultSetMaps = new ArrayList<>();
 
@@ -63,7 +62,7 @@ public class MapsServerResource extends ServerResource
 			resultSetMaps.add(map);
 		}
 
-		Maps maps = new Maps();
+		uk.ac.hutton.brapi.resource.Maps maps = new uk.ac.hutton.brapi.resource.Maps();
 		maps.setMaps(resultSetMaps);
 
 		return maps;
