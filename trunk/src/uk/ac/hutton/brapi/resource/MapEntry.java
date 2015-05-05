@@ -1,4 +1,4 @@
-package brapi.resource;
+package uk.ac.hutton.brapi.resource;
 
 /**
  * Created by gs40939 on 28/04/2015.

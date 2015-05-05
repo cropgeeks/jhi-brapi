@@ -1,9 +1,7 @@
-package brapi.server;
+package uk.ac.hutton.brapi.server;
 
 import java.util.*;
 import java.sql.*;
-
-import brapi.resource.*;
 
 import com.fasterxml.jackson.databind.*;
 
@@ -43,9 +41,9 @@ public class GermplasmMarkerProfileServerResource extends ServerResource
 			PreparedStatement statement = con.prepareStatement(allMarkers);
 			statement.setInt(1, id);
 
-			MarkerProfile profile = getProfile(statement.executeQuery());
+			uk.ac.hutton.brapi.resource.MarkerProfile profile = getProfile(statement.executeQuery());
 
-			JacksonRepresentation rep = new JacksonRepresentation<MarkerProfile>(profile);
+			JacksonRepresentation rep = new JacksonRepresentation<uk.ac.hutton.brapi.resource.MarkerProfile>(profile);
 			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 			return rep;
@@ -68,9 +66,9 @@ public class GermplasmMarkerProfileServerResource extends ServerResource
 			statement.setInt(1, id);
 			statement.setInt(2, Integer.parseInt(getQueryValue("map")));
 
-			MarkerProfile profile = getProfile(statement.executeQuery());
+			uk.ac.hutton.brapi.resource.MarkerProfile profile = getProfile(statement.executeQuery());
 
-			JacksonRepresentation rep = new JacksonRepresentation<MarkerProfile>(profile);
+			JacksonRepresentation rep = new JacksonRepresentation<uk.ac.hutton.brapi.resource.MarkerProfile>(profile);
 			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 			return rep;
@@ -83,9 +81,9 @@ public class GermplasmMarkerProfileServerResource extends ServerResource
 		return null;
 	}
 
-	private MarkerProfile getProfile(ResultSet resultSet) throws SQLException
+	private uk.ac.hutton.brapi.resource.MarkerProfile getProfile(ResultSet resultSet) throws SQLException
 	{
-		MarkerProfile profile = new MarkerProfile();
+		uk.ac.hutton.brapi.resource.MarkerProfile profile = new uk.ac.hutton.brapi.resource.MarkerProfile();
 		HashMap<String, String> alleles = new HashMap<>();
 		while (resultSet.next())
 		{

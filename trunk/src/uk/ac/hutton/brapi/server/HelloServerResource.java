@@ -1,4 +1,4 @@
-package brapi.server;
+package uk.ac.hutton.brapi.server;
 
 import org.restlet.representation.*;
 import org.restlet.resource.*;

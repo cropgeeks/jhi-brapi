@@ -1,4 +1,4 @@
-package brapi.server;
+package uk.ac.hutton.brapi.server;
 
 import org.restlet.*;
 import org.restlet.routing.*;
@@ -30,8 +30,8 @@ public class Brapi extends Application
 		Router router = new Router(getContext());
 
 		router.attach("/", HelloServerResource.class);
-		router.attach("/germplasm/{id}", GermplasmServerResource.class);
-		router.attach("/germplasm/{id}/", GermplasmServerResource.class);
+		router.attach("/germplasm/{id}", uk.ac.hutton.brapi.server.GermplasmServerResource.class);
+		router.attach("/germplasm/{id}/", uk.ac.hutton.brapi.server.GermplasmServerResource.class);
 		router.attach("/germplasm/{id}/markerprofiles", GermplasmMarkerProfileServerResource.class);
 		router.attach("/germplasm/{id}/markerprofiles/", GermplasmMarkerProfileServerResource.class);
 		router.attach("/maps/", MapsServerResource.class);
