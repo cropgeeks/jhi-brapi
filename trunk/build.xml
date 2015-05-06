@@ -56,6 +56,15 @@
 			</manifest>
 		</jar>
 	</target>
+	
+	<target name="jar-client" depends="clean, compile">
+		<jar jarfile="brapi-client.jar">
+			<fileset dir="${cls}">
+				<exclude name="**/*Test.class"/>
+				<exclude name="**/server/**"/>
+			</fileset>
+		</jar>
+	</target>
 
 	<target name="test" depends="compile">
 		<junit printsummary="on" haltonerror="true" haltonfailure="true" dir="." fork="true">
