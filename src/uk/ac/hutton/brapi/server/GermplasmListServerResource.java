@@ -1,6 +1,7 @@
 package uk.ac.hutton.brapi.server;
 
 import java.sql.*;
+import java.util.*;
 
 import uk.ac.hutton.brapi.resource.*;
 
@@ -11,22 +12,13 @@ import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
- * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the
- * Germplasm for API clients to consume.
+ * Queries the database for the Germplasm (germinatebase?) with the given ID then returns a JSON (Jackson)
+ * representation of the Germplasm for API clients to consume.
  */
-public class GermplasmServerResource extends ServerResource
+public class GermplasmListServerResource extends ServerResource
 {
-	// The ID from the URI (need to get this in overridden doInit method)
-	private String id;
-
-	// Simply selects all fields from germinatebase where the given id matches the id from the URI
-	private final String getSpecificLine = "select * from germinatebase where id=?";
-
-	@Override
-	public void doInit()
-	{
-		this.id = (String)getRequestAttributes().get("id");
-	}
+	// Simply selects all fields from germinatebase
+	private final String getLines = "select * from germinatebase";
 
 	@Get
 	public Representation retrieve()
@@ -34,12 +26,13 @@ public class GermplasmServerResource extends ServerResource
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
 		{
 			// Prepare statement with ID from URI
-			PreparedStatement statement = con.prepareStatement(getSpecificLine);
-			statement.setInt(1, Integer.parseInt(id));
+			PreparedStatement statement = con.prepareStatement(getLines);
 
 			// Get the first result returned from the database
 			ResultSet resultSet = statement.executeQuery();
-			if (resultSet.first())
+			List<Germplasm> germplasmList = new ArrayList<>();
+
+			while (resultSet.next())
 			{
 				// Set the Germplasm bean using the data returned from the database
 				Germplasm germplasm = new Germplasm();
@@ -47,18 +40,23 @@ public class GermplasmServerResource extends ServerResource
 				germplasm.setGermplasmName(resultSet.getString("number"));
 				germplasm.setTaxonId(resultSet.getInt("taxonomy_id"));
 
-				JacksonRepresentation rep = new JacksonRepresentation<Germplasm>(germplasm);
-				rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-				return rep;
+				germplasmList.add(germplasm);
 			}
+
+			GermplasmList germplasmResult = new GermplasmList();
+			germplasmResult.setGermplasm(germplasmList);
+
+			JacksonRepresentation rep = new JacksonRepresentation<GermplasmList>(germplasmResult);
+			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+			return rep;
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
 
-		throw new ResourceException(404);
+		return null;
 	}
 
 	@Put

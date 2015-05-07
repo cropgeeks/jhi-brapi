@@ -1,11 +1,11 @@
 package uk.ac.hutton.brapi.resource;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by gs40939 on 04/05/2015.
  */
-public class Maps
+public class MapList
 {
 	private List<Map> maps;
 
@@ -22,7 +22,7 @@ public class Maps
 	@Override
 	public String toString()
 	{
-		return "Maps{" +
+		return "MapList{" +
 			"maps=" + maps +
 			'}';
 	}
