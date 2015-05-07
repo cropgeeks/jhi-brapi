@@ -29,12 +29,15 @@ public class Brapi extends Application
 	{
 		Router router = new Router(getContext());
 
-		router.attach("/", HelloServerResource.class);
-		router.attach("/germplasm/{id}", uk.ac.hutton.brapi.server.GermplasmServerResource.class);
-		router.attach("/germplasm/{id}/", uk.ac.hutton.brapi.server.GermplasmServerResource.class);
+//		router.attach("/", HelloServerResource.class);
+		router.attach("/germplasm", GermplasmListServerResource.class);
+		router.attach("/germplasm/", GermplasmListServerResource.class);
+		router.attach("/germplasm/{id}", GermplasmServerResource.class);
+		router.attach("/germplasm/{id}/", GermplasmServerResource.class);
 		router.attach("/germplasm/{id}/markerprofiles", GermplasmMarkerProfileServerResource.class);
 		router.attach("/germplasm/{id}/markerprofiles/", GermplasmMarkerProfileServerResource.class);
-		router.attach("/maps/", MapsServerResource.class);
+		router.attach("/maps", MapListServerResource.class);
+		router.attach("/maps/", MapListServerResource.class);
 		router.attach("/maps/{id}", MapServerResource.class);
 		router.attach("/maps/{id}/", MapServerResource.class);
 
