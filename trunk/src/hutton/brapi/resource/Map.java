@@ -1,4 +1,4 @@
-package uk.ac.hutton.brapi.resource;
+package hutton.brapi.resource;
 
 import java.sql.Date;
 import java.util.*;

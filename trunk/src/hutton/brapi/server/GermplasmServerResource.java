@@ -1,8 +1,8 @@
-package uk.ac.hutton.brapi.server;
+package hutton.brapi.server;
 
 import java.sql.*;
 
-import uk.ac.hutton.brapi.resource.*;
+import hutton.brapi.resource.*;
 
 import com.fasterxml.jackson.databind.*;
 

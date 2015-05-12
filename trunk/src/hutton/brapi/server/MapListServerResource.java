@@ -1,10 +1,10 @@
-package uk.ac.hutton.brapi.server;
+package hutton.brapi.server;
 
 import java.sql.*;
 import java.util.*;
 
-import uk.ac.hutton.brapi.resource.*;
-import uk.ac.hutton.brapi.resource.Map;
+import hutton.brapi.resource.Map;
+import hutton.brapi.resource.*;
 
 import com.fasterxml.jackson.databind.*;
 
