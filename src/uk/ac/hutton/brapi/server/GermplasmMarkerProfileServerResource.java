@@ -18,14 +18,7 @@ public class GermplasmMarkerProfileServerResource extends ServerResource
 {
 	private int id;
 
-	private final String allMarkers = "select genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
-		"genotypes.germinatebase_id, markers.marker_name from genotypes INNER JOIN markers ON genotypes.marker_id = " +
-		"markers.id where germinatebase_id=?";
-
-	private final String markersFromMap = "select genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
-		"genotypes.germinatebase_id, markers.marker_name from genotypes INNER JOIN markers ON genotypes.marker_id = " +
-		"markers.id INNER JOIN mapdefinitions ON genotypes.marker_id = mapdefinitions.marker_id where germinatebase_id=? " +
-		"AND mapdefinitions.map_id=?";
+	private final String markrerProfileIdQuery = "select DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=?";
 
 	@Override
 	public void doInit()
@@ -40,12 +33,12 @@ public class GermplasmMarkerProfileServerResource extends ServerResource
 		getLogger().info("########## ALL MAPS ###########");
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
 		{
-			PreparedStatement statement = con.prepareStatement(allMarkers);
+			PreparedStatement statement = con.prepareStatement(markrerProfileIdQuery);
 			statement.setInt(1, id);
 
-			MarkerProfile profile = getProfile(statement.executeQuery());
+			GermplasmMarkerProfileList profileList = getProfileList(statement.executeQuery());
 
-			JacksonRepresentation rep = new JacksonRepresentation<MarkerProfile>(profile);
+			JacksonRepresentation rep = new JacksonRepresentation<GermplasmMarkerProfileList>(profileList);
 			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 			return rep;
@@ -58,43 +51,18 @@ public class GermplasmMarkerProfileServerResource extends ServerResource
 		return null;
 	}
 
-	@Get("?map={map}")
-	public Representation retrieveOnMap()
+	private GermplasmMarkerProfileList getProfileList(ResultSet resultSet) throws SQLException
 	{
-		getLogger().info("########## SPECIFIC MAP ###########");
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
-		{
-			PreparedStatement statement = con.prepareStatement(markersFromMap);
-			statement.setInt(1, id);
-			statement.setInt(2, Integer.parseInt(getQueryValue("map")));
-
-			MarkerProfile profile = getProfile(statement.executeQuery());
-
-			JacksonRepresentation rep = new JacksonRepresentation<MarkerProfile>(profile);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-			return rep;
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	private MarkerProfile getProfile(ResultSet resultSet) throws SQLException
-	{
-		MarkerProfile profile = new MarkerProfile();
-		HashMap<String, String> alleles = new HashMap<>();
+		GermplasmMarkerProfileList profileList = new GermplasmMarkerProfileList();
+		List<String> markerProfileIdList = new ArrayList<>();
 		while (resultSet.next())
 		{
-			profile.setGermplasmId(resultSet.getInt("germinatebase_id"));
-			alleles.put(resultSet.getString("marker_name"), resultSet.getString("allele1") + resultSet.getString("allele2"));
+			profileList.setId(resultSet.getInt("germinatebase_id"));
+			markerProfileIdList.add(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
 		}
-		profile.setData(alleles);
+		profileList.setMarkerProfiles(markerProfileIdList);
 
-		return profile;
+		return profileList;
 	}
 
 	@Put

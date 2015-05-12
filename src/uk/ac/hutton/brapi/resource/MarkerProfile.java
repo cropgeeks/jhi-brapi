@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class MarkerProfile
 {
-	private int id;
+	private String id;
 	private int germplasmId;
 	private int extractId;
 	private String analysisMethod;
@@ -16,12 +16,12 @@ public class MarkerProfile
 	// key : value pairs as outlined in the apiary.io documentation for the API
 	private HashMap<String, String> data;
 
-	public int getId()
+	public String getId()
 	{
 		return id;
 	}
 
-	public void setId(int id)
+	public void setId(String id)
 	{
 		this.id = id;
 	}
