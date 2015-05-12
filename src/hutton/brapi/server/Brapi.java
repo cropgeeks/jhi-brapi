@@ -1,7 +1,7 @@
-package uk.ac.hutton.brapi.server;
+package hutton.brapi.server;
 
 import org.restlet.*;
-import org.restlet.ext.json.JsonpFilter;
+import org.restlet.ext.json.*;
 import org.restlet.routing.*;
 
 /**

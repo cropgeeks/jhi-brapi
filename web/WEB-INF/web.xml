@@ -13,7 +13,7 @@
         <servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
         <init-param>
             <param-name>org.restlet.application</param-name>
-            <param-value>uk.ac.hutton.brapi.server.Brapi</param-value>
+            <param-value>hutton.brapi.server.Brapi</param-value>
         </init-param>
     </servlet>
 

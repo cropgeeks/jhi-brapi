@@ -1,6 +1,6 @@
-package uk.ac.hutton.brapi.client;
+package hutton.brapi.client;
 
-import uk.ac.hutton.brapi.resource.*;
+import hutton.brapi.resource.*;
 
 import org.restlet.resource.*;
 
@@ -60,7 +60,7 @@ public class Client
 	private void testMarkerProfileOnlySpecificMap()
 	{
 		ClientResource markerResource = new ClientResource("http://localhost:8080//brapi/germplasm/1/markerprofiles?map=20");
-		uk.ac.hutton.brapi.resource.MarkerProfile markerProfile = markerResource.get(MarkerProfile.class);
+		hutton.brapi.resource.MarkerProfile markerProfile = markerResource.get(MarkerProfile.class);
 		System.out.println(markerProfile);
 	}
 
