@@ -1,6 +1,7 @@
 package uk.ac.hutton.brapi.server;
 
 import org.restlet.*;
+import org.restlet.ext.json.JsonpFilter;
 import org.restlet.routing.*;
 
 /**
@@ -27,6 +28,8 @@ public class Brapi extends Application
 	@Override
 	public Restlet createInboundRoot()
 	{
+		JsonpFilter filter = new JsonpFilter(getContext());
+
 		Router router = new Router(getContext());
 
 //		router.attach("/", HelloServerResource.class);
@@ -40,7 +43,11 @@ public class Brapi extends Application
 		router.attach("/maps/", MapListServerResource.class);
 		router.attach("/maps/{id}", MapServerResource.class);
 		router.attach("/maps/{id}/", MapServerResource.class);
+		router.attach("/markerprofiles/{id}", MarkerProfileServerResource.class);
+		router.attach("/markerprofiles/{id}/", MarkerProfileServerResource.class);
 
-		return router;
+		filter.setNext(router);
+
+		return filter;
 	}
 }
