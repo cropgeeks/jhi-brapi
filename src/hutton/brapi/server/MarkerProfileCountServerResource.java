@@ -12,13 +12,12 @@ import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
- * Given an id, returns the information on the map indicated by the id. This extends to its name and among other things,
- * a list of markers which are on the given map and their positions.
+ * Given an id returns the markers and associated alleles which are associated with the markerprofile with that id.
  */
-public class MapServerResource extends SelfInjectingServerResource
+public class MarkerProfileCountServerResource extends SelfInjectingServerResource
 {
 	@Inject
-	private MapDAO mapDAO;
+	private MarkerProfileDAO markerProfileDAO;
 
 	private String id;
 
@@ -32,22 +31,16 @@ public class MapServerResource extends SelfInjectingServerResource
 	@Get
 	public Representation retrieve()
 	{
-		MapDetail mapDetail = mapDAO.getById(Integer.parseInt(id));
+		MarkerProfileCount profileCount = markerProfileDAO.getCountById(id);
 
-		if (mapDetail != null)
+		if (profileCount != null)
 		{
-			JacksonRepresentation<MapDetail> rep = new JacksonRepresentation(mapDetail);
+			JacksonRepresentation<MarkerProfileCount> rep = new JacksonRepresentation(profileCount);
 			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 			return rep;
 		}
 
 		throw new ResourceException(404);
-	}
-
-	@Put
-	public void store(Representation map)
-	{
-		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

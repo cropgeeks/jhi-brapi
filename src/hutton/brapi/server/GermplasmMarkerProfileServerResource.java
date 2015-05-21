@@ -1,68 +1,43 @@
 package hutton.brapi.server;
 
-import java.util.*;
-import java.sql.*;
-
+import hutton.brapi.data.*;
 import hutton.brapi.resource.*;
 
 import com.fasterxml.jackson.databind.*;
 
+import com.google.inject.Inject;
+
+import org.restlet.ext.guice.*;
 import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
- * Created by gs40939 on 30/04/2015.
+ * Given an id, returns the markerprofile ids which relate to the germplasm indicated by id.
  */
-public class GermplasmMarkerProfileServerResource extends ServerResource
+public class GermplasmMarkerProfileServerResource extends SelfInjectingServerResource
 {
-	private int id;
+	@Inject
+	private GermplasmDAO germplasmDAO;
 
-	private final String markrerProfileIdQuery = "select DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=?";
+	private int id;
 
 	@Override
 	public void doInit()
 	{
+		super.doInit();
 		this.id = Integer.parseInt(getRequestAttributes().get("id").toString());
-		getLogger().info("ID: " + id);
 	}
 
 	@Get
 	public Representation retrieve()
 	{
-		getLogger().info("########## ALL MAPS ###########");
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
-		{
-			PreparedStatement statement = con.prepareStatement(markrerProfileIdQuery);
-			statement.setInt(1, id);
+		GermplasmMarkerProfileList profileList = germplasmDAO.getMarkerProfilesFor(id);
 
-			GermplasmMarkerProfileList profileList = getProfileList(statement.executeQuery());
+		JacksonRepresentation<GermplasmMarkerProfileList> rep = new JacksonRepresentation<>(profileList);
+		rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
-			JacksonRepresentation rep = new JacksonRepresentation<GermplasmMarkerProfileList>(profileList);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-			return rep;
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	private GermplasmMarkerProfileList getProfileList(ResultSet resultSet) throws SQLException
-	{
-		GermplasmMarkerProfileList profileList = new GermplasmMarkerProfileList();
-		List<String> markerProfileIdList = new ArrayList<>();
-		while (resultSet.next())
-		{
-			profileList.setId(resultSet.getInt("germinatebase_id"));
-			markerProfileIdList.add(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
-		}
-		profileList.setMarkerProfiles(markerProfileIdList);
-
-		return profileList;
+		return rep;
 	}
 
 	@Put
