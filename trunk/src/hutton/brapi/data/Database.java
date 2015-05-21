@@ -1,4 +1,4 @@
-package hutton.brapi.server;
+package hutton.brapi.data;
 
 import javax.naming.*;
 import javax.sql.*;
@@ -20,6 +20,8 @@ public enum Database
 		{
 			Context ctx = new InitialContext();
 			dataSource = (DataSource) ctx.lookup("java:comp/env/jdbc/germinate");
+//			dataSource = (DataSource) ctx.lookup("jdbc/germinate");
+			System.out.println(dataSource);
 		}
 		catch (NamingException e)
 		{

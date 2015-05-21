@@ -2,6 +2,9 @@ package hutton.brapi.client;
 
 import hutton.brapi.resource.*;
 
+import org.restlet.data.Encoding;
+import org.restlet.data.Protocol;
+import org.restlet.engine.application.*;
 import org.restlet.resource.*;
 
 /**
@@ -31,7 +34,13 @@ public class Client
 
 	private void testGermplasm1()
 	{
+		org.restlet.Client client = new org.restlet.Client(Protocol.HTTP);
+		Decoder decoder = new Decoder(client.getContext(), false, true);
+		decoder.setNext(client);
+
 		ClientResource clientResource = new ClientResource("http://localhost:8080//brapi/germplasm/1");
+		clientResource.setNext(decoder);
+		clientResource.accept(Encoding.GZIP);
 		Germplasm germplasm = clientResource.get(Germplasm.class);
 		System.out.println(germplasm);
 	}

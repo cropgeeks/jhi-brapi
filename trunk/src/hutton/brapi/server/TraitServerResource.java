@@ -4,7 +4,6 @@ import hutton.brapi.data.*;
 import hutton.brapi.resource.*;
 
 import com.fasterxml.jackson.databind.*;
-
 import com.google.inject.*;
 
 import org.restlet.ext.guice.*;
@@ -13,21 +12,28 @@ import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
- * Queries the database for the Germplasm (germinatebase?) with the given ID then returns a JSON (Jackson)
+ * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson)
  * representation of the Germplasm for API clients to consume.
  */
-public class GermplasmListServerResource extends SelfInjectingServerResource
+public class TraitServerResource extends SelfInjectingServerResource
 {
 	@Inject
-	private GermplasmDAO germplasmDAO;
+	private TraitDAO traitDAO;
 
+	private String id;
 
-	@Get
+	@Override
+	public void doInit()
+	{
+		super.doInit();
+		this.id = (String)getRequestAttributes().get("id");
+	}
+
 	public Representation retrieve()
 	{
-		GermplasmList germplasmList = germplasmDAO.getAll();
+		Trait trait = traitDAO.getById(Integer.parseInt(id));
 
-		JacksonRepresentation<GermplasmList> rep = new JacksonRepresentation<>(germplasmList);
+		JacksonRepresentation<Trait> rep = new JacksonRepresentation<>(trait);
 		rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 		return rep;

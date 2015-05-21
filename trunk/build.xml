@@ -8,7 +8,7 @@
 	<property name="web" location="web"/>
 
 	<property name="jar" value="${lib}/brapi.jar"/>
-	<property name="war" value="brapi.war"/>
+	<property name="war" value="${project.name}.war"/>
 
 	<target name="init">
 	</target>
@@ -41,18 +41,14 @@
 	</target>
 
 	<target name="jar" depends="clean, compile">
-		<condition property="i4j.version" value="x.xx.xx.xx">
-			<equals arg1="${i4j.version}" arg2="${i4j.version}"/>
-		</condition>
 
 		<jar jarfile="${jar}">
 			<fileset dir="${cls}">
 				<exclude name="**/*Test.class"/>
 			</fileset>
 			<manifest>
-				<attribute name="Main-Class" value="uk.ac.hutton.brapi.server.Brapi"/>
+				<attribute name="Main-Class" value="hutton.brapi.server.Brapi"/>
 				<attribute name="Class-Path" value="${jar.classpath}"/>
-				<attribute name="Implementation-Version" value="${i4j.version}"/>
 			</manifest>
 		</jar>
 	</target>
@@ -62,6 +58,7 @@
 			<fileset dir="${cls}">
 				<exclude name="**/*Test.class"/>
 				<exclude name="**/server/**"/>
+				<exclude name="**/data/**"/>
 			</fileset>
 		</jar>
 	</target>
