@@ -1,30 +1,30 @@
 package hutton.brapi.resource;
 
 import java.sql.Date;
-import java.util.*;
 
 /**
  * Created by gs40939 on 28/04/2015.
  */
 public class Map
 {
-	private int id;
+	private int mapId;
 	private String name;
 	private String species;
 	private String type;
 	private String unit;
-	private Date date;
+	private Date publishedDate;
 	private int markerCount;
 	private int chromosomeCount;
+	private String comments;
 
-	public int getId()
+	public int getMapId()
 	{
-		return id;
+		return mapId;
 	}
 
-	public void setId(int id)
+	public void setMapId(int mapId)
 	{
-		this.id = id;
+		this.mapId = mapId;
 	}
 
 	public String getName()
@@ -67,14 +67,14 @@ public class Map
 		this.unit = unit;
 	}
 
-	public Date getDate()
+	public Date getPublishedDate()
 	{
-		return date;
+		return publishedDate;
 	}
 
-	public void setDate(Date date)
+	public void setPublishedDate(Date publishedDate)
 	{
-		this.date = date;
+		this.publishedDate = publishedDate;
 	}
 
 	public int getMarkerCount()
@@ -97,28 +97,26 @@ public class Map
 		this.chromosomeCount = chromosomeCount;
 	}
 
-	public List<String> getComments()
+	public String getComments()
 	{
 		return comments;
 	}
 
-	public void setComments(List<String> comments)
+	public void setComments(String comments)
 	{
 		this.comments = comments;
 	}
-
-	private List<String> comments;
 
 	@Override
 	public String toString()
 	{
 		return "Map{" +
-			"id=" + id +
+			"mapId=" + mapId +
 			", name='" + name + '\'' +
 			", species='" + species + '\'' +
 			", type='" + type + '\'' +
 			", unit='" + unit + '\'' +
-			", date=" + date +
+			", publishedDate=" + publishedDate +
 			", markerCount=" + markerCount +
 			", chromosomeCount=" + chromosomeCount +
 			", comments=" + comments +

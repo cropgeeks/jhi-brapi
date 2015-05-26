@@ -57,9 +57,9 @@ public class MapDAOImpl implements MapDAO
 		while (resultSet.next())
 		{
 			Map map = new Map();
-			map.setId(resultSet.getInt("id"));
+			map.setMapId(resultSet.getInt("id"));
 			map.setName(resultSet.getString("description"));
-			map.setDate(resultSet.getDate("created_on"));
+			map.setPublishedDate(resultSet.getDate("created_on"));
 			map.setChromosomeCount(resultSet.getInt("chromosomeCount"));
 			map.setMarkerCount(resultSet.getInt("markerCount"));
 			resultSetMaps.add(map);

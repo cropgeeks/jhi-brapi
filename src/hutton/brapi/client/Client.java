@@ -5,6 +5,7 @@ import hutton.brapi.resource.*;
 import org.restlet.data.Encoding;
 import org.restlet.data.Protocol;
 import org.restlet.engine.application.*;
+import org.restlet.ext.jackson.JacksonRepresentation;
 import org.restlet.resource.*;
 
 /**
@@ -49,6 +50,7 @@ public class Client
 	{
 		ClientResource mapResource = new ClientResource("http://localhost:8080//brapi/maps/");
 		MapList mapList = mapResource.get(MapList.class);
+//		java.util.List<Map> maps = mapResource.get()
 		System.out.println(mapList);
 	}
 
