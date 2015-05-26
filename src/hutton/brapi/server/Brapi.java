@@ -5,11 +5,15 @@ import hutton.brapi.data.*;
 import com.google.inject.Guice;
 
 import org.restlet.*;
+import org.restlet.engine.application.CorsFilter;
 import org.restlet.engine.application.Encoder;
 import org.restlet.ext.guice.*;
 import org.restlet.ext.json.*;
 import org.restlet.routing.*;
 import org.restlet.service.EncoderService;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Created by gs40939 on 24/04/2015.
@@ -29,6 +33,9 @@ public class Brapi extends Application
 	{
 		Filter encoder = new Encoder(getContext(), false, true, new EncoderService(true));
 		JsonpFilter filter = new JsonpFilter(getContext());
+		CorsFilter corsFilter = new CorsFilter(getContext());
+		corsFilter.setAllowedOrigins(new HashSet(Arrays.asList("*")));
+		corsFilter.setAllowedCredentials(true);
 
 		Router router = new Router(getContext());
 
@@ -55,7 +62,8 @@ public class Brapi extends Application
 
 		filter.setNext(router);
 		encoder.setNext(filter);
+		corsFilter.setNext(encoder);
 
-		return encoder;
+		return corsFilter;
 	}
 }
