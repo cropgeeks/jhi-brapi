@@ -51,6 +51,8 @@ public class Brapi extends Application
 		router.attach("/maps/", MapListServerResource.class);
 		router.attach("/maps/{id}", MapServerResource.class);
 		router.attach("/maps/{id}/", MapServerResource.class);
+		router.attach("/maps/{id}/chrom/{chrom}", MapByChromServerResource.class);
+		router.attach("/maps/{id}/chrom/{chrom}/", MapByChromServerResource.class);
 		router.attach("/markerprofiles/{id}", MarkerProfileServerResource.class);
 		router.attach("/markerprofiles/{id}/", MarkerProfileServerResource.class);
 		router.attach("/markerprofiles/{id}/count", MarkerProfileCountServerResource.class);

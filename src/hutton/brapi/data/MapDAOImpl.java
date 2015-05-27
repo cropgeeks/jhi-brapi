@@ -25,6 +25,14 @@ public class MapDAOImpl implements MapDAO
 		"mapdefinitions.definition_start, markers.marker_name from maps INNER JOIN mapdefinitions ON maps.id = " +
 		"mapdefinitions.map_id INNER JOIN markers ON mapdefinitions.marker_id = markers.id WHERE maps.id=?";
 
+	private final String detailByChromQuery = "SELECT maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
+		"mapdefinitions.marker_id) AS markercount, COUNT(DISTINCT mapdefinitions.chromosome) AS chromosomeCount from " +
+		"maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id WHERE maps.id=? AND mapdefinitions.chromosome=?";
+
+	private final String entriesByChromQuery = "SELECT maps.id, mapdefinitions.marker_id, mapdefinitions.chromosome, " +
+		"mapdefinitions.definition_start, markers.marker_name from maps INNER JOIN mapdefinitions ON maps.id = " +
+		"mapdefinitions.map_id INNER JOIN markers ON mapdefinitions.marker_id = markers.id WHERE maps.id=? AND mapdefinitions.chromosome=?";
+
 	/**
 	 * Queries the database (using mapQuery defined above) for the complete list of Maps which the database holds.
 	 *
@@ -135,5 +143,41 @@ public class MapDAOImpl implements MapDAO
 		}
 
 		return mapEntries;
+	}
+
+	/**
+	 * Queries the database (using detailQuery and entiresQuery defined above) for the information on the map identified
+	 * by the id given and the entries (MapEntry objects) which make up the detail of the map.
+	 *
+	 * @param id	The id of the
+	 * @return 		A MapDetail object which itself holds a List of MapEntry objects. Or null if no MapDetail exists for
+	 * the supplied id.
+	 */
+	@Override
+	public MapDetail getByIdAndChromosome(int id, String chromosome)
+	{
+		try (Connection con = hutton.brapi.data.Database.INSTANCE.getDataSource().getConnection())
+		{
+			// Get the basic information on the map
+			PreparedStatement mapStatement = con.prepareStatement(detailByChromQuery);
+			mapStatement.setInt(1, id);
+			mapStatement.setString(2, chromosome);
+			MapDetail mapDetail = getMapDetailFromResultSet(mapStatement.executeQuery());
+
+			// Get the list of entries for the map (effectively the markers)
+			PreparedStatement entriesStatement = con.prepareStatement(entriesByChromQuery);
+			entriesStatement.setInt(1, id);
+			entriesStatement.setString(2, chromosome);
+			List<MapEntry> mapEntries = getMapEntriesFromResultSet(entriesStatement.executeQuery());
+			mapDetail.setEntries(mapEntries);
+
+			return mapDetail;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }
