@@ -21,4 +21,6 @@ public interface MapDAO
 	 * @return		A MapDetail object which represents the Map we wish to getJson (or null if none exists).
 	 */
 	MapDetail getById(int id);
+
+	MapDetail getByIdAndChromosome(int id, String chromosome);
 }
