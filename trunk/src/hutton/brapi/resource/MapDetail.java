@@ -7,21 +7,10 @@ import java.util.*;
  */
 public class MapDetail
 {
-	private int id;
 	private String name;
 	private String type;
 	private String unit;
 	private List<MapEntry> entries;
-
-	public int getId()
-	{
-		return id;
-	}
-
-	public void setId(int id)
-	{
-		this.id = id;
-	}
 
 	public String getName()
 	{
@@ -67,8 +56,7 @@ public class MapDetail
 	public String toString()
 	{
 		return "MapDetail{" +
-			"id=" + id +
-			", name='" + name + '\'' +
+			"name='" + name + '\'' +
 			", type='" + type + '\'' +
 			", unit='" + unit + '\'' +
 			", entries=" + entries +

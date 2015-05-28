@@ -7,17 +7,17 @@ import java.util.*;
  */
 public class GermplasmMarkerProfileList
 {
-	private int id;
+	private int germplasmId;
 	private List<String> markerProfiles;
 
-	public int getId()
+	public int getGermplasmId()
 	{
-		return id;
+		return germplasmId;
 	}
 
-	public void setId(int id)
+	public void setGermplasmId(int germplasmId)
 	{
-		this.id = id;
+		this.germplasmId = germplasmId;
 	}
 
 	public List<String> getMarkerProfiles()
@@ -34,7 +34,7 @@ public class GermplasmMarkerProfileList
 	public String toString()
 	{
 		return "GermplasmMarkerProfileList{" +
-			"id=" + id +
+			"germplasmId=" + germplasmId +
 			", markerProfileIds=" + markerProfiles +
 			'}';
 	}

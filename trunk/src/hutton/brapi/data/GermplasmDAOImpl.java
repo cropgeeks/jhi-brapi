@@ -24,11 +24,10 @@ public class GermplasmDAOImpl implements GermplasmDAO
 	{
 		GermplasmList allGermplasm = new GermplasmList();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = con.prepareStatement(getLines);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			PreparedStatement statement = con.prepareStatement(getLines);
-			ResultSet resultSet = statement.executeQuery();
-
 			// To store the Germplasm instances created from the results of the db query before adding them to the
 			// GermplasmList object
 			List<Germplasm> germplasmList = new ArrayList<>();
@@ -37,7 +36,7 @@ public class GermplasmDAOImpl implements GermplasmDAO
 			{
 				// Set the Germplasm bean using the data returned from the database
 				Germplasm germplasm = new Germplasm();
-				germplasm.setId(resultSet.getInt("id"));
+				germplasm.setGermplasmId(resultSet.getInt("id"));
 				germplasm.setGermplasmName(resultSet.getString("number"));
 				germplasm.setTaxonId(resultSet.getInt("taxonomy_id"));
 
@@ -45,10 +44,7 @@ public class GermplasmDAOImpl implements GermplasmDAO
 			}
 			allGermplasm.setGermplasm(germplasmList);
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		catch (SQLException e) { e.printStackTrace(); }
 
 		return allGermplasm;
 	}
@@ -58,57 +54,53 @@ public class GermplasmDAOImpl implements GermplasmDAO
 	{
 		Germplasm germplasm = null;
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			PreparedStatement statement = createByIdStatement(con, getSpecificLine, id);
+			ResultSet resultSet = statement.executeQuery())
 		{
-			// Prepare statement with ID
-			PreparedStatement statement = con.prepareStatement(getSpecificLine);
-			statement.setInt(1, id);
-
-			// Get the first result returned from the database
-			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.first())
 			{
 				// Set the Germplasm bean using the data returned from the database
 				germplasm = new Germplasm();
-				germplasm.setId(resultSet.getInt("id"));
+				germplasm.setGermplasmId(resultSet.getInt("id"));
 				germplasm.setGermplasmName(resultSet.getString("number"));
 				germplasm.setTaxonId(resultSet.getInt("taxonomy_id"));
 			}
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		catch (SQLException e) { e.printStackTrace(); }
 
 		return germplasm;
+	}
+
+	private PreparedStatement createByIdStatement(Connection con, String query, int id)
+		throws SQLException
+	{
+		// Prepare statement with ID
+		PreparedStatement statement = con.prepareStatement(query);
+		statement.setInt(1, id);
+
+		return statement;
 	}
 
 	@Override
 	public GermplasmMarkerProfileList getMarkerProfilesFor(int id)
 	{
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = createByIdStatement(con, markrerProfileIdQuery, id);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			// Prepare statement with ID
-			PreparedStatement statement = con.prepareStatement(markrerProfileIdQuery);
-			statement.setInt(1, id);
-
-			ResultSet resultSet = statement.executeQuery();
-
 			GermplasmMarkerProfileList profileList = new GermplasmMarkerProfileList();
 			List<String> markerProfileIdList = new ArrayList<>();
 			while (resultSet.next())
 			{
-				profileList.setId(resultSet.getInt("germinatebase_id"));
+				profileList.setGermplasmId(resultSet.getInt("germinatebase_id"));
 				markerProfileIdList.add(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
 			}
 			profileList.setMarkerProfiles(markerProfileIdList);
 
 			return profileList;
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		catch (SQLException e) { e.printStackTrace(); }
 
 		return null;
 	}

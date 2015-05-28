@@ -20,6 +20,7 @@ public class TraitListServerResource extends SelfInjectingServerResource
 	@Inject
 	private TraitDAO traitDAO;
 
+	@Get
 	public Representation retrieve()
 	{
 		TraitList traitList = traitDAO.getAll();
@@ -28,11 +29,5 @@ public class TraitListServerResource extends SelfInjectingServerResource
 		rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 		return rep;
-	}
-
-	@Put
-	public void store(Representation germplasm)
-	{
-		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }
