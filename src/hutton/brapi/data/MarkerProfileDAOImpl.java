@@ -33,22 +33,28 @@ public class MarkerProfileDAOImpl implements MarkerProfileDAO
 		int datasetId = Integer.parseInt(tokens[0]);
 		int germinatebaseId = Integer.parseInt(tokens[1]);
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement markerProfileStatement = createByIdStatement(con, allMarkers, germinatebaseId, datasetId);
+			 ResultSet resultSet = markerProfileStatement.executeQuery())
 		{
-			// Get the basic information on the map
-			PreparedStatement markerProfileStatement = con.prepareStatement(allMarkers);
-			markerProfileStatement.setInt(1, germinatebaseId);
-			markerProfileStatement.setInt(2, datasetId);
-			MarkerProfile profile = getProfile(markerProfileStatement.executeQuery());
+			MarkerProfile profile = getProfile(resultSet);
 
 			return profile;
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		catch (SQLException e) { e.printStackTrace(); }
 
 		return null;
+	}
+
+	private PreparedStatement createByIdStatement(Connection con, String query, int germinatebaseId, int datasetId)
+		throws SQLException
+	{
+		// Get the basic information on the map
+		PreparedStatement statement = con.prepareStatement(allMarkers);
+		statement.setInt(1, germinatebaseId);
+		statement.setInt(2, datasetId);
+
+		return statement;
 	}
 
 	// Given a ResultSet generated from the allMarkers query, returns a MarkerProfile object which has been initialized
@@ -60,7 +66,7 @@ public class MarkerProfileDAOImpl implements MarkerProfileDAO
 		while (resultSet.next())
 		{
 			profile.setGermplasmId(resultSet.getInt("germinatebase_id"));
-			profile.setId(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
+			profile.setMarkerprofileId(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
 			alleles.put(resultSet.getString("marker_name"), resultSet.getString("allele1") + resultSet.getString("allele2"));
 		}
 		profile.setData(alleles);
@@ -82,20 +88,15 @@ public class MarkerProfileDAOImpl implements MarkerProfileDAO
 		int datasetId = Integer.parseInt(tokens[0]);
 		int germinatebaseId = Integer.parseInt(tokens[1]);
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement markerProfileStatement = createByIdStatement(con, markerCount, germinatebaseId, datasetId);
+			 ResultSet resultSet = markerProfileStatement.executeQuery())
 		{
-			// Get the basic information on the map
-			PreparedStatement markerProfileStatement = con.prepareStatement(markerCount);
-			markerProfileStatement.setInt(1, germinatebaseId);
-			markerProfileStatement.setInt(2, datasetId);
-			MarkerProfileCount profile = getProfileCount(markerProfileStatement.executeQuery());
+			MarkerProfileCount profile = getProfileCount(resultSet);
 
 			return profile;
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		catch (SQLException e) { e.printStackTrace(); }
 
 		return null;
 	}

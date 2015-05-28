@@ -43,15 +43,13 @@ public class MapDAOImpl implements MapDAO
 	{
 		MapList mapList = new MapList();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = con.prepareStatement(mapsQuery);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			PreparedStatement statement = con.prepareStatement(mapsQuery);
-			mapList = getMapsFromResultSet(statement.executeQuery());
+			mapList = getMapsFromResultSet(resultSet);
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		catch (SQLException e) { e.printStackTrace(); }
 
 		return mapList;
 	}
@@ -90,27 +88,36 @@ public class MapDAOImpl implements MapDAO
 	@Override
 	public MapDetail getById(int id)
 	{
-		try (Connection con = hutton.brapi.data.Database.INSTANCE.getDataSource().getConnection())
+		MapDetail mapDetail = new MapDetail();
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement mapStatement = createByIdStatement(con, detailQuery, id);
+			 ResultSet resultSet = mapStatement.executeQuery())
 		{
-			// Get the basic information on the map
-			PreparedStatement mapStatement = con.prepareStatement(detailQuery);
-			mapStatement.setInt(1, id);
-			MapDetail mapDetail = getMapDetailFromResultSet(mapStatement.executeQuery());
-
-			// Get the list of entries for the map (effectively the markers)
-			PreparedStatement entriesStatement = con.prepareStatement(entriesQuery);
-			entriesStatement.setInt(1, id);
-			List<MapEntry> mapEntries = getMapEntriesFromResultSet(entriesStatement.executeQuery());
-			mapDetail.setEntries(mapEntries);
-
-			return mapDetail;
+			mapDetail = getMapDetailFromResultSet(resultSet);
 		}
-		catch (SQLException e)
+		catch (SQLException e) { e.printStackTrace(); }
+
+		// Get the list of entries for the map (effectively the markers)
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement entriesStatement = createByIdStatement(con, entriesQuery, id);
+			 ResultSet resultSet = entriesStatement.executeQuery())
 		{
-			e.printStackTrace();
+				List<MapEntry> mapEntries = getMapEntriesFromResultSet(resultSet);
+				mapDetail.setEntries(mapEntries);
 		}
+		catch (SQLException e) { e.printStackTrace(); }
 
-		return null;
+		return mapDetail;
+	}
+
+	private PreparedStatement createByIdStatement(Connection con, String query, int id)
+		throws SQLException
+	{
+		PreparedStatement statement = con.prepareStatement(query);
+		// Get the basic information on the map
+		statement.setInt(1, id);
+
+		return statement;
 	}
 
 	// Takes a ResultSet which should represent the result of the detailQuery defined above and returns a new MapDetail
@@ -120,7 +127,6 @@ public class MapDAOImpl implements MapDAO
 		resultSet.first();
 
 		MapDetail mapDetail = new MapDetail();
-		mapDetail.setId(resultSet.getInt("id"));
 		mapDetail.setName(resultSet.getString("description"));
 
 		return mapDetail;
@@ -156,28 +162,48 @@ public class MapDAOImpl implements MapDAO
 	@Override
 	public MapDetail getByIdAndChromosome(int id, String chromosome)
 	{
-		try (Connection con = hutton.brapi.data.Database.INSTANCE.getDataSource().getConnection())
+		MapDetail mapDetail = new MapDetail();
+		try (Connection con = hutton.brapi.data.Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement mapStatement = createDetailByChromStatement(con, id, chromosome);
+			 ResultSet resultSet = mapStatement.executeQuery())
 		{
-			// Get the basic information on the map
-			PreparedStatement mapStatement = con.prepareStatement(detailByChromQuery);
-			mapStatement.setInt(1, id);
-			mapStatement.setString(2, chromosome);
-			MapDetail mapDetail = getMapDetailFromResultSet(mapStatement.executeQuery());
+			mapDetail = getMapDetailFromResultSet(resultSet);
+		}
+		catch (SQLException e) { e.printStackTrace(); }
 
-			// Get the list of entries for the map (effectively the markers)
-			PreparedStatement entriesStatement = con.prepareStatement(entriesByChromQuery);
-			entriesStatement.setInt(1, id);
-			entriesStatement.setString(2, chromosome);
-			List<MapEntry> mapEntries = getMapEntriesFromResultSet(entriesStatement.executeQuery());
+		// Get the list of entries for the map (effectively the markers)
+		try (Connection con = hutton.brapi.data.Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement entriesStatement = createEntriesByChromStatement(con, id, chromosome);
+			 ResultSet rs = entriesStatement.executeQuery())
+		{
+			List<MapEntry> mapEntries = getMapEntriesFromResultSet(rs);
 			mapDetail.setEntries(mapEntries);
-
-			return mapDetail;
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		catch (SQLException e) { e.printStackTrace(); }
 
-		return null;
+		return mapDetail;
+	}
+
+	private PreparedStatement createByChromStatement(Connection con, String query, int id, String chromosome)
+		throws SQLException
+	{
+		PreparedStatement statement = con.prepareStatement(query);
+		// Get the basic information on the map
+		statement.setInt(1, id);
+		statement.setString(2, chromosome);
+
+		return statement;
+	}
+
+	private PreparedStatement createDetailByChromStatement(Connection con, int id, String chromosome)
+		throws SQLException
+	{
+		return createByChromStatement(con, detailByChromQuery, id, chromosome);
+	}
+
+	private PreparedStatement createEntriesByChromStatement(Connection con, int id, String chromosome)
+		throws SQLException
+	{
+		return createByChromStatement(con, entriesByChromQuery, id, chromosome);
 	}
 }

@@ -6,7 +6,7 @@ import hutton.brapi.resource.*;
 import com.fasterxml.jackson.databind.*;
 import com.google.inject.*;
 
-import org.restlet.ext.guice.SelfInjectingServerResource;
+import org.restlet.ext.guice.*;
 import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
 import org.restlet.resource.*;

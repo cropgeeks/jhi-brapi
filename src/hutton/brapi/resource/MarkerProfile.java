@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class MarkerProfile
 {
-	private String id;
+	private String markerprofileId;
 	private int germplasmId;
 	private int extractId;
 	private String analysisMethod;
@@ -16,14 +16,14 @@ public class MarkerProfile
 	// key : value pairs as outlined in the apiary.io documentation for the API
 	private HashMap<String, String> data;
 
-	public String getId()
+	public String getMarkerprofileId()
 	{
-		return id;
+		return markerprofileId;
 	}
 
-	public void setId(String id)
+	public void setMarkerprofileId(String markerprofileId)
 	{
-		this.id = id;
+		this.markerprofileId = markerprofileId;
 	}
 
 	public int getGermplasmId()
@@ -80,7 +80,7 @@ public class MarkerProfile
 	public String toString()
 	{
 		return "MarkerProfile{" +
-			"id=" + id +
+			"markerprofileId=" + markerprofileId +
 			", germplasmId=" + germplasmId +
 			", extractId=" + extractId +
 			", analysisMethod='" + analysisMethod + '\'' +

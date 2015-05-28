@@ -23,21 +23,17 @@ public class TraitDAOImpl implements TraitDAO
 	{
 		TraitList allTraits = new TraitList();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = con.prepareStatement(getTraits);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			// Prepare statement with ID from URI
-			PreparedStatement statement = con.prepareStatement(getTraits);
-
-			// Get the first result returned from the database
-			ResultSet resultSet = statement.executeQuery();
-
 			List<Trait> traitList = new ArrayList<>();
 
 			while (resultSet.next())
 			{
 				// Set the Germplasm bean using the data returned from the database
 				Trait trait = new Trait();
-				trait.setId(resultSet.getString("id"));
+				trait.setTraitId(resultSet.getString("id"));
 				trait.setName(resultSet.getString("name"));
 				trait.setMethod(resultSet.getString("description"));
 				trait.setMethod(resultSet.getString("unit_name"));
@@ -63,31 +59,33 @@ public class TraitDAOImpl implements TraitDAO
 	@Override
 	public Trait getById(int id)
 	{
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection())
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = createByIdStatement(con, getTrait, id);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			// Prepare statement with ID from URI
-			PreparedStatement statement = con.prepareStatement(getTrait);
-			statement.setInt(1, id);
-
-			// Get the first result returned from the database
-			ResultSet resultSet = statement.executeQuery();
-
 			if (resultSet.first())
 			{
 				// Set the Germplasm bean using the data returned from the database
 				Trait trait = new Trait();
-				trait.setId(resultSet.getString("id"));
+				trait.setTraitId(resultSet.getString("id"));
 				trait.setName(resultSet.getString("name"));
 				trait.setMethod(resultSet.getString("description"));
 
 				return trait;
 			}
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		catch (SQLException e) { e.printStackTrace(); }
 
 		return null;
+	}
+
+	private PreparedStatement createByIdStatement(Connection con, String query, int id)
+		throws SQLException
+	{
+		// Prepare statement with ID from URI
+		PreparedStatement statement = con.prepareStatement(query);
+		statement.setInt(1, id);
+
+		return statement;
 	}
 }

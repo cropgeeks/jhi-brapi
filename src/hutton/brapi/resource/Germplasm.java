@@ -7,20 +7,20 @@ import java.util.*;
  */
 public class Germplasm
 {
-	private int id;
+	private int germplasmId;
 	private int taxonId;
 	private String germplasmName;
 	private List<String> synonyms;
 	private int breedingProgramId;
 
-	public int getId()
+	public int getGermplasmId()
 	{
-		return id;
+		return germplasmId;
 	}
 
-	public void setId(int id)
+	public void setGermplasmId(int germplasmId)
 	{
-		this.id = id;
+		this.germplasmId = germplasmId;
 	}
 
 	public int getTaxonId()
@@ -67,7 +67,7 @@ public class Germplasm
 	public String toString()
 	{
 		return "Germplasm{" +
-			"id=" + id +
+			"germplasmId=" + germplasmId +
 			", taxonId=" + taxonId +
 			", germplasmName='" + germplasmName + '\'' +
 			", synonyms=" + synonyms +

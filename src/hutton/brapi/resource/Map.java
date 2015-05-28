@@ -1,6 +1,6 @@
 package hutton.brapi.resource;
 
-import java.sql.Date;
+import java.sql.*;
 
 /**
  * Created by gs40939 on 28/04/2015.

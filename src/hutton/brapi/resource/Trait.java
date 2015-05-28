@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class Trait
 {
-	private String id;
+	private String traitId;
 	private String name;
 	private String format;
 	private String unit;
@@ -19,14 +19,14 @@ public class Trait
 	private String isVisible;
 	private String realPosition;
 
-	public String getId()
+	public String getTraitId()
 	{
-		return id;
+		return traitId;
 	}
 
-	public void setId(String id)
+	public void setTraitId(String traitId)
 	{
-		this.id = id;
+		this.traitId = traitId;
 	}
 
 	public String getName()

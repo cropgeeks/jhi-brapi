@@ -29,6 +29,7 @@ public class TraitServerResource extends SelfInjectingServerResource
 		this.id = (String)getRequestAttributes().get("id");
 	}
 
+	@Get
 	public Representation retrieve()
 	{
 		Trait trait = traitDAO.getById(Integer.parseInt(id));
@@ -37,11 +38,5 @@ public class TraitServerResource extends SelfInjectingServerResource
 		rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 		return rep;
-	}
-
-	@Put
-	public void store(Representation germplasm)
-	{
-		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

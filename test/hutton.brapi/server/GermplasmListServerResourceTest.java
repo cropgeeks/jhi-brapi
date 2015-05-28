@@ -47,7 +47,7 @@ public class GermplasmListServerResourceTest
 		List<Germplasm> list = new ArrayList<>();
 		Germplasm g = new Germplasm();
 		g.setGermplasmName("Blah");
-		g.setId(1);
+		g.setGermplasmId(1);
 		list.add(g);
 		germplasmList.setGermplasm(list);
 
