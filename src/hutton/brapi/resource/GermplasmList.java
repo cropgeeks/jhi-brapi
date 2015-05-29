@@ -17,7 +17,7 @@ public class GermplasmList
 
 	// JsonCreator annotation specifies the method used by Jackson to deserialize from JSON to Java.
 	@JsonCreator
-	public GermplasmList(List<Germplasm> maps)
+	public GermplasmList(List<Germplasm> germplasm)
 	{
 		this.germplasm = germplasm;
 	}
