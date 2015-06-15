@@ -29,20 +29,11 @@ public class GermplasmMarkerProfileServerResource extends SelfInjectingServerRes
 		this.id = Integer.parseInt(getRequestAttributes().get("id").toString());
 	}
 
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public GermplasmMarkerProfileList retrieve()
 	{
 		GermplasmMarkerProfileList profileList = germplasmDAO.getMarkerProfilesFor(id);
 
-		JacksonRepresentation<GermplasmMarkerProfileList> rep = new JacksonRepresentation<>(profileList);
-		rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-		return rep;
-	}
-
-	@Put
-	public void store(Representation germplasm)
-	{
-		throw new UnsupportedOperationException("Not implemented yet");
+		return profileList;
 	}
 }

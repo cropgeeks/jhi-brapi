@@ -29,14 +29,11 @@ public class TraitServerResource extends SelfInjectingServerResource
 		this.id = (String)getRequestAttributes().get("id");
 	}
 
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public Trait retrieve()
 	{
 		Trait trait = traitDAO.getById(Integer.parseInt(id));
 
-		JacksonRepresentation<Trait> rep = new JacksonRepresentation<>(trait);
-		rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-		return rep;
+		return trait;
 	}
 }

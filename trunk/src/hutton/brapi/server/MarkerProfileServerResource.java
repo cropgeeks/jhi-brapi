@@ -29,16 +29,12 @@ public class MarkerProfileServerResource extends SelfInjectingServerResource
 	}
 
 	@Get("json")
-	public Representation getJson()
+	public MarkerProfile getJson()
 	{
 		MarkerProfile profile = markerProfileDAO.getById(id);
 
 		if (profile != null)
-		{
-			JacksonRepresentation<MarkerProfile> rep = new JacksonRepresentation(profile);
-
-			return rep;
-		}
+			return profile;
 
 		throw new ResourceException(404);
 	}
@@ -56,7 +52,7 @@ public class MarkerProfileServerResource extends SelfInjectingServerResource
 
 		if (profile != null)
 		{
-			JacksonRepresentation<MarkerProfile> rep = new JacksonRepresentation(profile);
+			JacksonRepresentation<MarkerProfile> rep = new JacksonRepresentation<>(profile);
 			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 			return rep;

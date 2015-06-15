@@ -29,25 +29,14 @@ public class MapServerResource extends SelfInjectingServerResource
 		this.id = (String)getRequestAttributes().get("id");
 	}
 
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public MapDetail retrieve()
 	{
 		MapDetail mapDetail = mapDAO.getById(Integer.parseInt(id));
 
 		if (mapDetail != null)
-		{
-			JacksonRepresentation<MapDetail> rep = new JacksonRepresentation(mapDetail);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-			return rep;
-		}
+			return mapDetail;
 
 		throw new ResourceException(404);
-	}
-
-	@Put
-	public void store(Representation map)
-	{
-		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

@@ -31,25 +31,14 @@ public class GermplasmServerResource extends SelfInjectingServerResource
 		this.id = (String)getRequestAttributes().get("id");
 	}
 
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public Germplasm retrieve()
 	{
 		Germplasm germplasm = germplasmDAO.getById(Integer.parseInt(id));
 
 		if (germplasm != null)
-		{
-			JacksonRepresentation<Germplasm> rep = new JacksonRepresentation<>(germplasm);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-			return rep;
-		}
+			return germplasm;
 
 		throw new ResourceException(404);
-	}
-
-	@Put
-	public void store(Representation germplasm)
-	{
-		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }
