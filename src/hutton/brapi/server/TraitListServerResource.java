@@ -20,14 +20,11 @@ public class TraitListServerResource extends SelfInjectingServerResource
 	@Inject
 	private TraitDAO traitDAO;
 
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public TraitList retrieve()
 	{
 		TraitList traitList = traitDAO.getAll();
 
-		JacksonRepresentation<TraitList> rep = new JacksonRepresentation<>(traitList);
-		rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-		return rep;
+		return traitList;
 	}
 }

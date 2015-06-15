@@ -28,18 +28,13 @@ public class MarkerProfileCountServerResource extends SelfInjectingServerResourc
 		this.id = (String)getRequestAttributes().get("id");
 	}
 
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public MarkerProfileCount retrieve()
 	{
 		MarkerProfileCount profileCount = markerProfileDAO.getCountById(id);
 
 		if (profileCount != null)
-		{
-			JacksonRepresentation<MarkerProfileCount> rep = new JacksonRepresentation(profileCount);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-			return rep;
-		}
+			return profileCount;
 
 		throw new ResourceException(404);
 	}

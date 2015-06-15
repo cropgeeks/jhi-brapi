@@ -20,20 +20,11 @@ public class MapListServerResource extends SelfInjectingServerResource
 	@Inject
 	private MapDAO mapDAO;
 
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public MapList retrieve()
 	{
 		MapList mapList = mapDAO.getAll();
 
-		JacksonRepresentation<MapList> rep = new JacksonRepresentation(mapList);
-		rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-		return rep;
-	}
-
-	@Put
-	public void store(Representation map)
-	{
-		throw new UnsupportedOperationException("Not implemented yet");
+		return mapList;
 	}
 }

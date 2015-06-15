@@ -9,14 +9,14 @@ import com.google.inject.Guice;
 import org.restlet.*;
 import org.restlet.engine.application.*;
 import org.restlet.ext.guice.*;
-import org.restlet.ext.json.*;
+import org.restlet.ext.swagger.*;
 import org.restlet.routing.*;
 import org.restlet.service.*;
 
 /**
  * Created by gs40939 on 24/04/2015.
  */
-public class Brapi extends Application
+public class Brapi extends SwaggerApplication
 {
 	public Brapi()
 	{
@@ -29,13 +29,14 @@ public class Brapi extends Application
 	@Override
 	public Restlet createInboundRoot()
 	{
-		Filter encoder = new Encoder(getContext(), false, true, new EncoderService(true));
-		JsonpFilter filter = new JsonpFilter(getContext());
-		CorsFilter corsFilter = new CorsFilter(getContext());
-		corsFilter.setAllowedOrigins(new HashSet(Arrays.asList("*")));
-		corsFilter.setAllowedCredentials(true);
-
 		Router router = new Router(getContext());
+
+//		Filter encoder = new Encoder(getContext(), false, true, new EncoderService(true));
+//		encoder.setNext(router);
+		CorsFilter corsFilter = new CorsFilter(getContext(), router);
+		corsFilter.setAllowedOrigins(new HashSet<String>(Arrays.asList("*")));
+		corsFilter.setAllowedCredentials(true);
+		corsFilter.setSkippingResourceForCorsOptions(false);
 
 		Guice.createInjector(new DAOModule(), new SelfInjectingServerResourceModule());
 
@@ -60,9 +61,14 @@ public class Brapi extends Application
 		router.attach("/traits/{id}", TraitServerResource.class);
 		router.attach("/traits/{id}/", TraitServerResource.class);
 
-		filter.setNext(router);
-		encoder.setNext(filter);
-		corsFilter.setNext(encoder);
+//		attachSwaggerSpecificationRestlet(router, "/api-docs");
+//		corsFilter.setNext(encoder);
+//		encoder.setNext(router);
+//		corsFilter.setNext(encoder);
+
+		CustomSwaggerSpecificationRestlet customSwaggerSpec = new CustomSwaggerSpecificationRestlet(getContext());
+		customSwaggerSpec.setApiInboundRoot(this);
+		attachSwaggerDocumentationRestlets(router, "/api-docs", customSwaggerSpec, "/api-docs/{resource}", customSwaggerSpec);
 
 		return corsFilter;
 	}

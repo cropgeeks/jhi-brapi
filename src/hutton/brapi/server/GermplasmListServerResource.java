@@ -21,21 +21,36 @@ public class GermplasmListServerResource extends SelfInjectingServerResource
 	@Inject
 	private GermplasmDAO germplasmDAO;
 
-
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public GermplasmList retrieve()
 	{
 		GermplasmList germplasmList = germplasmDAO.getAll();
 
-		JacksonRepresentation<GermplasmList> rep = new JacksonRepresentation<>(germplasmList);
-		rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+		if (germplasmList != null)
+			return germplasmList;
 
-		return rep;
+		throw new ResourceException(404);
 	}
 
-	@Put
-	public void store(Representation germplasm)
+	/**
+	 * This is an example of serving the browser (or anything requesting html) the formatted / pretty-printed version
+	 * of the JSON as opposed to the standard JSON which has no spacing (thus saves size for transferring data).
+	 *
+	 * @return
+	 */
+	@Get("html")
+	public Representation getHtml()
 	{
-		throw new UnsupportedOperationException("Not implemented yet");
+		GermplasmList germplasmList = germplasmDAO.getAll();
+
+		if (germplasmList != null)
+		{
+			JacksonRepresentation<GermplasmList> rep = new JacksonRepresentation<>(germplasmList);
+			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+			return rep;
+		}
+
+		throw new ResourceException(404);
 	}
 }

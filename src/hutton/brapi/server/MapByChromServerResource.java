@@ -30,18 +30,13 @@ public class MapByChromServerResource extends SelfInjectingServerResource
 		this.chrom = (String)getRequestAttributes().get("chrom");
 	}
 
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public MapDetail retrieve()
 	{
 		MapDetail mapDetail = mapDAO.getByIdAndChromosome(Integer.parseInt(id), chrom);
 
 		if (mapDetail != null)
-		{
-			JacksonRepresentation<MapDetail> rep = new JacksonRepresentation(mapDetail);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-			return rep;
-		}
+			return mapDetail;
 
 		throw new ResourceException(404);
 	}
