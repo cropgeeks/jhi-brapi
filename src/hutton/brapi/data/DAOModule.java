@@ -19,5 +19,6 @@ public class DAOModule extends AbstractModule
 		bind(MapDAO.class).to(MapDAOImpl.class);
 		bind(MarkerProfileDAO.class).to(MarkerProfileDAOImpl.class);
 		bind(TraitDAO.class).to(TraitDAOImpl.class);
+		bind(MarkerProfileMethodsDAO.class).to(MarkerProfileMethodsDAOImpl.class);
 	}
 }

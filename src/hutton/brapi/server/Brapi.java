@@ -52,6 +52,8 @@ public class Brapi extends SwaggerApplication
 		router.attach("/maps/{id}/", MapServerResource.class);
 		router.attach("/maps/{id}/chrom/{chrom}", MapByChromServerResource.class);
 		router.attach("/maps/{id}/chrom/{chrom}/", MapByChromServerResource.class);
+		router.attach("/markerprofiles/methods", MarkerProfileMethodsListServerResource.class);
+		router.attach("/markerprofiles/methods/", MarkerProfileMethodsListServerResource.class);
 		router.attach("/markerprofiles/{id}", MarkerProfileServerResource.class);
 		router.attach("/markerprofiles/{id}/", MarkerProfileServerResource.class);
 		router.attach("/markerprofiles/{id}/count", MarkerProfileCountServerResource.class);
@@ -61,14 +63,15 @@ public class Brapi extends SwaggerApplication
 		router.attach("/traits/{id}", TraitServerResource.class);
 		router.attach("/traits/{id}/", TraitServerResource.class);
 
+
 //		attachSwaggerSpecificationRestlet(router, "/api-docs");
 //		corsFilter.setNext(encoder);
 //		encoder.setNext(router);
 //		corsFilter.setNext(encoder);
 
-		CustomSwaggerSpecificationRestlet customSwaggerSpec = new CustomSwaggerSpecificationRestlet(getContext());
-		customSwaggerSpec.setApiInboundRoot(this);
-		attachSwaggerDocumentationRestlets(router, "/api-docs", customSwaggerSpec, "/api-docs/{resource}", customSwaggerSpec);
+//		CustomSwaggerSpecificationRestlet customSwaggerSpec = new CustomSwaggerSpecificationRestlet(getContext());
+//		customSwaggerSpec.setApiInboundRoot(this);
+//		attachSwaggerDocumentationRestlets(router, "/api-docs", customSwaggerSpec, "/api-docs/{resource}", customSwaggerSpec);
 
 		return corsFilter;
 	}
