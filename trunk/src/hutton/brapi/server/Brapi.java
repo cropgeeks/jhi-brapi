@@ -31,9 +31,9 @@ public class Brapi extends SwaggerApplication
 	{
 		Router router = new Router(getContext());
 
-//		Filter encoder = new Encoder(getContext(), false, true, new EncoderService(true));
-//		encoder.setNext(router);
-		CorsFilter corsFilter = new CorsFilter(getContext(), router);
+		Filter encoder = new Encoder(getContext(), false, true, new EncoderService(true));
+		encoder.setNext(router);
+		CorsFilter corsFilter = new CorsFilter(getContext(), encoder);
 		corsFilter.setAllowedOrigins(new HashSet<String>(Arrays.asList("*")));
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(false);
@@ -52,8 +52,12 @@ public class Brapi extends SwaggerApplication
 		router.attach("/maps/{id}/", MapServerResource.class);
 		router.attach("/maps/{id}/chrom/{chrom}", MapByChromServerResource.class);
 		router.attach("/maps/{id}/chrom/{chrom}/", MapByChromServerResource.class);
+		router.attach("/markerprofiles", MarkerProfileListServerResource.class);
+		router.attach("/markerprofiles/", MarkerProfileListServerResource.class);
 		router.attach("/markerprofiles/methods", MarkerProfileMethodsListServerResource.class);
 		router.attach("/markerprofiles/methods/", MarkerProfileMethodsListServerResource.class);
+		router.attach("/markerprofiles/count", MarkerProfileCountServerResource.class);
+		router.attach("/markerprofiles/count/", MarkerProfileCountServerResource.class);
 		router.attach("/markerprofiles/{id}", MarkerProfileServerResource.class);
 		router.attach("/markerprofiles/{id}/", MarkerProfileServerResource.class);
 		router.attach("/markerprofiles/{id}/count", MarkerProfileCountServerResource.class);
@@ -62,16 +66,16 @@ public class Brapi extends SwaggerApplication
 		router.attach("/traits/", TraitListServerResource.class);
 		router.attach("/traits/{id}", TraitServerResource.class);
 		router.attach("/traits/{id}/", TraitServerResource.class);
+		router.attach("/allelematrix", AlleleMatrixServerResource.class);
+		router.attach("/allelematrix/", AlleleMatrixServerResource.class);
 
+//		router.attach("/authorize", AuthorizationServerResource.class);
+//		router.attach(HttpOAuthHelper.getAuthPage(getContext()),
+//			AuthPageServerResource.class);
 
-//		attachSwaggerSpecificationRestlet(router, "/api-docs");
-//		corsFilter.setNext(encoder);
-//		encoder.setNext(router);
-//		corsFilter.setNext(encoder);
-
-//		CustomSwaggerSpecificationRestlet customSwaggerSpec = new CustomSwaggerSpecificationRestlet(getContext());
-//		customSwaggerSpec.setApiInboundRoot(this);
-//		attachSwaggerDocumentationRestlets(router, "/api-docs", customSwaggerSpec, "/api-docs/{resource}", customSwaggerSpec);
+		CustomSwaggerSpecificationRestlet customSwaggerSpec = new CustomSwaggerSpecificationRestlet(getContext());
+		customSwaggerSpec.setApiInboundRoot(this);
+		attachSwaggerDocumentationRestlets(router, "/api-docs", customSwaggerSpec, "/api-docs/{resource}", customSwaggerSpec);
 
 		return corsFilter;
 	}

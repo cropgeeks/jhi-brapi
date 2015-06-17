@@ -7,13 +7,15 @@ import hutton.brapi.resource.*;
  */
 public interface MarkerProfileDAO
 {
+	MarkerProfileList getAll();
+
 	/**
 	 * Return a specific Map specified by the supplied id.
 	 *
 	 * @param id	The id of the MarkerProfile to getJson
 	 * @return		A MarkerProfile object identified by id (or null if none exists).
 	 */
-	MarkerProfile getById(String id);
+	MarkerProfileData getById(String id);
 
 	/**
 	 * Return a count of the Markers which are contained within the MarkerProfile in the form of a MarkerProfileCount.

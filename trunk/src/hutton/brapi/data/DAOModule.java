@@ -20,5 +20,6 @@ public class DAOModule extends AbstractModule
 		bind(MarkerProfileDAO.class).to(MarkerProfileDAOImpl.class);
 		bind(TraitDAO.class).to(TraitDAOImpl.class);
 		bind(MarkerProfileMethodsDAO.class).to(MarkerProfileMethodsDAOImpl.class);
+		bind(AlleleMatrixDAO.class).to(AlleleMatrixImpl.class);
 	}
 }
