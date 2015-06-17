@@ -15,9 +15,28 @@ public class MarkerProfileDAOImpl implements MarkerProfileDAO
 		"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where " +
 		"germinatebase_id=? AND datasets.id=?";
 
+	private final String allMarkerProfiles = "select genotypes.marker_id, genotypes.germinatebase_id, " +
+		"genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
+		"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id";
+
 	private final String markerCount = "select COUNT(DISTINCT genotypes.marker_id) AS markerCount, " +
 		"genotypes.germinatebase_id, genotypes.dataset_id from genotypes INNER JOIN markers ON genotypes.marker_id = " +
-		"markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id=? AND datasets.id=?";
+		"markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id";
+
+	public MarkerProfileList getAll()
+	{
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement markerProfileStatement = con.prepareStatement(allMarkerProfiles);
+			 ResultSet resultSet = markerProfileStatement.executeQuery())
+		{
+			MarkerProfileList profiles = getProfiles(resultSet);
+
+			return profiles;
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+		return null;
+	}
 
 	/**
 	 * Return a specific Map specified by the supplied id. Queries a database using the allMarkers query specified
@@ -27,7 +46,7 @@ public class MarkerProfileDAOImpl implements MarkerProfileDAO
 	 * @return		A MarkerProfile object identified by id (or null if none exists).
 	 */
 	@Override
-	public MarkerProfile getById(String id)
+	public MarkerProfileData getById(String id)
 	{
 		String[] tokens = id.split("-");
 		int datasetId = Integer.parseInt(tokens[0]);
@@ -37,7 +56,7 @@ public class MarkerProfileDAOImpl implements MarkerProfileDAO
 			 PreparedStatement markerProfileStatement = createByIdStatement(con, allMarkers, germinatebaseId, datasetId);
 			 ResultSet resultSet = markerProfileStatement.executeQuery())
 		{
-			MarkerProfile profile = getProfile(resultSet);
+			MarkerProfileData profile = getProfile(resultSet);
 
 			return profile;
 		}
@@ -50,7 +69,7 @@ public class MarkerProfileDAOImpl implements MarkerProfileDAO
 		throws SQLException
 	{
 		// Get the basic information on the map
-		PreparedStatement statement = con.prepareStatement(allMarkers);
+		PreparedStatement statement = con.prepareStatement(query);
 		statement.setInt(1, germinatebaseId);
 		statement.setInt(2, datasetId);
 
@@ -59,9 +78,44 @@ public class MarkerProfileDAOImpl implements MarkerProfileDAO
 
 	// Given a ResultSet generated from the allMarkers query, returns a MarkerProfile object which has been initialized
 	// with the information from the ResultSet
-	private MarkerProfile getProfile(ResultSet resultSet) throws SQLException
+	private MarkerProfileList getProfiles(ResultSet resultSet) throws SQLException
 	{
-		MarkerProfile profile = new MarkerProfile();
+		MarkerProfileList profiles = new MarkerProfileList();
+
+		HashMap<String, MarkerProfile> markerProfiles = new HashMap<>();
+		HashMap<String, Integer> markerProfileCounts = new HashMap<>();
+
+		while (resultSet.next())
+		{
+			String markerprofileId = resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id");
+			int germplasmId = resultSet.getInt("germinatebase_id");
+			MarkerProfile profile = markerProfiles.get(markerprofileId);
+			if (profile == null)
+			{
+				profile = new MarkerProfile();
+				profile.setMarkerprofileId(markerprofileId);
+				profile.setGermplasmId(germplasmId);
+				markerProfiles.put(markerprofileId, profile);
+				markerProfileCounts.put(markerprofileId, 1);
+				System.out.println();
+			}
+			else
+			{
+				int count = markerProfileCounts.get(markerprofileId);
+				markerProfileCounts.put(markerprofileId, ++count);
+				markerProfiles.get(markerprofileId).setResultCount(count);
+			}
+		}
+		profiles.setMarkerprofiles(new ArrayList<>(markerProfiles.values()));
+
+		return profiles;
+	}
+
+	// Given a ResultSet generated from the allMarkers query, returns a MarkerProfile object which has been initialized
+	// with the information from the ResultSet
+	private MarkerProfileData getProfile(ResultSet resultSet) throws SQLException
+	{
+		MarkerProfileData profile = new MarkerProfileData();
 		HashMap<String, String> alleles = new HashMap<>();
 		while (resultSet.next())
 		{

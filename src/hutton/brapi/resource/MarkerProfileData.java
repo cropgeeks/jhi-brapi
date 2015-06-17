@@ -1,26 +1,20 @@
 package hutton.brapi.resource;
 
+import java.util.HashMap;
+
 /**
  * Created by gs40939 on 30/04/2015.
  */
-public class MarkerProfile
+public class MarkerProfileData
 {
 	private String markerprofileId;
 	private int germplasmId;
 	private int extractId;
 	private String analysisMethod;
 	private String encoding;
-	private int resultCount;
-
-	public int getResultCount()
-	{
-		return resultCount;
-	}
-
-	public void setResultCount(int resultCount)
-	{
-		this.resultCount = resultCount;
-	}
+	// Seems to be the best way to have Jackson automatically generate a data array in json with comma separated
+	// key : value pairs as outlined in the apiary.io documentation for the API
+	private HashMap<String, String> data;
 
 	public String getMarkerprofileId()
 	{
@@ -72,6 +66,16 @@ public class MarkerProfile
 		this.encoding = encoding;
 	}
 
+	public HashMap<String, String> getData()
+	{
+		return data;
+	}
+
+	public void setData(HashMap<String, String> data)
+	{
+		this.data = data;
+	}
+
 	@Override
 	public String toString()
 	{
@@ -81,6 +85,7 @@ public class MarkerProfile
 			", extractId=" + extractId +
 			", analysisMethod='" + analysisMethod + '\'' +
 			", encoding='" + encoding + '\'' +
+			", data=" + data +
 			'}';
 	}
 }
