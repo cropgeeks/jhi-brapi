@@ -1,36 +1,55 @@
 package hutton.brapi.resource;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.*;
 
 /**
- * Created by gs40939 on 24/04/2015.
+ * @author Sebastian Raubach
  */
+
+// Exclude non-null fields from the output
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Germplasm
 {
-	private int germplasmId;
-	private int taxonId;
-	private String germplasmName;
+	private String       germplasmId;
+	private String       germplasmPUI;
+	private String       germplasmName;
+	private String       accessionNumber;
+	private String       breederCode;
 	private List<String> synonyms;
-	private int breedingProgramId;
+	private String       commonCropName;
+	private String       instituteCode;
+	private String       instituteName;
+	private String       biologicalStatusOfGermplasmCode;
+	private String       countryOfOriginCode;
+	private List<String> typeOfGermplasmStorageCode;
+	private String       genus;
+	private String       species;
+	private String       speciesAuthority;
+	private String       subtaxa;
+	private String       subtaxaAuthority;
+	private List<Donor>  donors;
+	private String       acquisitionDate;
 
-	public int getGermplasmId()
+	public String getGermplasmId()
 	{
 		return germplasmId;
 	}
 
-	public void setGermplasmId(int germplasmId)
+	public void setGermplasmId(String germplasmId)
 	{
 		this.germplasmId = germplasmId;
 	}
 
-	public int getTaxonId()
+	public String getGermplasmPUI()
 	{
-		return taxonId;
+		return germplasmPUI;
 	}
 
-	public void setTaxonId(int taxonId)
+	public void setGermplasmPUI(String germplasmPUI)
 	{
-		this.taxonId = taxonId;
+		this.germplasmPUI = germplasmPUI;
 	}
 
 	public String getGermplasmName()
@@ -43,6 +62,26 @@ public class Germplasm
 		this.germplasmName = germplasmName;
 	}
 
+	public String getAccessionNumber()
+	{
+		return accessionNumber;
+	}
+
+	public void setAccessionNumber(String accessionNumber)
+	{
+		this.accessionNumber = accessionNumber;
+	}
+
+	public String getBreederCode()
+	{
+		return breederCode;
+	}
+
+	public void setBreederCode(String breederCode)
+	{
+		this.breederCode = breederCode;
+	}
+
 	public List<String> getSynonyms()
 	{
 		return synonyms;
@@ -53,25 +92,159 @@ public class Germplasm
 		this.synonyms = synonyms;
 	}
 
-	public int getBreedingProgramId()
+	public String getCommonCropName()
 	{
-		return breedingProgramId;
+		return commonCropName;
 	}
 
-	public void setBreedingProgramId(int breedingProgramId)
+	public void setCommonCropName(String commonCropName)
 	{
-		this.breedingProgramId = breedingProgramId;
+		this.commonCropName = commonCropName;
+	}
+
+	public String getInstituteCode()
+	{
+		return instituteCode;
+	}
+
+	public void setInstituteCode(String instituteCode)
+	{
+		this.instituteCode = instituteCode;
+	}
+
+	public String getInstituteName()
+	{
+		return instituteName;
+	}
+
+	public void setInstituteName(String instituteName)
+	{
+		this.instituteName = instituteName;
+	}
+
+	public String getBiologicalStatusOfGermplasmCode()
+	{
+		return biologicalStatusOfGermplasmCode;
+	}
+
+	public void setBiologicalStatusOfGermplasmCode(String biologicalStatusOfGermplasmCode)
+	{
+		this.biologicalStatusOfGermplasmCode = biologicalStatusOfGermplasmCode;
+	}
+
+	public String getCountryOfOriginCode()
+	{
+		return countryOfOriginCode;
+	}
+
+	public void setCountryOfOriginCode(String countryOfOriginCode)
+	{
+		this.countryOfOriginCode = countryOfOriginCode;
+	}
+
+	public List<String> getTypeOfGermplasmStorageCode()
+	{
+		return typeOfGermplasmStorageCode;
+	}
+
+	public void setTypeOfGermplasmStorageCode(List<String> typeOfGermplasmStorageCode)
+	{
+		this.typeOfGermplasmStorageCode = typeOfGermplasmStorageCode;
+	}
+
+	public String getGenus()
+	{
+		return genus;
+	}
+
+	public void setGenus(String genus)
+	{
+		this.genus = genus;
+	}
+
+	public String getSpecies()
+	{
+		return species;
+	}
+
+	public void setSpecies(String species)
+	{
+		this.species = species;
+	}
+
+	public String getSpeciesAuthority()
+	{
+		return speciesAuthority;
+	}
+
+	public void setSpeciesAuthority(String speciesAuthority)
+	{
+		this.speciesAuthority = speciesAuthority;
+	}
+
+	public String getSubtaxa()
+	{
+		return subtaxa;
+	}
+
+	public void setSubtaxa(String subtaxa)
+	{
+		this.subtaxa = subtaxa;
+	}
+
+	public String getSubtaxaAuthority()
+	{
+		return subtaxaAuthority;
+	}
+
+	public void setSubtaxaAuthority(String subtaxaAuthority)
+	{
+		this.subtaxaAuthority = subtaxaAuthority;
+	}
+
+	public List<Donor> getDonors()
+	{
+		return donors;
+	}
+
+	public void setDonors(List<Donor> donors)
+	{
+		this.donors = donors;
+	}
+
+	public String getAcquisitionDate()
+	{
+		return acquisitionDate;
+	}
+
+	public void setAcquisitionDate(String acquisitionDate)
+	{
+		this.acquisitionDate = acquisitionDate;
 	}
 
 	@Override
 	public String toString()
 	{
 		return "Germplasm{" +
-			"germplasmId=" + germplasmId +
-			", taxonId=" + taxonId +
-			", germplasmName='" + germplasmName + '\'' +
-			", synonyms=" + synonyms +
-			", breedingProgramId=" + breedingProgramId +
-			'}';
+				"germplasmId='" + germplasmId + '\'' +
+				", germplasmPUI='" + germplasmPUI + '\'' +
+				", germplasmName='" + germplasmName + '\'' +
+				", accessionNumber='" + accessionNumber + '\'' +
+				", breederCode='" + breederCode + '\'' +
+				", synonyms=" + synonyms +
+				", commonCropName='" + commonCropName + '\'' +
+				", instituteCode='" + instituteCode + '\'' +
+				", instituteName='" + instituteName + '\'' +
+				", biologicalStatusOfGermplasmCode='" + biologicalStatusOfGermplasmCode + '\'' +
+				", countryOfOriginCode='" + countryOfOriginCode + '\'' +
+				", typeOfGermplasmStorageCode=" + typeOfGermplasmStorageCode +
+				", genus='" + genus + '\'' +
+				", species='" + species + '\'' +
+				", speciesAuthority='" + speciesAuthority + '\'' +
+				", subtaxa='" + subtaxa + '\'' +
+				", subtaxaAuthority='" + subtaxaAuthority + '\'' +
+				", donors=" + donors +
+				", acquisitionDate='" + acquisitionDate + '\'' +
+				'}';
 	}
 }

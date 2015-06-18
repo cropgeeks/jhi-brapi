@@ -1,10 +1,6 @@
 package hutton.brapi.server;
 
-import hutton.brapi.data.*;
-import hutton.brapi.resource.*;
-
 import com.fasterxml.jackson.databind.*;
-
 import com.google.inject.*;
 
 import org.restlet.ext.guice.*;
@@ -12,45 +8,106 @@ import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
 import org.restlet.resource.*;
 
+import hutton.brapi.data.*;
+import hutton.brapi.resource.*;
+
 /**
- * Queries the database for the Germplasm (germinatebase?) with the given ID then returns a JSON (Jackson)
- * representation of the Germplasm for API clients to consume.
+ * Queries the database for the Germplasm (germinatebase?) with the given ID then returns a JSON (Jackson) representation of the Germplasm for API
+ * clients to consume.
  */
 public class GermplasmListServerResource extends SelfInjectingServerResource
 {
+	private static final String PARAM_NAME            = "name";
+	private static final String PARAM_MATCHING_METHOD = "matchMethod";
+	private static final String PARAM_PAGE            = "page";
+	private static final String PARAM_PAGE_SIZE       = "pageSize";
+
 	@Inject
 	private GermplasmDAO germplasmDAO;
 
-	@Get("json")
-	public GermplasmList retrieve()
+	private String         name;
+	private MatchingMethod matchingMethod;
+
+	private int pageSize = 1000;
+	private int page = 1;
+
+	@Override
+	public void doInit()
 	{
-		GermplasmList germplasmList = germplasmDAO.getAll();
+		super.doInit();
+		this.name = getQueryValue(PARAM_NAME);
+		this.matchingMethod = MatchingMethod.getValue(getQueryValue(PARAM_MATCHING_METHOD));
 
-		if (germplasmList != null)
-			return germplasmList;
+		// Try to parse the page and pageSize as integers
+		try
+		{
+			this.page = Integer.parseInt(getQueryValue(PARAM_PAGE));
+		}
+		catch(Exception e)
+		{
+		}
 
-		throw new ResourceException(404);
+		try
+		{
+			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
+		}
+		catch(Exception e)
+		{
+		}
 	}
 
-	/**
-	 * This is an example of serving the browser (or anything requesting html) the formatted / pretty-printed version
-	 * of the JSON as opposed to the standard JSON which has no spacing (thus saves size for transferring data).
-	 *
-	 * @return
-	 */
-	@Get("html")
-	public Representation getHtml()
+	@Get
+	public Representation retrieve()
 	{
-		GermplasmList germplasmList = germplasmDAO.getAll();
-
-		if (germplasmList != null)
+		if (name != null)
 		{
+			GermplasmSearchListPagination germplasmSearchListPagination = germplasmDAO.getByName(name, matchingMethod, page, pageSize);
+
+			JacksonRepresentation<GermplasmSearchListPagination> rep = new JacksonRepresentation<>(germplasmSearchListPagination);
+			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+			return rep;
+		}
+		else
+		{
+			GermplasmList germplasmList = germplasmDAO.getAll();
+
 			JacksonRepresentation<GermplasmList> rep = new JacksonRepresentation<>(germplasmList);
 			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 			return rep;
 		}
+	}
 
-		throw new ResourceException(404);
+	@Put
+	public void store(Representation germplasm)
+	{
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	public enum MatchingMethod
+	{
+		EXACT,
+		WILDCARD;
+
+		public static MatchingMethod getValue(String input)
+		{
+			if(input == null || input.equals(""))
+			{
+				return EXACT;
+			}
+			else
+			{
+				try
+				{
+					return MatchingMethod.valueOf(input.toUpperCase());
+				}
+				catch (Exception e)
+				{
+					// TODO: Return a 501 HTTP error code
+					return EXACT;
+				}
+			}
+		}
 	}
 }

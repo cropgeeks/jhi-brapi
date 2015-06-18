@@ -1,6 +1,7 @@
 package hutton.brapi.data;
 
 import hutton.brapi.resource.*;
+import hutton.brapi.server.GermplasmListServerResource;
 
 /**
  * Specifies the public interface which any Germplasm data accessing classes must implement.
@@ -33,4 +34,23 @@ public interface GermplasmDAO
 	 * @return		A GermplasmMarkerProfileList object identified by the supplied id (or null if none exists).
 	 */
 	GermplasmMarkerProfileList getMarkerProfilesFor(int id);
+
+	/**
+	 * Return the list of Germplasm objects matching the name query using the MatchingMethod
+	 *
+	 * @param name           The name
+	 * @param matchingMethod The MatchingMethod
+	 * @param page           The page number (starting from 1)
+	 * @param pageSize       The size of the page
+	 * @return A GermplasmSearchListPagination object, which is a wrapper around a Pagination and a List of matching GermplasmSearch objects.
+	 */
+	GermplasmSearchListPagination getByName(String name, GermplasmListServerResource.MatchingMethod matchingMethod, int page, int pageSize);
+
+	/**
+	 * Return a pedigree of a specific Germplasm specified by the supplied id.
+	 *
+	 * @param id The id of the Germplasm to getJson.
+	 * @return A Pedigree object identified by the supplied id (or null if none exists).
+	 */
+	Pedigree getPedigreeById(int id);
 }
