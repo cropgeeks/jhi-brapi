@@ -30,12 +30,27 @@ public class MapServerResource extends SelfInjectingServerResource
 	}
 
 	@Get("json")
-	public MapDetail retrieve()
+	public MapDetail getJson()
 	{
 		MapDetail mapDetail = mapDAO.getById(Integer.parseInt(id));
 
 		if (mapDetail != null)
 			return mapDetail;
+
+		throw new ResourceException(404);
+	}
+
+	@Get("html")
+	public Representation getHtml()
+	{
+		MapDetail mapDetail = mapDAO.getById(Integer.parseInt(id));
+
+		if (mapDetail != null)
+		{
+			JacksonRepresentation<MapDetail> rep = new JacksonRepresentation<>(mapDetail);
+			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+			return rep;
+		}
 
 		throw new ResourceException(404);
 	}

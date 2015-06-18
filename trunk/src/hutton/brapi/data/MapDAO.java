@@ -22,5 +22,7 @@ public interface MapDAO
 	 */
 	MapDetail getById(int id);
 
+	MapMarkersList getByIdMarkers(int id);
+
 	MapDetail getByIdAndChromosome(int id, String chromosome);
 }

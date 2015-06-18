@@ -7,10 +7,21 @@ import java.util.*;
  */
 public class MapDetail
 {
+	private String mapId;
 	private String name;
 	private String type;
 	private String unit;
-	private List<MapEntry> entries;
+	private List<LinkageGroup> linkageGroups;
+
+	public String getMapId()
+	{
+		return mapId;
+	}
+
+	public void setMapId(String mapId)
+	{
+		this.mapId = mapId;
+	}
 
 	public String getName()
 	{
@@ -42,14 +53,14 @@ public class MapDetail
 		this.unit = unit;
 	}
 
-	public List<MapEntry> getEntries()
+	public List<LinkageGroup> getLinkageGroups()
 	{
-		return entries;
+		return linkageGroups;
 	}
 
-	public void setEntries(List<MapEntry> entries)
+	public void setLinkageGroups(List<LinkageGroup> linkageGroups)
 	{
-		this.entries = entries;
+		this.linkageGroups = linkageGroups;
 	}
 
 	@Override
@@ -59,7 +70,6 @@ public class MapDetail
 			"name='" + name + '\'' +
 			", type='" + type + '\'' +
 			", unit='" + unit + '\'' +
-			", entries=" + entries +
 			'}';
 	}
 }

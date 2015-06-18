@@ -50,8 +50,8 @@ public class Brapi extends SwaggerApplication
 		router.attach("/maps/", MapListServerResource.class);
 		router.attach("/maps/{id}", MapServerResource.class);
 		router.attach("/maps/{id}/", MapServerResource.class);
-		router.attach("/maps/{id}/chrom/{chrom}", MapByChromServerResource.class);
-		router.attach("/maps/{id}/chrom/{chrom}/", MapByChromServerResource.class);
+		router.attach("/maps/{id}/positions", MapMarkersListServerResource.class);
+		router.attach("/maps/{id}/positions/", MapMarkersListServerResource.class);
 		router.attach("/markerprofiles", MarkerProfileListServerResource.class);
 		router.attach("/markerprofiles/", MarkerProfileListServerResource.class);
 		router.attach("/markerprofiles/methods", MarkerProfileMethodsListServerResource.class);

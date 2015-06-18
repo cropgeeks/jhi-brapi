@@ -10,4 +10,6 @@ import hutton.brapi.resource.*;
 public interface AlleleMatrixDAO
 {
 	AlleleMatrix get(List<String> markerProfileIds);
+
+	AlleleMatrix get(List<String> markerProfileIds, List<String> markerIds);
 }
