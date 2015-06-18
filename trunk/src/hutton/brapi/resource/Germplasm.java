@@ -9,7 +9,7 @@ import java.util.*;
  */
 
 // Exclude non-null fields from the output
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Germplasm
 {
 	private String       germplasmId;
