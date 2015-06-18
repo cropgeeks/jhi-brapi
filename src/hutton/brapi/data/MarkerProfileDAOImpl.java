@@ -88,7 +88,7 @@ public class MarkerProfileDAOImpl implements MarkerProfileDAO
 		while (resultSet.next())
 		{
 			String markerprofileId = resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id");
-			int germplasmId = resultSet.getInt("germinatebase_id");
+			String germplasmId = resultSet.getString("germinatebase_id");
 			MarkerProfile profile = markerProfiles.get(markerprofileId);
 			if (profile == null)
 			{

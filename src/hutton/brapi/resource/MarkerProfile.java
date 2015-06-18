@@ -6,7 +6,7 @@ package hutton.brapi.resource;
 public class MarkerProfile
 {
 	private String markerprofileId;
-	private int germplasmId;
+	private String germplasmId;
 	private int extractId;
 	private String analysisMethod;
 	private String encoding;
@@ -32,12 +32,12 @@ public class MarkerProfile
 		this.markerprofileId = markerprofileId;
 	}
 
-	public int getGermplasmId()
+	public String getGermplasmId()
 	{
 		return germplasmId;
 	}
 
-	public void setGermplasmId(int germplasmId)
+	public void setGermplasmId(String germplasmId)
 	{
 		this.germplasmId = germplasmId;
 	}

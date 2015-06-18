@@ -7,7 +7,7 @@ import java.sql.*;
  */
 public class Map
 {
-	private int mapId;
+	private String mapId;
 	private String name;
 	private String species;
 	private String type;
@@ -17,12 +17,12 @@ public class Map
 	private int linkageGroupCount;
 	private String comments;
 
-	public int getMapId()
+	public String getMapId()
 	{
 		return mapId;
 	}
 
-	public void setMapId(int mapId)
+	public void setMapId(String mapId)
 	{
 		this.mapId = mapId;
 	}
