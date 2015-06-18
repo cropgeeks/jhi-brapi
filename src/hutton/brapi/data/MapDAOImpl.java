@@ -33,6 +33,12 @@ public class MapDAOImpl implements MapDAO
 		"mapdefinitions.definition_start, markers.marker_name from maps INNER JOIN mapdefinitions ON maps.id = " +
 		"mapdefinitions.map_id INNER JOIN markers ON mapdefinitions.marker_id = markers.id WHERE maps.id=? AND mapdefinitions.chromosome=?";
 
+	private final String linkageGroupQuery = "SELECT map_id, chromosome, MAX(definition_end) AS max, COUNT(marker_id) " +
+		"AS number_markers FROM mapdefinitions WHERE map_id=? GROUP BY chromosome";
+
+	private final String mapMarkersQuery = "SELECT map_id, chromosome, definition_start, marker_id, markers.marker_name" +
+		" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=?";
+
 	/**
 	 * Queries the database (using mapQuery defined above) for the complete list of Maps which the database holds.
 	 *
@@ -66,7 +72,7 @@ public class MapDAOImpl implements MapDAO
 			map.setMapId(resultSet.getInt("id"));
 			map.setName(resultSet.getString("description"));
 			map.setPublishedDate(resultSet.getDate("created_on"));
-			map.setChromosomeCount(resultSet.getInt("chromosomeCount"));
+			map.setLinkageGroupCount(resultSet.getInt("chromosomeCount"));
 			map.setMarkerCount(resultSet.getInt("markerCount"));
 			resultSetMaps.add(map);
 		}
@@ -85,6 +91,30 @@ public class MapDAOImpl implements MapDAO
 	 * @return 		A MapDetail object which itself holds a List of MapEntry objects. Or null if no MapDetail exists for
 	 * the supplied id.
 	 */
+//	@Override
+//	public MapDetail getById(int id)
+//	{
+//		MapDetail mapDetail = new MapDetail();
+//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+//			 PreparedStatement mapStatement = createByIdStatement(con, detailQuery, id);
+//			 ResultSet resultSet = mapStatement.executeQuery())
+//		{
+//			mapDetail = getMapDetailFromResultSet(resultSet);
+//		}
+//		catch (SQLException e) { e.printStackTrace(); }
+//
+//		// Get the list of entries for the map (effectively the markers)
+//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+//			 PreparedStatement entriesStatement = createByIdStatement(con, entriesQuery, id);
+//			 ResultSet resultSet = entriesStatement.executeQuery())
+//		{
+//				List<MapEntry> mapEntries = getMapEntriesFromResultSet(resultSet);
+//				mapDetail.setEntries(mapEntries);
+//		}
+//		catch (SQLException e) { e.printStackTrace(); }
+//
+//		return mapDetail;
+//	}
 	@Override
 	public MapDetail getById(int id)
 	{
@@ -99,11 +129,13 @@ public class MapDAOImpl implements MapDAO
 
 		// Get the list of entries for the map (effectively the markers)
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement entriesStatement = createByIdStatement(con, entriesQuery, id);
+			 PreparedStatement entriesStatement = createByIdStatement(con, linkageGroupQuery, id);
 			 ResultSet resultSet = entriesStatement.executeQuery())
 		{
-				List<MapEntry> mapEntries = getMapEntriesFromResultSet(resultSet);
-				mapDetail.setEntries(mapEntries);
+			List<LinkageGroup> linkageGroups = getLinkageGroupsFromResultSet(resultSet);
+			mapDetail.setLinkageGroups(linkageGroups);
+//			List<MapEntry> mapEntries = getMapEntriesFromResultSet(resultSet);
+//			mapDetail.setEntries(mapEntries);
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
@@ -132,23 +164,22 @@ public class MapDAOImpl implements MapDAO
 		return mapDetail;
 	}
 
-	// Takes a ResultSet which should represent the result of the entriesQuery defined above and returns a List of
-	// MapEntry objects, each of which has been initialized with the values from the ResultSet
-	private List<MapEntry> getMapEntriesFromResultSet(ResultSet resultSet) throws SQLException
+	// Takes a ResultSet which should represent the result of the linkageGroupsQuery defined above and returns a List of
+	// LinkageGroup objects, each of which has been initialized with the values from the ResultSet
+	private List<LinkageGroup> getLinkageGroupsFromResultSet(ResultSet resultSet) throws SQLException
 	{
-		List<MapEntry> mapEntries = new ArrayList<>();
+		List<LinkageGroup> linkageGroups = new ArrayList<>();
 
 		while (resultSet.next())
 		{
-			MapEntry mapEntry = new MapEntry();
-			mapEntry.setMarkerId(resultSet.getInt("marker_id"));
-			mapEntry.setMarkerName(resultSet.getString("marker_name"));
-			mapEntry.setLocation("" + resultSet.getDouble("definition_start"));
-			mapEntry.setChromosome(resultSet.getString("chromosome"));
-			mapEntries.add(mapEntry);
+			LinkageGroup linkageGroup = new LinkageGroup();
+			linkageGroup.setLinkageGroupId(resultSet.getString("chromosome"));
+			linkageGroup.setMaxPosition(resultSet.getInt("max"));
+			linkageGroup.setNumberMarkers(resultSet.getInt("number_markers"));
+			linkageGroups.add(linkageGroup);
 		}
 
-		return mapEntries;
+		return linkageGroups;
 	}
 
 	/**
@@ -168,16 +199,6 @@ public class MapDAOImpl implements MapDAO
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
 			mapDetail = getMapDetailFromResultSet(resultSet);
-		}
-		catch (SQLException e) { e.printStackTrace(); }
-
-		// Get the list of entries for the map (effectively the markers)
-		try (Connection con = hutton.brapi.data.Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement entriesStatement = createEntriesByChromStatement(con, id, chromosome);
-			 ResultSet rs = entriesStatement.executeQuery())
-		{
-			List<MapEntry> mapEntries = getMapEntriesFromResultSet(rs);
-			mapDetail.setEntries(mapEntries);
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
@@ -205,5 +226,52 @@ public class MapDAOImpl implements MapDAO
 		throws SQLException
 	{
 		return createByChromStatement(con, entriesByChromQuery, id, chromosome);
+	}
+
+	@Override
+	public MapMarkersList getByIdMarkers(int id)
+	{
+		MapMarkersList markersList = new MapMarkersList();
+
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id);
+			 ResultSet resultSet = mapStatement.executeQuery())
+		{
+			markersList = getMapMarkersListFromResultSet(resultSet);
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+		return markersList;
+	}
+
+	private PreparedStatement createByIdStatementMarkers(Connection con, String query, int id)
+		throws SQLException
+	{
+		PreparedStatement statement = con.prepareStatement(query);
+		// Get the basic information on the map
+		statement.setInt(1, id);
+
+		return statement;
+	}
+
+	// Takes a ResultSet which should represent the result of the linkageGroupsQuery defined above and returns a List of
+	// LinkageGroup objects, each of which has been initialized with the values from the ResultSet
+	private MapMarkersList getMapMarkersListFromResultSet(ResultSet resultSet) throws SQLException
+	{
+		List<MapMarker> mapMarkers = new ArrayList<>();
+
+		while (resultSet.next())
+		{
+			MapMarker mapMarker = new MapMarker();
+			mapMarker.setMarkerId(resultSet.getString("marker_id"));
+			mapMarker.setMarkerName(resultSet.getString("marker_name"));
+			mapMarker.setLocation(resultSet.getString("definition_start"));
+			mapMarker.setLinkageGroup(resultSet.getString("chromosome"));
+			mapMarkers.add(mapMarker);
+		}
+
+		MapMarkersList markers = new MapMarkersList();
+		markers.setMapMarkers(mapMarkers);
+		return markers;
 	}
 }

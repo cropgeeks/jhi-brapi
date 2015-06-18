@@ -14,7 +14,7 @@ public class Map
 	private String unit;
 	private Date publishedDate;
 	private int markerCount;
-	private int chromosomeCount;
+	private int linkageGroupCount;
 	private String comments;
 
 	public int getMapId()
@@ -87,14 +87,14 @@ public class Map
 		this.markerCount = markerCount;
 	}
 
-	public int getChromosomeCount()
+	public int getLinkageGroupCount()
 	{
-		return chromosomeCount;
+		return linkageGroupCount;
 	}
 
-	public void setChromosomeCount(int chromosomeCount)
+	public void setLinkageGroupCount(int linkageGroupCount)
 	{
-		this.chromosomeCount = chromosomeCount;
+		this.linkageGroupCount = linkageGroupCount;
 	}
 
 	public String getComments()
@@ -118,7 +118,7 @@ public class Map
 			", unit='" + unit + '\'' +
 			", publishedDate=" + publishedDate +
 			", markerCount=" + markerCount +
-			", chromosomeCount=" + chromosomeCount +
+			", linkageGroupCount=" + linkageGroupCount +
 			", comments=" + comments +
 			'}';
 	}

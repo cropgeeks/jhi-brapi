@@ -68,15 +68,23 @@ public class AlleleMatrixServerResource extends SelfInjectingServerResource
 	public Representation post(Representation entity)
 	{
 		List<String> profileIds = new ArrayList<>();
+		List<String> markerIds = new ArrayList<>();
 
 		Form form = new Form(entity);
 		for (Parameter parameter : form)
 		{
 			if (parameter.getName().equals("markerprofileId"))
 				profileIds.add(parameter.getValue());
+
+			if (parameter.getName().equals("markerId"))
+				markerIds.add(parameter.getValue());
 		}
 
-		AlleleMatrix matrix = alleleMatrixDAO.get(profileIds);
+		AlleleMatrix matrix;
+		if (markerIds.isEmpty())
+			matrix = alleleMatrixDAO.get(profileIds);
+		else
+			matrix = alleleMatrixDAO.get(profileIds, markerIds);
 
 		if (matrix != null)
 			return new JacksonRepresentation<>(matrix);

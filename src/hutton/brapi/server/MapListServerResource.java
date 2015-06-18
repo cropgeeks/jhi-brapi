@@ -21,10 +21,25 @@ public class MapListServerResource extends SelfInjectingServerResource
 	private MapDAO mapDAO;
 
 	@Get("json")
-	public MapList retrieve()
+	public MapList getJson()
 	{
 		MapList mapList = mapDAO.getAll();
 
 		return mapList;
+	}
+
+	@Get("html")
+	public Representation getHtml()
+	{
+		MapList mapList = mapDAO.getAll();
+
+		if (mapList != null)
+		{
+			JacksonRepresentation<MapList> rep = new JacksonRepresentation<>(mapList);
+			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+			return rep;
+		}
+
+		throw new ResourceException(404);
 	}
 }
