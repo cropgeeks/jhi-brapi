@@ -46,6 +46,8 @@ public class Brapi extends SwaggerApplication
 		router.attach("/germplasm/{id}/", GermplasmServerResource.class);
 		router.attach("/germplasm/{id}/markerprofiles", GermplasmMarkerProfileServerResource.class);
 		router.attach("/germplasm/{id}/markerprofiles/", GermplasmMarkerProfileServerResource.class);
+		router.attach("/germplasm/{id}/pedigree", GermplasmPedigreeServerResource.class);
+		router.attach("/germplasm/{id}/pedigree/", GermplasmPedigreeServerResource.class);
 		router.attach("/maps", MapListServerResource.class);
 		router.attach("/maps/", MapListServerResource.class);
 		router.attach("/maps/{id}", MapServerResource.class);
@@ -56,12 +58,12 @@ public class Brapi extends SwaggerApplication
 		router.attach("/markerprofiles/", MarkerProfileListServerResource.class);
 		router.attach("/markerprofiles/methods", MarkerProfileMethodsListServerResource.class);
 		router.attach("/markerprofiles/methods/", MarkerProfileMethodsListServerResource.class);
-		router.attach("/markerprofiles/count", MarkerProfileCountServerResource.class);
-		router.attach("/markerprofiles/count/", MarkerProfileCountServerResource.class);
+//		router.attach("/markerprofiles/count", MarkerProfileCountServerResource.class);
+//		router.attach("/markerprofiles/count/", MarkerProfileCountServerResource.class);
 		router.attach("/markerprofiles/{id}", MarkerProfileServerResource.class);
 		router.attach("/markerprofiles/{id}/", MarkerProfileServerResource.class);
-		router.attach("/markerprofiles/{id}/count", MarkerProfileCountServerResource.class);
-		router.attach("/markerprofiles/{id}/count/", MarkerProfileCountServerResource.class);
+//		router.attach("/markerprofiles/{id}/count", MarkerProfileCountServerResource.class);
+//		router.attach("/markerprofiles/{id}/count/", MarkerProfileCountServerResource.class);
 		router.attach("/traits", TraitListServerResource.class);
 		router.attach("/traits/", TraitListServerResource.class);
 		router.attach("/traits/{id}", TraitServerResource.class);
