@@ -34,16 +34,26 @@ public class GermplasmPedigreeServerResource extends SelfInjectingServerResource
 		this.notation = PedigreeNotation.getValue(getQueryValue("notation"));
 	}
 
-	@Get
-	public Representation retrieve()
+	@Get("json")
+	public Pedigree getJson()
 	{
 		Pedigree pedigree = germplasmDAO.getPedigreeById(Integer.parseInt(id));
+
+		if (pedigree != null)
+			return pedigree;
+
+		throw new ResourceException(404);
+	}
+
+	@Get("html")
+	public Representation getHtml()
+	{
+		Pedigree pedigree = getJson();
 
 		if (pedigree != null)
 		{
 			JacksonRepresentation<Pedigree> rep = new JacksonRepresentation<>(pedigree);
 			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
 			return rep;
 		}
 

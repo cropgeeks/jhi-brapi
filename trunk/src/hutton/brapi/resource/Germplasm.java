@@ -1,7 +1,5 @@
 package hutton.brapi.resource;
 
-import com.fasterxml.jackson.annotation.*;
-
 import java.util.*;
 
 /**
