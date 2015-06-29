@@ -3,19 +3,14 @@ package hutton.brapi.server;
 import hutton.brapi.data.*;
 import hutton.brapi.resource.*;
 
-import com.fasterxml.jackson.databind.*;
-
 import com.google.inject.*;
 
-import org.restlet.ext.guice.*;
-import org.restlet.ext.jackson.*;
-import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
  * Created by gs40939 on 27/05/2015.
  */
-public class MapByChromServerResource extends SelfInjectingServerResource
+public class MapByChromServerResource extends BaseBrapiServerResource<MapDetail>
 {
 	@Inject
 	private MapDAO mapDAO;
@@ -31,7 +26,7 @@ public class MapByChromServerResource extends SelfInjectingServerResource
 	}
 
 	@Get("json")
-	public MapDetail retrieve()
+	public MapDetail getJson()
 	{
 		MapDetail mapDetail = mapDAO.getByIdAndChromosome(Integer.parseInt(id), chrom);
 
