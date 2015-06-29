@@ -1,21 +1,18 @@
 package hutton.brapi.server;
 
-import com.fasterxml.jackson.databind.*;
-import com.google.inject.*;
-
-import org.restlet.ext.guice.*;
-import org.restlet.ext.jackson.*;
-import org.restlet.representation.*;
-import org.restlet.resource.*;
-
 import hutton.brapi.data.*;
 import hutton.brapi.resource.*;
+
+import com.google.inject.*;
+
+import org.restlet.representation.*;
+import org.restlet.resource.*;
 
 /**
  * Queries the database for the Germplasm pedigree with the given ID then returns a JSON (Jackson) representation of the Germplasm pedigree for API
  * clients to consume.
  */
-public class GermplasmPedigreeServerResource extends SelfInjectingServerResource
+public class GermplasmPedigreeServerResource extends BaseBrapiServerResource
 {
 	@Inject
 	private GermplasmDAO germplasmDAO;
@@ -41,21 +38,6 @@ public class GermplasmPedigreeServerResource extends SelfInjectingServerResource
 
 		if (pedigree != null)
 			return pedigree;
-
-		throw new ResourceException(404);
-	}
-
-	@Get("html")
-	public Representation getHtml()
-	{
-		Pedigree pedigree = getJson();
-
-		if (pedigree != null)
-		{
-			JacksonRepresentation<Pedigree> rep = new JacksonRepresentation<>(pedigree);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-			return rep;
-		}
 
 		throw new ResourceException(404);
 	}

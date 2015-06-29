@@ -3,19 +3,14 @@ package hutton.brapi.server;
 import hutton.brapi.data.*;
 import hutton.brapi.resource.*;
 
-import com.fasterxml.jackson.databind.*;
-
 import com.google.inject.*;
 
-import org.restlet.ext.guice.*;
-import org.restlet.ext.jackson.*;
-import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
  * Given an id, returns the markerprofile ids which relate to the germplasm indicated by id.
  */
-public class GermplasmMarkerProfileServerResource extends SelfInjectingServerResource
+public class GermplasmMarkerProfileServerResource extends BaseBrapiServerResource<GermplasmMarkerProfileList>
 {
 	@Inject
 	private GermplasmDAO germplasmDAO;
@@ -30,7 +25,7 @@ public class GermplasmMarkerProfileServerResource extends SelfInjectingServerRes
 	}
 
 	@Get("json")
-	public GermplasmMarkerProfileList retrieve()
+	public GermplasmMarkerProfileList getJson()
 	{
 		GermplasmMarkerProfileList profileList = germplasmDAO.getMarkerProfilesFor(id);
 

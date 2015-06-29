@@ -3,18 +3,14 @@ package hutton.brapi.server;
 import hutton.brapi.data.*;
 import hutton.brapi.resource.*;
 
-import com.fasterxml.jackson.databind.*;
 import com.google.inject.*;
 
-import org.restlet.ext.guice.*;
-import org.restlet.ext.jackson.*;
-import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
  * Given an id returns the markers and associated alleles which are associated with the markerprofile with that id.
  */
-public class MarkerProfileServerResource extends SelfInjectingServerResource
+public class MarkerProfileServerResource extends BaseBrapiServerResource
 {
 	@Inject
 	private MarkerProfileDAO markerProfileDAO;
@@ -35,28 +31,6 @@ public class MarkerProfileServerResource extends SelfInjectingServerResource
 
 		if (profile != null)
 			return profile;
-
-		throw new ResourceException(404);
-	}
-
-	/**
-	 * This is an example of serving the browser (or anything requesting html) the formatted / pretty-printed version
-	 * of the JSON as opposed to the standard JSON which has no spacing (thus saves size for transferring data).
-	 *
-	 * @return
-	 */
-	@Get("html")
-	public Representation getHtml()
-	{
-		MarkerProfileData profile = markerProfileDAO.getById(id);
-
-		if (profile != null)
-		{
-			JacksonRepresentation<MarkerProfileData> rep = new JacksonRepresentation<>(profile);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-			return rep;
-		}
 
 		throw new ResourceException(404);
 	}

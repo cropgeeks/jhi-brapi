@@ -3,20 +3,15 @@ package hutton.brapi.server;
 import hutton.brapi.data.*;
 import hutton.brapi.resource.*;
 
-import com.fasterxml.jackson.databind.*;
-
 import com.google.inject.*;
 
-import org.restlet.ext.guice.*;
-import org.restlet.ext.jackson.*;
-import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
  * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the
  * Germplasm for API clients to consume.
  */
-public class GermplasmServerResource extends SelfInjectingServerResource
+public class GermplasmServerResource extends BaseBrapiServerResource<Germplasm>
 {
 	@Inject
 	private GermplasmDAO germplasmDAO;
@@ -38,21 +33,6 @@ public class GermplasmServerResource extends SelfInjectingServerResource
 
 		if (germplasm != null)
 			return germplasm;
-
-		throw new ResourceException(404);
-	}
-
-	@Get("html")
-	public Representation getHtml()
-	{
-		Germplasm germplasm = getJson();
-
-		if (germplasm != null)
-		{
-			JacksonRepresentation<Germplasm> rep = new JacksonRepresentation<>(germplasm);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-			return rep;
-		}
 
 		throw new ResourceException(404);
 	}

@@ -3,18 +3,14 @@ package hutton.brapi.server;
 import hutton.brapi.data.*;
 import hutton.brapi.resource.*;
 
-import com.fasterxml.jackson.databind.*;
 import com.google.inject.*;
 
-import org.restlet.ext.guice.*;
-import org.restlet.ext.jackson.*;
-import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
  * Given an id returns the markers and associated alleles which are associated with the markerprofile with that id.
  */
-public class MarkerProfileCountServerResource extends SelfInjectingServerResource
+public class MarkerProfileCountServerResource extends BaseBrapiServerResource
 {
 	@Inject
 	private MarkerProfileDAO markerProfileDAO;
@@ -29,7 +25,7 @@ public class MarkerProfileCountServerResource extends SelfInjectingServerResourc
 	}
 
 	@Get("json")
-	public MarkerProfileCount retrieve()
+	public MarkerProfileCount getJson()
 	{
 		MarkerProfileCount profileCount = markerProfileDAO.getCountById(id);
 
