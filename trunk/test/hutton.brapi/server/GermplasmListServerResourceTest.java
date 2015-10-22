@@ -1,9 +1,9 @@
-package hutton.brapi.server;
+package jhi.brapi.server;
 
 import java.util.*;
 
-import hutton.brapi.data.*;
-import hutton.brapi.resource.*;
+import jhi.brapi.data.*;
+import jhi.brapi.resource.*;
 
 import org.junit.*;
 import org.junit.runner.*;
