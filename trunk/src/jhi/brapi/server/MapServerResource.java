@@ -3,8 +3,6 @@ package jhi.brapi.server;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
-import com.google.inject.*;
-
 import org.restlet.resource.*;
 
 /**
@@ -13,8 +11,7 @@ import org.restlet.resource.*;
  */
 public class MapServerResource extends BaseBrapiServerResource
 {
-	@Inject
-	private MapDAO mapDAO;
+	private MapDAO mapDAO = new MapDAOImpl();
 
 	private String id;
 

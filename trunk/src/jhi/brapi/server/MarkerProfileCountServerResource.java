@@ -3,8 +3,6 @@ package jhi.brapi.server;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
-import com.google.inject.*;
-
 import org.restlet.resource.*;
 
 /**
@@ -12,8 +10,7 @@ import org.restlet.resource.*;
  */
 public class MarkerProfileCountServerResource extends BaseBrapiServerResource
 {
-	@Inject
-	private MarkerProfileDAO markerProfileDAO;
+	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAOImpl();
 
 	private String id;
 

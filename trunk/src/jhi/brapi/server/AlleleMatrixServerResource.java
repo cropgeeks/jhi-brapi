@@ -2,35 +2,26 @@ package jhi.brapi.server;
 
 import java.util.*;
 
+import jhi.brapi.data.*;
+import jhi.brapi.resource.*;
+
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.inject.Inject;
-import jhi.brapi.data.AlleleMatrixDAO;
-import jhi.brapi.data.MarkerProfileDAO;
-import jhi.brapi.resource.AlleleMatrix;
-import jhi.brapi.resource.GermplasmList;
-import jhi.brapi.resource.MarkerProfile;
-import jhi.brapi.resource.MarkerProfileList;
-import org.restlet.data.Form;
-import org.restlet.data.Parameter;
-import org.restlet.ext.guice.SelfInjectingServerResource;
-import org.restlet.ext.jackson.JacksonRepresentation;
-import org.restlet.representation.Representation;
-import org.restlet.resource.Get;
-import org.restlet.resource.Post;
-import org.restlet.resource.ResourceException;
+
+import org.restlet.data.*;
+import org.restlet.ext.jackson.*;
+import org.restlet.representation.*;
+import org.restlet.resource.*;
 
 /**
  * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the
  * Germplasm for API clients to consume.
  */
-public class AlleleMatrixServerResource extends SelfInjectingServerResource
+public class AlleleMatrixServerResource extends ServerResource
 {
-	@Inject
-	private AlleleMatrixDAO alleleMatrixDAO;
+	private AlleleMatrixDAO alleleMatrixDAO = new AlleleMatrixImpl();
 
 	// Temporarily included markerProfileDAO for dummy HTML get of AlleleMatrix
-	@Inject
-	private MarkerProfileDAO markerProfileDAO;
+	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAOImpl();
 
 	// The ID from the URI (need to get this in overridden doInit method)
 	private String id;

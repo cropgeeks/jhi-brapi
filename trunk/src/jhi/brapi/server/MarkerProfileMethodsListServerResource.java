@@ -3,8 +3,6 @@ package jhi.brapi.server;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
-import com.google.inject.*;
-
 import org.restlet.resource.*;
 
 /**
@@ -12,8 +10,7 @@ import org.restlet.resource.*;
  */
 public class MarkerProfileMethodsListServerResource extends BaseBrapiServerResource
 {
-	@Inject
-	private MarkerProfileMethodsDAO markerProfileMethodsDAO;
+	private MarkerProfileMethodsDAO markerProfileMethodsDAO = new MarkerProfileMethodsDAOImpl();
 
 	@Get("json")
 	public MarkerProfileMethodList getJson()

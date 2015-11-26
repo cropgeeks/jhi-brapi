@@ -3,8 +3,6 @@ package jhi.brapi.server;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
-import com.google.inject.*;
-
 import org.restlet.resource.*;
 
 /**
@@ -13,8 +11,7 @@ import org.restlet.resource.*;
  */
 public class GermplasmServerResource extends BaseBrapiServerResource<Germplasm>
 {
-	@Inject
-	private GermplasmDAO germplasmDAO;
+	private GermplasmDAO germplasmDAO = new GermplasmDAOImpl();
 
 	// The ID from the URI (need to get this in overridden doInit method)
 	private String id;
