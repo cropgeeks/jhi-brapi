@@ -8,6 +8,8 @@ import org.restlet.engine.application.*;
 import org.restlet.ext.jackson.JacksonRepresentation;
 import org.restlet.resource.*;
 
+import java.util.List;
+
 /**
  * Created by gs40939 on 01/05/2015.
  */
@@ -49,9 +51,8 @@ public class Client
 	private void testMaps()
 	{
 		ClientResource mapResource = new ClientResource("http://localhost:8080//brapi/maps/");
-		MapList mapList = mapResource.get(MapList.class);
-//		java.util.List<Map> maps = mapResource.get()
-		System.out.println(mapList);
+		List<Map> maps = (List<Map>) mapResource.get();
+		System.out.println(maps);
 	}
 
 	private void testMap()

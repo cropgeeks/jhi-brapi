@@ -1,5 +1,7 @@
 package jhi.brapi.server;
 
+import java.util.List;
+
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -14,10 +16,10 @@ public class MapListServerResource extends BaseBrapiServerResource
 	private MapDAO mapDAO = new MapDAO();
 
 	@Get("json")
-	public MapList getJson()
+	public BasicResource<Map> getJson()
 	{
-		MapList mapList = mapDAO.getAll();
+		List<Map> maps = mapDAO.getAll();
 
-		return mapList;
+		return new BasicResource<Map>(maps);
 	}
 }
