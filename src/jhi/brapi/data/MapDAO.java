@@ -47,27 +47,27 @@ public class MapDAO
 	 *
 	 * @return A MapList object which is a wrapper around a List of Map objects.
 	 */
-	public MapList getAll()
+	public List<Map> getAll()
 	{
-		MapList mapList = new MapList();
+		List<Map> maps = new ArrayList<>();
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement statement = con.prepareStatement(mapsQuery);
 			 ResultSet resultSet = statement.executeQuery())
 		{
-			mapList = getMapsFromResultSet(resultSet);
+			maps = getMapsFromResultSet(resultSet);
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
-		return mapList;
+		return maps;
 	}
 
 	// Takes a resultSet and iterates over it adding each map object in turn to a list of Map objects, which is then
 	// put in the MapList wrapper (easing Jackson translation of the object to JSON and back).
-	private MapList getMapsFromResultSet(ResultSet resultSet)
+	private List<Map> getMapsFromResultSet(ResultSet resultSet)
 		throws SQLException
 	{
-		List<Map> resultSetMaps = new ArrayList<>();
+		List<Map> maps = new ArrayList<>();
 
 		while (resultSet.next())
 		{
@@ -77,13 +77,10 @@ public class MapDAO
 			map.setPublishedDate(resultSet.getDate("created_on"));
 			map.setLinkageGroupCount(resultSet.getInt("chromosomeCount"));
 			map.setMarkerCount(resultSet.getInt("markerCount"));
-			resultSetMaps.add(map);
+			maps.add(map);
 		}
 
-		MapList mapList = new MapList();
-		mapList.setMaps(resultSetMaps);
-
-		return mapList;
+		return maps;
 	}
 
 	/**
