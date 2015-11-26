@@ -3,8 +3,6 @@ package jhi.brapi.server;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
-import com.google.inject.*;
-
 import org.restlet.resource.*;
 
 /**
@@ -12,8 +10,7 @@ import org.restlet.resource.*;
  */
 public class MapMarkersListServerResource extends BaseBrapiServerResource
 {
-	@Inject
-	private MapDAO mapDAO;
+	private MapDAO mapDAO = new MapDAOImpl();
 
 	// The ID from the URI (need to get this in overridden doInit method)
 	private String id;

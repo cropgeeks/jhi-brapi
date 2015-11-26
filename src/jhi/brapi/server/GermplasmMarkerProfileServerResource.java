@@ -3,8 +3,6 @@ package jhi.brapi.server;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
-import com.google.inject.*;
-
 import org.restlet.resource.*;
 
 /**
@@ -12,8 +10,7 @@ import org.restlet.resource.*;
  */
 public class GermplasmMarkerProfileServerResource extends BaseBrapiServerResource<GermplasmMarkerProfileList>
 {
-	@Inject
-	private GermplasmDAO germplasmDAO;
+	private GermplasmDAO germplasmDAO = new GermplasmDAOImpl();
 
 	private int id;
 

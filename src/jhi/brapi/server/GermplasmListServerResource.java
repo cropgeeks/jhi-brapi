@@ -1,29 +1,26 @@
 package jhi.brapi.server;
 
-import com.fasterxml.jackson.databind.*;
-import com.google.inject.*;
+import jhi.brapi.data.*;
+import jhi.brapi.resource.*;
 
-import org.restlet.ext.guice.*;
+import com.fasterxml.jackson.databind.*;
+
 import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
 import org.restlet.resource.*;
-
-import jhi.brapi.data.*;
-import jhi.brapi.resource.*;
 
 /**
  * Queries the database for the Germplasm (germinatebase?) with the given ID then returns a JSON (Jackson) representation of the Germplasm for API
  * clients to consume.
  */
-public class GermplasmListServerResource extends SelfInjectingServerResource
+public class GermplasmListServerResource extends ServerResource
 {
 	private static final String PARAM_NAME            = "name";
 	private static final String PARAM_MATCHING_METHOD = "matchMethod";
 	private static final String PARAM_PAGE            = "page";
 	private static final String PARAM_PAGE_SIZE       = "pageSize";
 
-	@Inject
-	private GermplasmDAO germplasmDAO;
+	private GermplasmDAO germplasmDAO = new GermplasmDAOImpl();
 
 	private String         name;
 	private MatchingMethod matchingMethod;

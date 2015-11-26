@@ -2,7 +2,6 @@ package jhi.brapi.server;
 
 import com.fasterxml.jackson.databind.*;
 
-import org.restlet.ext.guice.*;
 import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
 import org.restlet.resource.*;
@@ -15,7 +14,7 @@ import org.restlet.resource.*;
  * implementation of the getHtml() method is provided which will respond to request for the ServerResource in html
  * format by returning pretty printed JSON in html text.
  */
-public abstract class BaseBrapiServerResource<T> extends SelfInjectingServerResource
+public abstract class BaseBrapiServerResource<T> extends ServerResource
 {
 	@Get("json")
 	public abstract T getJson();
