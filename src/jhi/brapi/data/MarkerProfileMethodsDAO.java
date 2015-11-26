@@ -2,12 +2,35 @@ package jhi.brapi.data;
 
 import jhi.brapi.resource.*;
 
-public interface MarkerProfileMethodsDAO
+import java.util.ArrayList;
+import java.util.List;
+
+public class MarkerProfileMethodsDAO
 {
-	/**
-	 * Returns all of the Method objects.
-	 *
-	 * @return	A MarkerProfileMethodList object, which is a wrapper around a List of Method objects.
-	 */
-	MarkerProfileMethodList getAll();
+	public MarkerProfileMethodList getAll()
+	{
+		MarkerProfileMethodList allMethods = new MarkerProfileMethodList();
+
+		//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		//			 PreparedStatement statement = con.prepareStatement(getLines);
+		//			 ResultSet resultSet = statement.executeQuery())
+		{
+			// To store the Germplasm instances created from the results of the db query before adding them to the
+			// GermplasmList object
+			List<MarkerProfileMethod> methodsList = new ArrayList<>();
+
+			//			while (resultSet.next())
+			{
+				MarkerProfileMethod method = new MarkerProfileMethod();
+				method.setMethodId("0");
+				method.setName("wibble");
+
+				methodsList.add(method);
+			}
+			allMethods.setMethods(methodsList);
+		}
+		//		catch (SQLException e) { e.printStackTrace(); }
+
+		return allMethods;
+	}
 }

@@ -11,7 +11,7 @@ import org.restlet.resource.*;
  */
 public class GermplasmServerResource extends BaseBrapiServerResource<Germplasm>
 {
-	private GermplasmDAO germplasmDAO = new GermplasmDAOImpl();
+	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
 	// The ID from the URI (need to get this in overridden doInit method)
 	private String id;

@@ -10,7 +10,7 @@ import org.restlet.resource.*;
  */
 public class MapMarkersListServerResource extends BaseBrapiServerResource
 {
-	private MapDAO mapDAO = new MapDAOImpl();
+	private MapDAO mapDAO = new MapDAO();
 
 	// The ID from the URI (need to get this in overridden doInit method)
 	private String id;

@@ -20,7 +20,7 @@ public class GermplasmListServerResource extends ServerResource
 	private static final String PARAM_PAGE            = "page";
 	private static final String PARAM_PAGE_SIZE       = "pageSize";
 
-	private GermplasmDAO germplasmDAO = new GermplasmDAOImpl();
+	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
 	private String         name;
 	private MatchingMethod matchingMethod;

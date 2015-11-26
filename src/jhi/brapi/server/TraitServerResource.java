@@ -11,7 +11,7 @@ import org.restlet.resource.*;
  */
 public class TraitServerResource extends BaseBrapiServerResource
 {
-	private TraitDAO traitDAO = new TraitDAOImpl();
+	private TraitDAO traitDAO = new TraitDAO();
 
 	private String id;
 

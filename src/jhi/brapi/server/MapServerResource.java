@@ -11,7 +11,7 @@ import org.restlet.resource.*;
  */
 public class MapServerResource extends BaseBrapiServerResource
 {
-	private MapDAO mapDAO = new MapDAOImpl();
+	private MapDAO mapDAO = new MapDAO();
 
 	private String id;
 

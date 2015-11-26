@@ -10,7 +10,7 @@ import org.restlet.resource.*;
  */
 public class GermplasmMarkerProfileServerResource extends BaseBrapiServerResource<GermplasmMarkerProfileList>
 {
-	private GermplasmDAO germplasmDAO = new GermplasmDAOImpl();
+	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
 	private int id;
 

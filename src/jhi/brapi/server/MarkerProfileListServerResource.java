@@ -11,7 +11,7 @@ import org.restlet.resource.*;
  */
 public class MarkerProfileListServerResource extends BaseBrapiServerResource
 {
-	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAOImpl();
+	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 
 	@Get("json")
 	public MarkerProfileList getJson()
