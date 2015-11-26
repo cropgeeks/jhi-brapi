@@ -10,7 +10,7 @@ import org.restlet.resource.*;
  */
 public class MarkerProfileServerResource extends BaseBrapiServerResource
 {
-	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAOImpl();
+	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 
 	private String id;
 

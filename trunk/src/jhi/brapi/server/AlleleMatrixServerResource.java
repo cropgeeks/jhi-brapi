@@ -18,10 +18,10 @@ import org.restlet.resource.*;
  */
 public class AlleleMatrixServerResource extends ServerResource
 {
-	private AlleleMatrixDAO alleleMatrixDAO = new AlleleMatrixImpl();
+	private AlleleMatrixDAO alleleMatrixDAO = new AlleleMatrixDAO();
 
 	// Temporarily included markerProfileDAO for dummy HTML get of AlleleMatrix
-	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAOImpl();
+	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 
 	// The ID from the URI (need to get this in overridden doInit method)
 	private String id;

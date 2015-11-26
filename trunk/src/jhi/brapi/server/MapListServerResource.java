@@ -11,7 +11,7 @@ import org.restlet.resource.*;
  */
 public class MapListServerResource extends BaseBrapiServerResource
 {
-	private MapDAO mapDAO = new MapDAOImpl();
+	private MapDAO mapDAO = new MapDAO();
 
 	@Get("json")
 	public MapList getJson()

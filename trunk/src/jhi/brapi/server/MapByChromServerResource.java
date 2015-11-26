@@ -10,7 +10,7 @@ import org.restlet.resource.*;
  */
 public class MapByChromServerResource extends BaseBrapiServerResource<MapDetail>
 {
-	private MapDAO mapDAO = new MapDAOImpl();
+	private MapDAO mapDAO = new MapDAO();
 
 	private String id;
 	private String chrom;

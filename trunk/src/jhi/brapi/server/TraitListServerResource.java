@@ -11,7 +11,7 @@ import org.restlet.resource.*;
  */
 public class TraitListServerResource extends BaseBrapiServerResource
 {
-	private TraitDAO traitDAO = new TraitDAOImpl();
+	private TraitDAO traitDAO = new TraitDAO();
 
 	@Get("json")
 	public TraitList getJson()
