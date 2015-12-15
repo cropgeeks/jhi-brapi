@@ -1,5 +1,7 @@
 package jhi.brapi.server;
 
+import java.util.*;
+
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -23,12 +25,17 @@ public class MapServerResource extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public MapDetail getJson()
+	public BasicResource<MapDetail> getJson()
 	{
 		MapDetail mapDetail = mapDAO.getById(Integer.parseInt(id));
 
 		if (mapDetail != null)
-			return mapDetail;
+		{
+			List<MapDetail> list = new ArrayList<>();
+			list.add(mapDetail);
+
+			return new BasicResource<MapDetail>(list);
+		}
 
 		throw new ResourceException(404);
 	}

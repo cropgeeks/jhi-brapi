@@ -5,7 +5,8 @@ import java.sql.*;
 /**
  * Created by gs40939 on 28/04/2015.
  */
-public class Map
+
+public class BrapiMap
 {
 	private String mapId;
 	private String name;

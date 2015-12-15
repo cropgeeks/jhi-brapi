@@ -1,11 +1,13 @@
 package jhi.brapi.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.LinkedHashMap;
 import jhi.brapi.resource.*;
 
 import org.restlet.data.Encoding;
 import org.restlet.data.Protocol;
 import org.restlet.engine.application.*;
-import org.restlet.ext.jackson.JacksonRepresentation;
 import org.restlet.resource.*;
 
 import java.util.List;
@@ -51,7 +53,13 @@ public class Client
 	private void testMaps()
 	{
 		ClientResource mapResource = new ClientResource("http://localhost:8080//brapi/maps/");
-		List<Map> maps = (List<Map>) mapResource.get();
+
+		LinkedHashMap hashMap = mapResource.get(LinkedHashMap.class);
+		BasicResource<BrapiMap> br = new ObjectMapper().convertValue(hashMap,
+			new TypeReference<BasicResource<BrapiMap>>() {});
+		
+		List<BrapiMap> maps = br.getResult();
+
 		System.out.println(maps);
 	}
 

@@ -11,6 +11,8 @@ public class BasicResource<T>
 
 	private List<T> result;
 
+	public BasicResource() {}
+
 	public BasicResource(List<T> result)
 	{
 		this.result = result;
