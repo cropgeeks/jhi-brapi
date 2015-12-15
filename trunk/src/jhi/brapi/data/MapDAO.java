@@ -126,6 +126,10 @@ public class MapDAO
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
+		// Quit now if we didn't find a map with the given ID
+		if (mapDetail == null)
+			return null;
+
 		// Get the list of entries for the map (effectively the markers)
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement entriesStatement = createByIdStatement(con, linkageGroupQuery, id);
@@ -156,12 +160,21 @@ public class MapDAO
 	private MapDetail getMapDetailFromResultSet(ResultSet resultSet)
 		throws SQLException
 	{
-		resultSet.first();
+		if (resultSet.first())
+		{
+			// Passing an ID that doesn't match a Map will still return a row
+			// from the query (containing count columns of zero), so we need an
+			// extra check to see if there's a Map in the result or not
+			if (resultSet.getString("description") != null)
+			{
+				MapDetail mapDetail = new MapDetail();
+				mapDetail.setName(resultSet.getString("description"));
 
-		MapDetail mapDetail = new MapDetail();
-		mapDetail.setName(resultSet.getString("description"));
+				return mapDetail;
+			}
+		}
 
-		return mapDetail;
+		return null;
 	}
 
 	// Takes a ResultSet which should represent the result of the linkageGroupsQuery defined above and returns a List of

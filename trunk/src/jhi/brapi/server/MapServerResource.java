@@ -29,14 +29,10 @@ public class MapServerResource extends BaseBrapiServerResource
 	{
 		MapDetail mapDetail = mapDAO.getById(Integer.parseInt(id));
 
+		List<MapDetail> list = new ArrayList<>();
 		if (mapDetail != null)
-		{
-			List<MapDetail> list = new ArrayList<>();
 			list.add(mapDetail);
 
-			return new BasicResource<MapDetail>(list);
-		}
-
-		throw new ResourceException(404);
+		return new BasicResource<MapDetail>(list);
 	}
 }
