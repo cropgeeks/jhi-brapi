@@ -7,19 +7,17 @@ import java.util.List;
 
 public class MarkerProfileMethodsDAO
 {
-	public MarkerProfileMethodList getAll()
+	public List<MarkerProfileMethod> getAll()
 	{
-		MarkerProfileMethodList allMethods = new MarkerProfileMethodList();
+		// To store the Germplasm instances created from the results of the db query before adding them to the
+		// GermplasmList object
+		List<MarkerProfileMethod> methodsList = new ArrayList<>();
 
 		//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 		//			 PreparedStatement statement = con.prepareStatement(getLines);
 		//			 ResultSet resultSet = statement.executeQuery())
 		{
-			// To store the Germplasm instances created from the results of the db query before adding them to the
-			// GermplasmList object
-			List<MarkerProfileMethod> methodsList = new ArrayList<>();
-
-			//			while (resultSet.next())
+//			while (resultSet.next())
 			{
 				MarkerProfileMethod method = new MarkerProfileMethod();
 				method.setMethodId("0");
@@ -27,10 +25,10 @@ public class MarkerProfileMethodsDAO
 
 				methodsList.add(method);
 			}
-			allMethods.setMethods(methodsList);
+
 		}
 		//		catch (SQLException e) { e.printStackTrace(); }
 
-		return allMethods;
+		return methodsList;
 	}
 }

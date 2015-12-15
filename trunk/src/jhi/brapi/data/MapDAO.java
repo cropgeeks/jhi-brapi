@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Specifies the public interface which any Map data accessing classes must implement.
+ * Specifies the public interface which any BrapiMap data accessing classes must implement.
  */
 public class MapDAO
 {
@@ -45,11 +45,11 @@ public class MapDAO
 	/**
 	 * Queries the database (using mapQuery defined above) for the complete list of Maps which the database holds.
 	 *
-	 * @return A MapList object which is a wrapper around a List of Map objects.
+	 * @return A MapList object which is a wrapper around a List of BrapiMap objects.
 	 */
-	public List<Map> getAll()
+	public List<BrapiMap> getAll()
 	{
-		List<Map> maps = new ArrayList<>();
+		List<BrapiMap> maps = new ArrayList<>();
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement statement = con.prepareStatement(mapsQuery);
@@ -62,16 +62,16 @@ public class MapDAO
 		return maps;
 	}
 
-	// Takes a resultSet and iterates over it adding each map object in turn to a list of Map objects, which is then
+	// Takes a resultSet and iterates over it adding each map object in turn to a list of BrapiMap objects, which is then
 	// put in the MapList wrapper (easing Jackson translation of the object to JSON and back).
-	private List<Map> getMapsFromResultSet(ResultSet resultSet)
+	private List<BrapiMap> getMapsFromResultSet(ResultSet resultSet)
 		throws SQLException
 	{
-		List<Map> maps = new ArrayList<>();
+		List<BrapiMap> maps = new ArrayList<>();
 
 		while (resultSet.next())
 		{
-			Map map = new Map();
+			BrapiMap map = new BrapiMap();
 			map.setMapId(resultSet.getString("id"));
 			map.setName(resultSet.getString("description"));
 			map.setPublishedDate(resultSet.getDate("created_on"));
@@ -228,37 +228,48 @@ public class MapDAO
 		return createByChromStatement(con, entriesByChromQuery, id, chromosome);
 	}
 
-	public MapMarkersList getByIdMarkers(int id)
+	public ArrayList<MapMarker> getByIdMarkers(int id, String[] chromosomes)
 	{
-		MapMarkersList markersList = new MapMarkersList();
+		ArrayList<MapMarker> list = new ArrayList<>();
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id);
+			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes);
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
-			markersList = getMapMarkersListFromResultSet(resultSet);
+			list = getMapMarkersListFromResultSet(resultSet);
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
-		return markersList;
+		return list;
 	}
 
-	private PreparedStatement createByIdStatementMarkers(Connection con, String query, int id)
+	private PreparedStatement createByIdStatementMarkers(Connection con, String query, int id, String[] chromosomes)
 		throws SQLException
 	{
+		// Tweak the statement to include optional chromosome filters
+		for (int i = 0; i < chromosomes.length; i++)
+		{
+			if (i == 0)
+				query += " AND mapdefinitions.chromosome=?";
+			else
+				query += " OR mapdefinitions.chromosome=?";
+		}
+
 		PreparedStatement statement = con.prepareStatement(query);
 		// Get the basic information on the map
 		statement.setInt(1, id);
+		for (int i = 0; i < chromosomes.length; i++)
+			statement.setString(i+2, chromosomes[i]);
 
 		return statement;
 	}
 
 	// Takes a ResultSet which should represent the result of the linkageGroupsQuery defined above and returns a List of
 	// LinkageGroup objects, each of which has been initialized with the values from the ResultSet
-	private MapMarkersList getMapMarkersListFromResultSet(ResultSet resultSet)
+	private ArrayList<MapMarker> getMapMarkersListFromResultSet(ResultSet resultSet)
 		throws SQLException
 	{
-		List<MapMarker> mapMarkers = new ArrayList<>();
+		ArrayList<MapMarker> mapMarkers = new ArrayList<>();
 
 		while (resultSet.next())
 		{
@@ -270,8 +281,6 @@ public class MapDAO
 			mapMarkers.add(mapMarker);
 		}
 
-		MapMarkersList markers = new MapMarkersList();
-		markers.setMapMarkers(mapMarkers);
-		return markers;
+		return mapMarkers;
 	}
 }

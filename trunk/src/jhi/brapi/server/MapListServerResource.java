@@ -8,7 +8,8 @@ import jhi.brapi.resource.*;
 import org.restlet.resource.*;
 
 /**
- * Queries the database for the (Genome) MapList then returns a JSON (Jackson) representation of the MapList for API clients
+ * Queries the database for the (Genome) MapList then returns a JSON (Jackson)
+ * representation of the MapList for API clients
  * to consume.
  */
 public class MapListServerResource extends BaseBrapiServerResource
@@ -16,10 +17,10 @@ public class MapListServerResource extends BaseBrapiServerResource
 	private MapDAO mapDAO = new MapDAO();
 
 	@Get("json")
-	public BasicResource<Map> getJson()
+	public BasicResource<BrapiMap> getJson()
 	{
-		List<Map> maps = mapDAO.getAll();
+		List<BrapiMap> maps = mapDAO.getAll();
 
-		return new BasicResource<Map>(maps);
+		return new BasicResource<BrapiMap>(maps);
 	}
 }

@@ -1,5 +1,7 @@
 package jhi.brapi.server;
 
+import java.util.*;
+
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -13,12 +15,12 @@ public class MarkerProfileMethodsListServerResource extends BaseBrapiServerResou
 	private MarkerProfileMethodsDAO markerProfileMethodsDAO = new MarkerProfileMethodsDAO();
 
 	@Get("json")
-	public MarkerProfileMethodList getJson()
+	public BasicResource<MarkerProfileMethod> getJson()
 	{
-		MarkerProfileMethodList methodList = markerProfileMethodsDAO.getAll();
+		List<MarkerProfileMethod> methodList = markerProfileMethodsDAO.getAll();
 
 		if (methodList != null)
-			return methodList;
+			return new BasicResource<MarkerProfileMethod>(methodList);
 
 		throw new ResourceException(404);
 	}
