@@ -7,14 +7,14 @@ import java.util.List;
  */
 public class MapMarkersList
 {
-	private List<MapMarker> markers;
+	private List<BrapiMarker> markers;
 
-	public List<MapMarker> getMarkers()
+	public List<BrapiMarker> getMarkers()
 	{
 		return markers;
 	}
 
-	public void setMapMarkers(List<MapMarker> markers)
+	public void setMapMarkers(List<BrapiMarker> markers)
 	{
 		this.markers = markers;
 	}

@@ -6,7 +6,7 @@ import java.sql.*;
  * Created by gs40939 on 28/04/2015.
  */
 
-public class BrapiMap
+public class BrapiGenomeMap
 {
 	private String mapId;
 	private String name;

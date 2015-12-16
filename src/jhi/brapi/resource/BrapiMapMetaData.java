@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Created by gs40939 on 28/04/2015.
  */
-public class MapDetail
+public class BrapiMapMetaData
 {
 	private String mapId;
 	private String name;
