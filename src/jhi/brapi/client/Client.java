@@ -46,7 +46,7 @@ public class Client
 		ClientResource clientResource = new ClientResource("http://localhost:8080//brapi/germplasm/1");
 		clientResource.setNext(decoder);
 		clientResource.accept(Encoding.GZIP);
-		Germplasm germplasm = clientResource.get(Germplasm.class);
+		BrapiGermplasm germplasm = clientResource.get(BrapiGermplasm.class);
 		System.out.println(germplasm);
 	}
 

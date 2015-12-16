@@ -1,7 +1,7 @@
 package jhi.brapi.data;
 
 import jhi.brapi.resource.*;
-import jhi.brapi.server.GermplasmListServerResource;
+import jhi.brapi.server.Germplasm;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,9 +21,9 @@ public class GermplasmDAO
 	// Simply selects all fields from germinatebase
 	private final String getLines = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id";
 
-	private final String getLinesByNameExact = "select * from germinatebase where number=? OR name=? OR old_name=?";
+	private final String getLinesByNameExact = "select * from germinatebase where number=? OR name=?";
 
-	private final String getLinesByNameRegex = "select * from germinatebase where number LIKE ? OR name LIKE ? or old_name LIKE ?";
+	private final String getLinesByNameRegex = "select * from germinatebase where number LIKE ? OR name LIKE ?";
 
 	// Simply selects all fields from germinatebase where the given id matches the id from the URI
 	private final String getSpecificLine = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id where germinatebase.id=?";
@@ -31,35 +31,31 @@ public class GermplasmDAO
 	// Query to extract the markerprofiles which relate to the germplasm indicated by id
 	private final String markrerProfileIdQuery = "select DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=?";
 
-	public GermplasmList getAll()
+	public List<BrapiGermplasm> getAll()
 	{
-		GermplasmList allGermplasm = new GermplasmList();
+		List<BrapiGermplasm> list = new ArrayList<>();
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement statement = con.prepareStatement(getLines);
 			 ResultSet resultSet = statement.executeQuery())
 		{
-			// To store the Germplasm instances created from the results of the db query before adding them to the
-			// GermplasmList object
-			List<Germplasm> germplasmList = new ArrayList<>();
-
+			int i=0;
 			while (resultSet.next())
 			{
 				// Set the Germplasm bean using the data returned from the database
-				Germplasm germplasm = getGermplasm(resultSet);
+				BrapiGermplasm germplasm = getGermplasm(resultSet);
 
-				germplasmList.add(germplasm);
+				list.add(germplasm);
 			}
-			allGermplasm.setGermplasm(germplasmList);
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
-		return allGermplasm;
+		return list;
 	}
 
-	public Germplasm getById(int id)
+	public BrapiGermplasm getById(int id)
 	{
-		Germplasm germplasm = null;
+		BrapiGermplasm germplasm = null;
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement statement = createByIdStatement(con, getSpecificLine, id);
@@ -76,10 +72,10 @@ public class GermplasmDAO
 		return germplasm;
 	}
 
-	private Germplasm getGermplasm(ResultSet resultSet)
+	private BrapiGermplasm getGermplasm(ResultSet resultSet)
 		throws SQLException
 	{
-		Germplasm germplasm = new Germplasm();
+		BrapiGermplasm germplasm = new BrapiGermplasm();
 		germplasm.setGermplasmId(resultSet.getString("germinatebase.id"));
 		germplasm.setGermplasmPUI(resultSet.getString("germinatebase.general_identifier"));
 		germplasm.setGermplasmName(resultSet.getString("germinatebase.name"));
@@ -125,7 +121,7 @@ public class GermplasmDAO
 		return statement;
 	}
 
-	private PreparedStatement createByNameStatement(Connection con, String name, GermplasmListServerResource.MatchingMethod matchingMethod)
+	private PreparedStatement createByNameStatement(Connection con, String name, Germplasm.MatchingMethod matchingMethod)
 		throws SQLException
 	{
 		// Replace the non-sql wildcards with sql wildcards
@@ -175,7 +171,7 @@ public class GermplasmDAO
 		return null;
 	}
 
-	public GermplasmSearchListPagination getByName(String name, GermplasmListServerResource.MatchingMethod matchingMethod, int page, int pageSize)
+	public GermplasmSearchListPagination getByName(String name, Germplasm.MatchingMethod matchingMethod, int page, int pageSize)
 	{
 		GermplasmSearchListPagination resultGermplasm = new GermplasmSearchListPagination();
 
@@ -239,13 +235,10 @@ public class GermplasmDAO
 		List<String> synonyms = new ArrayList<>();
 
 		String name = resultSet.getString("germinatebase.name");
-		String oldName = resultSet.getString("germinatebase.old_name");
 		String number = resultSet.getString("germinatebase.number");
 
 		if(name != null)
 			synonyms.add(name);
-		if(oldName != null)
-			synonyms.add(oldName);
 		if(number != null)
 			synonyms.add(number);
 

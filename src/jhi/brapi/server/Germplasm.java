@@ -3,6 +3,8 @@ package jhi.brapi.server;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.*;
 
 import org.restlet.ext.jackson.*;
@@ -13,46 +15,33 @@ import org.restlet.resource.*;
  * Queries the database for the Germplasm (germinatebase?) with the given ID then returns a JSON (Jackson) representation of the Germplasm for API
  * clients to consume.
  */
-public class GermplasmListServerResource extends ServerResource
+public class Germplasm extends BaseBrapiServerResource
 {
 	private static final String PARAM_NAME            = "name";
 	private static final String PARAM_MATCHING_METHOD = "matchMethod";
-	private static final String PARAM_PAGE            = "page";
-	private static final String PARAM_PAGE_SIZE       = "pageSize";
 
 	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
 	private String         name;
-	private MatchingMethod matchingMethod;
-
-	private int pageSize = 1000;
-	private int page = 1;
+//	private MatchingMethod matchingMethod;
 
 	@Override
 	public void doInit()
 	{
 		super.doInit();
 		this.name = getQueryValue(PARAM_NAME);
-		this.matchingMethod = MatchingMethod.getValue(getQueryValue(PARAM_MATCHING_METHOD));
-
-		// Try to parse the page and pageSize as integers
-		try
-		{
-			this.page = Integer.parseInt(getQueryValue(PARAM_PAGE));
-		}
-		catch(Exception e)
-		{
-		}
-
-		try
-		{
-			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
-		}
-		catch(Exception e)
-		{
-		}
+//		this.matchingMethod = MatchingMethod.getValue(getQueryValue(PARAM_MATCHING_METHOD));
 	}
 
+	@Get("json")
+	public BasicResource<BrapiGermplasm> getJson()
+	{
+		List<BrapiGermplasm> germplasm = germplasmDAO.getAll();
+
+		return new BasicResource<BrapiGermplasm>(germplasm);
+	}
+
+	/*
 	@Get
 	public Representation retrieve()
 	{
@@ -81,7 +70,7 @@ public class GermplasmListServerResource extends ServerResource
 	{
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
-
+*/
 	public enum MatchingMethod
 	{
 		EXACT,
