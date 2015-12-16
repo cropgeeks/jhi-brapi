@@ -29,7 +29,7 @@ public class GenomeMapMarkerData extends BaseBrapiServerResource
 	@Get("json")
 	public BasicResource<BrapiMarker> getJson()
 	{
-		ArrayList<BrapiMarker> mapMarkers = mapDAO.getByIdMarkers(Integer.parseInt(id), linkageGroups);
+		List<BrapiMarker> mapMarkers = mapDAO.getByIdMarkers(Integer.parseInt(id), linkageGroups);
 
 		return new BasicResource<BrapiMarker>(mapMarkers);
 	}

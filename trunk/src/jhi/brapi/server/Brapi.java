@@ -32,8 +32,8 @@ public class Brapi extends Application
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(false);
 
-		router.attach("/germplasm", GermplasmListServerResource.class);
-		router.attach("/germplasm/", GermplasmListServerResource.class);
+		router.attach("/germplasm", Germplasm.class);
+		router.attach("/germplasm/", Germplasm.class);
 		router.attach("/germplasm/{id}", GermplasmServerResource.class);
 		router.attach("/germplasm/{id}/", GermplasmServerResource.class);
 		router.attach("/germplasm/{id}/markerprofiles", GermplasmMarkerProfileServerResource.class);

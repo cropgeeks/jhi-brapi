@@ -8,7 +8,7 @@ import java.util.*;
 
 // Exclude non-null fields from the output
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Germplasm
+public class BrapiGermplasm
 {
 	private String       germplasmId;
 	private String       germplasmPUI;

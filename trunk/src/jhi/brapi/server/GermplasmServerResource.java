@@ -9,7 +9,7 @@ import org.restlet.resource.*;
  * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the
  * Germplasm for API clients to consume.
  */
-public class GermplasmServerResource extends BaseBrapiServerResource<Germplasm>
+public class GermplasmServerResource extends BaseBrapiServerResource
 {
 	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
@@ -24,12 +24,13 @@ public class GermplasmServerResource extends BaseBrapiServerResource<Germplasm>
 	}
 
 	@Get("json")
-	public Germplasm getJson()
+	public BasicResource<BrapiGermplasm> getJson()
 	{
-		Germplasm germplasm = germplasmDAO.getById(Integer.parseInt(id));
+		BrapiGermplasm germplasm = germplasmDAO.getById(Integer.parseInt(id));
 
 		if (germplasm != null)
-			return germplasm;
+//			return germplasm;
+			return null;
 
 		throw new ResourceException(404);
 	}
