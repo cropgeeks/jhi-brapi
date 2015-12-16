@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Created by gs40939 on 16/06/2015.
  */
-public class AlleleMatrix
+public class BrapiAlleleMatrix
 {
 	private List<String> markerprofileIds;
 

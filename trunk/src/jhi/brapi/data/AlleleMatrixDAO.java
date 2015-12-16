@@ -17,12 +17,12 @@ public class AlleleMatrixDAO
 			"genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
 			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where ";
 
-	public AlleleMatrix get(List<String> markerProfileIds)
+	public List<BrapiAlleleMatrix> get(List<String> markerProfileDbIds)
 	{
 		List<Integer> datasetIds = new ArrayList<>();
 		List<Integer> germinatebaseIds = new ArrayList<>();
 
-		for (String profileId : markerProfileIds)
+		for (String profileId : markerProfileDbIds)
 		{
 			String[] tokens = profileId.split("-");
 			datasetIds.add(Integer.parseInt(tokens[0]));
@@ -67,12 +67,14 @@ public class AlleleMatrixDAO
 
 		String query = builder.toString();
 
-		AlleleMatrix matrix = new AlleleMatrix();
+		List<BrapiAlleleMatrix> list = new ArrayList<>();
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds);
 			 ResultSet resultSet = statement.executeQuery())
 		{
+			BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
+
 			HashMap<String, List<String>> scores = new HashMap<>();
 			HashSet<String> lines = new HashSet<>();
 
@@ -100,13 +102,15 @@ public class AlleleMatrixDAO
 			}
 			matrix.setMarkerprofileIds(new ArrayList<>(lines));
 			matrix.setScores(scores);
+
+			list.add(matrix);
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
-		return matrix;
+		return list;
 	}
 
-	public AlleleMatrix get(List<String> markerProfileIds, List<String> markerIds)
+	public BrapiAlleleMatrix get(List<String> markerProfileIds, List<String> markerIds)
 	{
 		List<Integer> datasetIds = new ArrayList<>();
 		List<Integer> germinatebaseIds = new ArrayList<>();
@@ -156,7 +160,7 @@ public class AlleleMatrixDAO
 
 		String query = builder.toString();
 
-		AlleleMatrix matrix = new AlleleMatrix();
+		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds);

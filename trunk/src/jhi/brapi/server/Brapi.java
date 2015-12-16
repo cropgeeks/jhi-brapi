@@ -32,7 +32,7 @@ public class Brapi extends Application
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(false);
 
-		router.attach("/germplasm", Germplasm.class);
+		router.attach("/germplasm", Germplasm.class); // FJ
 		router.attach("/germplasm/", Germplasm.class);
 		router.attach("/germplasm/{id}", GermplasmServerResource.class);
 		router.attach("/germplasm/{id}/", GermplasmServerResource.class);
@@ -40,15 +40,15 @@ public class Brapi extends Application
 		router.attach("/germplasm/{id}/markerprofiles/", GermplasmMarkerProfileServerResource.class);
 		router.attach("/germplasm/{id}/pedigree", GermplasmPedigreeServerResource.class);
 		router.attach("/germplasm/{id}/pedigree/", GermplasmPedigreeServerResource.class);
-		router.attach("/maps", GenomeMaps.class);
+		router.attach("/maps", GenomeMaps.class); // FJ
 		router.attach("/maps/", GenomeMaps.class);
 		router.attach("/maps/{id}", GenomeMapMetaData.class);
 		router.attach("/maps/{id}/", GenomeMapMetaData.class);
-		router.attach("/maps/{id}/positions", GenomeMapMarkerData.class);
+		router.attach("/maps/{id}/positions", GenomeMapMarkerData.class); // FJ
 		router.attach("/maps/{id}/positions/", GenomeMapMarkerData.class);
-		router.attach("/markerprofiles", MarkerProfiles.class);
+		router.attach("/markerprofiles", MarkerProfiles.class); // FJ
 		router.attach("/markerprofiles/", MarkerProfiles.class);
-		router.attach("/markerprofiles/methods", MarkerProfileMethods.class);
+		router.attach("/markerprofiles/methods", MarkerProfileMethods.class); // FJ
 		router.attach("/markerprofiles/methods/", MarkerProfileMethods.class);
 //		router.attach("/markerprofiles/count", MarkerProfileCountServerResource.class);
 //		router.attach("/markerprofiles/count/", MarkerProfileCountServerResource.class);
@@ -60,8 +60,8 @@ public class Brapi extends Application
 		router.attach("/traits/", TraitListServerResource.class);
 		router.attach("/traits/{id}", TraitServerResource.class);
 		router.attach("/traits/{id}/", TraitServerResource.class);
-		router.attach("/allelematrix", AlleleMatrixServerResource.class);
-		router.attach("/allelematrix/", AlleleMatrixServerResource.class);
+		router.attach("/allelematrix", AlleleMatrix.class); // FJ
+		router.attach("/allelematrix/", AlleleMatrix.class);
 
 //		router.attach("/authorize", AuthorizationServerResource.class);
 //		router.attach(HttpOAuthHelper.getAuthPage(getContext()),
