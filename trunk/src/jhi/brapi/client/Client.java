@@ -55,10 +55,10 @@ public class Client
 		ClientResource mapResource = new ClientResource("http://localhost:8080//brapi/maps/");
 
 		LinkedHashMap hashMap = mapResource.get(LinkedHashMap.class);
-		BasicResource<BrapiMap> br = new ObjectMapper().convertValue(hashMap,
-			new TypeReference<BasicResource<BrapiMap>>() {});
+		BasicResource<BrapiGenomeMap> br = new ObjectMapper().convertValue(hashMap,
+			new TypeReference<BasicResource<BrapiGenomeMap>>() {});
 		
-		List<BrapiMap> maps = br.getResult();
+		List<BrapiGenomeMap> maps = br.getResult();
 
 		System.out.println(maps);
 	}
@@ -66,7 +66,7 @@ public class Client
 	private void testMap()
 	{
 		ClientResource mapResource = new ClientResource("http://localhost:8080//brapi/maps/20");
-		MapDetail map = mapResource.get(MapDetail.class);
+		BrapiMapMetaData map = mapResource.get(BrapiMapMetaData.class);
 		System.out.println(map);
 	}
 

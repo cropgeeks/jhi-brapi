@@ -8,7 +8,7 @@ import org.restlet.resource.*;
 /**
  * Created by gs40939 on 27/05/2015.
  */
-public class MapByChromServerResource extends BaseBrapiServerResource<MapDetail>
+public class MapByChromServerResource extends BaseBrapiServerResource<BrapiMapMetaData>
 {
 	private MapDAO mapDAO = new MapDAO();
 
@@ -23,9 +23,9 @@ public class MapByChromServerResource extends BaseBrapiServerResource<MapDetail>
 	}
 
 	@Get("json")
-	public MapDetail getJson()
+	public BrapiMapMetaData getJson()
 	{
-		MapDetail mapDetail = mapDAO.getByIdAndChromosome(Integer.parseInt(id), chrom);
+		BrapiMapMetaData mapDetail = mapDAO.getByIdAndChromosome(Integer.parseInt(id), chrom);
 
 		if (mapDetail != null)
 			return mapDetail;

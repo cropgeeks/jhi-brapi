@@ -11,7 +11,7 @@ import org.restlet.resource.*;
  * Given an id, returns the information on the map indicated by the id. This extends to its name and among other things,
  * a list of markers which are on the given map and their positions.
  */
-public class MapServerResource extends BaseBrapiServerResource
+public class GenomeMapMetaData extends BaseBrapiServerResource
 {
 	private MapDAO mapDAO = new MapDAO();
 
@@ -25,14 +25,14 @@ public class MapServerResource extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<MapDetail> getJson()
+	public BasicResource<BrapiMapMetaData> getJson()
 	{
-		MapDetail mapDetail = mapDAO.getById(Integer.parseInt(id));
+		BrapiMapMetaData mapDetail = mapDAO.getById(Integer.parseInt(id));
 
-		List<MapDetail> list = new ArrayList<>();
+		List<BrapiMapMetaData> list = new ArrayList<>();
 		if (mapDetail != null)
 			list.add(mapDetail);
 
-		return new BasicResource<MapDetail>(list);
+		return new BasicResource<BrapiMapMetaData>(list);
 	}
 }

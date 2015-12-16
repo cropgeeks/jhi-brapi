@@ -3,7 +3,7 @@ package jhi.brapi.resource;
 /**
  * Created by gs40939 on 17/06/2015.
  */
-public class MapMarker
+public class BrapiMarker
 {
 	private String markerId;
 	private String markerName;

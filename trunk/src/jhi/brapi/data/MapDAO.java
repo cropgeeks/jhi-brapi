@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Specifies the public interface which any BrapiMap data accessing classes must implement.
+ * Specifies the public interface which any BrapiGenomeMap data accessing classes must implement.
  */
 public class MapDAO
 {
@@ -45,11 +45,11 @@ public class MapDAO
 	/**
 	 * Queries the database (using mapQuery defined above) for the complete list of Maps which the database holds.
 	 *
-	 * @return A MapList object which is a wrapper around a List of BrapiMap objects.
+	 * @return A MapList object which is a wrapper around a List of BrapiGenomeMap objects.
 	 */
-	public List<BrapiMap> getAll()
+	public List<BrapiGenomeMap> getAll()
 	{
-		List<BrapiMap> maps = new ArrayList<>();
+		List<BrapiGenomeMap> maps = new ArrayList<>();
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement statement = con.prepareStatement(mapsQuery);
@@ -62,16 +62,16 @@ public class MapDAO
 		return maps;
 	}
 
-	// Takes a resultSet and iterates over it adding each map object in turn to a list of BrapiMap objects, which is then
+	// Takes a resultSet and iterates over it adding each map object in turn to a list of BrapiGenomeMap objects, which is then
 	// put in the MapList wrapper (easing Jackson translation of the object to JSON and back).
-	private List<BrapiMap> getMapsFromResultSet(ResultSet resultSet)
+	private List<BrapiGenomeMap> getMapsFromResultSet(ResultSet resultSet)
 		throws SQLException
 	{
-		List<BrapiMap> maps = new ArrayList<>();
+		List<BrapiGenomeMap> maps = new ArrayList<>();
 
 		while (resultSet.next())
 		{
-			BrapiMap map = new BrapiMap();
+			BrapiGenomeMap map = new BrapiGenomeMap();
 			map.setMapId(resultSet.getString("id"));
 			map.setName(resultSet.getString("description"));
 			map.setPublishedDate(resultSet.getDate("created_on"));
@@ -88,13 +88,13 @@ public class MapDAO
 	 * by the id given and the entries (MapEntry objects) which make up the detail of the map.
 	 *
 	 * @param id	The id of the
-	 * @return 		A MapDetail object which itself holds a List of MapEntry objects. Or null if no MapDetail exists for
-	 * the supplied id.
+	 * @return 		A BrapiMapMetaData object which itself holds a List of MapEntry objects. Or null if no BrapiMapMetaData exists for
+ the supplied id.
 	 */
 	//	@Override
-	//	public MapDetail getById(int id)
+	//	public BrapiMapMetaData getById(int id)
 	//	{
-	//		MapDetail mapDetail = new MapDetail();
+	//		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
 	//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 	//			 PreparedStatement mapStatement = createByIdStatement(con, detailQuery, id);
 	//			 ResultSet resultSet = mapStatement.executeQuery())
@@ -115,9 +115,9 @@ public class MapDAO
 	//
 	//		return mapDetail;
 	//	}
-	public MapDetail getById(int id)
+	public BrapiMapMetaData getById(int id)
 	{
-		MapDetail mapDetail = new MapDetail();
+		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement mapStatement = createByIdStatement(con, detailQuery, id);
 			 ResultSet resultSet = mapStatement.executeQuery())
@@ -155,9 +155,9 @@ public class MapDAO
 		return statement;
 	}
 
-	// Takes a ResultSet which should represent the result of the detailQuery defined above and returns a new MapDetail
+	// Takes a ResultSet which should represent the result of the detailQuery defined above and returns a new BrapiMapMetaData
 	// object which has been initialized with the values from the ResultSet
-	private MapDetail getMapDetailFromResultSet(ResultSet resultSet)
+	private BrapiMapMetaData getMapDetailFromResultSet(ResultSet resultSet)
 		throws SQLException
 	{
 		if (resultSet.first())
@@ -167,7 +167,7 @@ public class MapDAO
 			// extra check to see if there's a Map in the result or not
 			if (resultSet.getString("description") != null)
 			{
-				MapDetail mapDetail = new MapDetail();
+				BrapiMapMetaData mapDetail = new BrapiMapMetaData();
 				mapDetail.setName(resultSet.getString("description"));
 
 				return mapDetail;
@@ -201,12 +201,12 @@ public class MapDAO
 	 * by the id given and the entries (MapEntry objects) which make up the detail of the map.
 	 *
 	 * @param id	The id of the
-	 * @return 		A MapDetail object which itself holds a List of MapEntry objects. Or null if no MapDetail exists for
-	 * the supplied id.
+	 * @return 		A BrapiMapMetaData object which itself holds a List of MapEntry objects. Or null if no BrapiMapMetaData exists for
+ the supplied id.
 	 */
-	public MapDetail getByIdAndChromosome(int id, String chromosome)
+	public BrapiMapMetaData getByIdAndChromosome(int id, String chromosome)
 	{
-		MapDetail mapDetail = new MapDetail();
+		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
 		try (Connection con = jhi.brapi.data.Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement mapStatement = createDetailByChromStatement(con, id, chromosome);
 			 ResultSet resultSet = mapStatement.executeQuery())
@@ -241,9 +241,9 @@ public class MapDAO
 		return createByChromStatement(con, entriesByChromQuery, id, chromosome);
 	}
 
-	public ArrayList<MapMarker> getByIdMarkers(int id, String[] chromosomes)
+	public ArrayList<BrapiMarker> getByIdMarkers(int id, String[] chromosomes)
 	{
-		ArrayList<MapMarker> list = new ArrayList<>();
+		ArrayList<BrapiMarker> list = new ArrayList<>();
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes);
@@ -279,14 +279,14 @@ public class MapDAO
 
 	// Takes a ResultSet which should represent the result of the linkageGroupsQuery defined above and returns a List of
 	// LinkageGroup objects, each of which has been initialized with the values from the ResultSet
-	private ArrayList<MapMarker> getMapMarkersListFromResultSet(ResultSet resultSet)
+	private ArrayList<BrapiMarker> getMapMarkersListFromResultSet(ResultSet resultSet)
 		throws SQLException
 	{
-		ArrayList<MapMarker> mapMarkers = new ArrayList<>();
+		ArrayList<BrapiMarker> mapMarkers = new ArrayList<>();
 
 		while (resultSet.next())
 		{
-			MapMarker mapMarker = new MapMarker();
+			BrapiMarker mapMarker = new BrapiMarker();
 			mapMarker.setMarkerId(resultSet.getString("marker_id"));
 			mapMarker.setMarkerName(resultSet.getString("marker_name"));
 			mapMarker.setLocation(resultSet.getString("definition_start"));

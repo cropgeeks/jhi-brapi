@@ -12,15 +12,15 @@ import org.restlet.resource.*;
  * representation of the MapList for API clients
  * to consume.
  */
-public class MapListServerResource extends BaseBrapiServerResource
+public class GenomeMaps extends BaseBrapiServerResource
 {
 	private MapDAO mapDAO = new MapDAO();
 
 	@Get("json")
-	public BasicResource<BrapiMap> getJson()
+	public BasicResource<BrapiGenomeMap> getJson()
 	{
-		List<BrapiMap> maps = mapDAO.getAll();
+		List<BrapiGenomeMap> maps = mapDAO.getAll();
 
-		return new BasicResource<BrapiMap>(maps);
+		return new BasicResource<BrapiGenomeMap>(maps);
 	}
 }

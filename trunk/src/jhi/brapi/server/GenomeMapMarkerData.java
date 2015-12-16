@@ -10,7 +10,7 @@ import org.restlet.resource.*;
 /**
  * Created by gs40939 on 17/06/2015.
  */
-public class MapMarkersListServerResource extends BaseBrapiServerResource
+public class GenomeMapMarkerData extends BaseBrapiServerResource
 {
 	private MapDAO mapDAO = new MapDAO();
 
@@ -27,11 +27,11 @@ public class MapMarkersListServerResource extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<MapMarker> getJson()
+	public BasicResource<BrapiMarker> getJson()
 	{
-		ArrayList<MapMarker> mapMarkers = mapDAO.getByIdMarkers(Integer.parseInt(id), linkageGroups);
+		ArrayList<BrapiMarker> mapMarkers = mapDAO.getByIdMarkers(Integer.parseInt(id), linkageGroups);
 
-		return new BasicResource<MapMarker>(mapMarkers);
+		return new BasicResource<BrapiMarker>(mapMarkers);
 	}
 
 	private String[] getLinkageGroups(String linkageGroupIdList)
