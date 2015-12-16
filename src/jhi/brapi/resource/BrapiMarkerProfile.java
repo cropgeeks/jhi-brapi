@@ -3,7 +3,7 @@ package jhi.brapi.resource;
 /**
  * Created by gs40939 on 30/04/2015.
  */
-public class MarkerProfile
+public class BrapiMarkerProfile
 {
 	private String markerprofileId;
 	private String germplasmId;

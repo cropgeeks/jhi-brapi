@@ -39,8 +39,8 @@ public class AlleleMatrixServerResource extends ServerResource
 	{
 		List<String> profileIds = new ArrayList<>();
 
-		MarkerProfileList markerProfileList = markerProfileDAO.getAll();
-		for (MarkerProfile profile : markerProfileList.getMarkerprofiles())
+		List<BrapiMarkerProfile> list = markerProfileDAO.getAll();
+		for (BrapiMarkerProfile profile : list)
 			profileIds.add(profile.getMarkerprofileId());
 
 		AlleleMatrix matrix = alleleMatrixDAO.get(profileIds);

@@ -73,21 +73,21 @@ public class Client
 	private void testGermplasmMarkerProfile()
 	{
 		ClientResource markerResource = new ClientResource("http://localhost:8080//brapi/germplasm/1/markerprofiles");
-		MarkerProfile markerProfile = markerResource.get(MarkerProfile.class);
+		BrapiMarkerProfile markerProfile = markerResource.get(BrapiMarkerProfile.class);
 		System.out.println(markerProfile);
 	}
 
 	private void testMarkerProfileOnlySpecificMap()
 	{
 		ClientResource markerResource = new ClientResource("http://localhost:8080//brapi/germplasm/1/markerprofiles?map=20");
-		jhi.brapi.resource.MarkerProfile markerProfile = markerResource.get(MarkerProfile.class);
+		jhi.brapi.resource.BrapiMarkerProfile markerProfile = markerResource.get(BrapiMarkerProfile.class);
 		System.out.println(markerProfile);
 	}
 
 	private void testMarkerProfile()
 	{
 		ClientResource markerResource = new ClientResource("http://localhost:8080//brapi/markerprofiles/13-1/");
-		MarkerProfile markerProfile = markerResource.get(MarkerProfile.class);
+		BrapiMarkerProfile markerProfile = markerResource.get(BrapiMarkerProfile.class);
 		System.out.println(markerProfile);
 	}
 }

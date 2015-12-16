@@ -1,5 +1,6 @@
 package jhi.brapi.server;
 
+import java.util.List;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -9,18 +10,15 @@ import org.restlet.resource.*;
  * Queries the database for the Germplasm (germinatebase?) with the given ID then returns a JSON (Jackson)
  * representation of the Germplasm for API clients to consume.
  */
-public class MarkerProfileListServerResource extends BaseBrapiServerResource
+public class MarkerProfiles extends BaseBrapiServerResource
 {
 	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 
 	@Get("json")
-	public MarkerProfileList getJson()
+	public BasicResource<BrapiMarkerProfile> getJson()
 	{
-		MarkerProfileList markerProfileList = markerProfileDAO.getAll();
+		List<BrapiMarkerProfile> list = markerProfileDAO.getAll();
 
-		if (markerProfileList != null)
-			return markerProfileList;
-
-		throw new ResourceException(404);
+		return new BasicResource<BrapiMarkerProfile>(list);
 	}
 }

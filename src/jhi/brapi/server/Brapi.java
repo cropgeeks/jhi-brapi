@@ -46,8 +46,8 @@ public class Brapi extends Application
 		router.attach("/maps/{id}/", GenomeMapMetaData.class);
 		router.attach("/maps/{id}/positions", GenomeMapMarkerData.class);
 		router.attach("/maps/{id}/positions/", GenomeMapMarkerData.class);
-		router.attach("/markerprofiles", MarkerProfileListServerResource.class);
-		router.attach("/markerprofiles/", MarkerProfileListServerResource.class);
+		router.attach("/markerprofiles", MarkerProfiles.class);
+		router.attach("/markerprofiles/", MarkerProfiles.class);
 		router.attach("/markerprofiles/methods", MarkerProfileMethods.class);
 		router.attach("/markerprofiles/methods/", MarkerProfileMethods.class);
 //		router.attach("/markerprofiles/count", MarkerProfileCountServerResource.class);
