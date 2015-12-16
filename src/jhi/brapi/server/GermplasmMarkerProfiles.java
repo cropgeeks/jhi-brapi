@@ -1,5 +1,6 @@
 package jhi.brapi.server;
 
+import java.util.List;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -8,7 +9,7 @@ import org.restlet.resource.*;
 /**
  * Given an id, returns the markerprofile ids which relate to the germplasm indicated by id.
  */
-public class GermplasmMarkerProfileServerResource extends BaseBrapiServerResource<GermplasmMarkerProfileList>
+public class GermplasmMarkerProfiles extends BaseBrapiServerResource
 {
 	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
@@ -22,10 +23,10 @@ public class GermplasmMarkerProfileServerResource extends BaseBrapiServerResourc
 	}
 
 	@Get("json")
-	public GermplasmMarkerProfileList getJson()
+	public BasicResource<BrapiGermplasmMarkerProfiles> getJson()
 	{
-		GermplasmMarkerProfileList profileList = germplasmDAO.getMarkerProfilesFor(id);
+		List<BrapiGermplasmMarkerProfiles> list = germplasmDAO.getMarkerProfilesFor(id);
 
-		return profileList;
+		return new BasicResource<BrapiGermplasmMarkerProfiles>(list);
 	}
 }
