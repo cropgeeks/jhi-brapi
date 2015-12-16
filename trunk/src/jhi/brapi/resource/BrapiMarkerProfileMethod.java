@@ -1,6 +1,6 @@
 package jhi.brapi.resource;
 
-public class MarkerProfileMethod
+public class BrapiMarkerProfileMethod
 {
 	private String methodId;
 	private String name;

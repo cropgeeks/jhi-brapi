@@ -7,11 +7,11 @@ import java.util.List;
 
 public class MarkerProfileMethodsDAO
 {
-	public List<MarkerProfileMethod> getAll()
+	public List<BrapiMarkerProfileMethod> getAll()
 	{
 		// To store the Germplasm instances created from the results of the db query before adding them to the
 		// GermplasmList object
-		List<MarkerProfileMethod> methodsList = new ArrayList<>();
+		List<BrapiMarkerProfileMethod> methodsList = new ArrayList<>();
 
 		//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 		//			 PreparedStatement statement = con.prepareStatement(getLines);
@@ -19,7 +19,7 @@ public class MarkerProfileMethodsDAO
 		{
 //			while (resultSet.next())
 			{
-				MarkerProfileMethod method = new MarkerProfileMethod();
+				BrapiMarkerProfileMethod method = new BrapiMarkerProfileMethod();
 				method.setMethodId("0");
 				method.setName("wibble");
 
