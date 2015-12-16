@@ -149,26 +149,28 @@ public class GermplasmDAO
 		return statement;
 	}
 
-	public GermplasmMarkerProfileList getMarkerProfilesFor(int id)
+	public List<BrapiGermplasmMarkerProfiles> getMarkerProfilesFor(int id)
 	{
+		List<BrapiGermplasmMarkerProfiles> list = new ArrayList<>();
+
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 			 PreparedStatement statement = createByIdStatement(con, markrerProfileIdQuery, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{
-			GermplasmMarkerProfileList profileList = new GermplasmMarkerProfileList();
+			BrapiGermplasmMarkerProfiles profiles = new BrapiGermplasmMarkerProfiles();
 			List<String> markerProfileIdList = new ArrayList<>();
 			while (resultSet.next())
 			{
-				profileList.setGermplasmId(resultSet.getInt("germinatebase_id"));
+				profiles.setGermplasmId(resultSet.getInt("germinatebase_id"));
 				markerProfileIdList.add(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
 			}
-			profileList.setMarkerProfiles(markerProfileIdList);
+			profiles.setMarkerProfiles(markerProfileIdList);
 
-			return profileList;
+			list.add(profiles);
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
-		return null;
+		return list;
 	}
 
 	public GermplasmSearchListPagination getByName(String name, Germplasm.MatchingMethod matchingMethod, int page, int pageSize)

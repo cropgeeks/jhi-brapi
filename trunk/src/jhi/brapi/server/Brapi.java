@@ -36,8 +36,8 @@ public class Brapi extends Application
 		router.attach("/germplasm/", Germplasm.class);
 		router.attach("/germplasm/{id}", GermplasmServerResource.class);
 		router.attach("/germplasm/{id}/", GermplasmServerResource.class);
-		router.attach("/germplasm/{id}/markerprofiles", GermplasmMarkerProfileServerResource.class);
-		router.attach("/germplasm/{id}/markerprofiles/", GermplasmMarkerProfileServerResource.class);
+		router.attach("/germplasm/{id}/markerprofiles", GermplasmMarkerProfiles.class);
+		router.attach("/germplasm/{id}/markerprofiles/", GermplasmMarkerProfiles.class);
 		router.attach("/germplasm/{id}/pedigree", GermplasmPedigreeServerResource.class);
 		router.attach("/germplasm/{id}/pedigree/", GermplasmPedigreeServerResource.class);
 		router.attach("/maps", GenomeMaps.class); // FJ

@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Created by gs40939 on 12/05/2015.
  */
-public class GermplasmMarkerProfileList
+public class BrapiGermplasmMarkerProfiles
 {
 	private int germplasmId;
 	private List<String> markerProfiles;
