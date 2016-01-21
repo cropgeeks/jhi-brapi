@@ -10,9 +10,10 @@ import java.util.*;
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BrapiGermplasm
 {
-	private String       germplasmId;
+	private String       germplasmDbId;
 	private String       germplasmPUI;
 	private String       germplasmName;
+	private String       defaultDisplayName;
 	private String       accessionNumber;
 	private String       breederCode;
 	private List<String> synonyms;
@@ -29,15 +30,17 @@ public class BrapiGermplasm
 	private String       subtaxaAuthority;
 	private List<Donor>  donors;
 	private String       acquisitionDate;
+	private String       pedigree;
+	private String       seedSource;
 
-	public String getGermplasmId()
+	public String getGermplasmDbId()
 	{
-		return germplasmId;
+		return germplasmDbId;
 	}
 
-	public void setGermplasmId(String germplasmId)
+	public void setGermplasmDbId(String germplasmDbId)
 	{
-		this.germplasmId = germplasmId;
+		this.germplasmDbId = germplasmDbId;
 	}
 
 	public String getGermplasmPUI()
@@ -220,13 +223,44 @@ public class BrapiGermplasm
 		this.acquisitionDate = acquisitionDate;
 	}
 
+	public String getDefaultDisplayName()
+	{
+		return defaultDisplayName;
+	}
+
+	public void setDefaultDisplayName(String defaultDisplayName)
+	{
+		this.defaultDisplayName = defaultDisplayName;
+	}
+
+	public String getPedigree()
+	{
+		return pedigree;
+	}
+
+	public void setPedigree(String pedigree)
+	{
+		this.pedigree = pedigree;
+	}
+
+	public String getSeedSource()
+	{
+		return seedSource;
+	}
+
+	public void setSeedSource(String seedSource)
+	{
+		this.seedSource = seedSource;
+	}
+
 	@Override
 	public String toString()
 	{
-		return "Germplasm{" +
-				"germplasmId='" + germplasmId + '\'' +
+		return "BrapiGermplasm{" +
+				"germplasmDbId='" + germplasmDbId + '\'' +
 				", germplasmPUI='" + germplasmPUI + '\'' +
 				", germplasmName='" + germplasmName + '\'' +
+				", defaultDisplayName='" + defaultDisplayName + '\'' +
 				", accessionNumber='" + accessionNumber + '\'' +
 				", breederCode='" + breederCode + '\'' +
 				", synonyms=" + synonyms +
@@ -243,6 +277,34 @@ public class BrapiGermplasm
 				", subtaxaAuthority='" + subtaxaAuthority + '\'' +
 				", donors=" + donors +
 				", acquisitionDate='" + acquisitionDate + '\'' +
+				", pedigree='" + pedigree + '\'' +
+				", seedSource='" + seedSource + '\'' +
 				'}';
+	}
+
+	public enum MatchingMethod
+	{
+		EXACT,
+		WILDCARD;
+
+		public static MatchingMethod getValue(String input)
+		{
+			if (input == null || input.equals(""))
+			{
+				return EXACT;
+			}
+			else
+			{
+				try
+				{
+					return MatchingMethod.valueOf(input.toUpperCase());
+				}
+				catch (Exception e)
+				{
+					// TODO: Return a 501 HTTP error code
+					return EXACT;
+				}
+			}
+		}
 	}
 }
