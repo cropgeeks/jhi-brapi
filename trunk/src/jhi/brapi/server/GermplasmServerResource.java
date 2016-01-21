@@ -1,13 +1,14 @@
 package jhi.brapi.server;
 
+import org.restlet.resource.*;
+
+import java.util.*;
+
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
-import org.restlet.resource.*;
-
 /**
- * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the
- * Germplasm for API clients to consume.
+ * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the Germplasm for API clients to consume.
  */
 public class GermplasmServerResource extends BaseBrapiServerResource
 {
@@ -20,7 +21,7 @@ public class GermplasmServerResource extends BaseBrapiServerResource
 	public void doInit()
 	{
 		super.doInit();
-		this.id = (String)getRequestAttributes().get("id");
+		this.id = (String) getRequestAttributes().get("id");
 	}
 
 	@Get("json")
@@ -28,10 +29,11 @@ public class GermplasmServerResource extends BaseBrapiServerResource
 	{
 		BrapiGermplasm germplasm = germplasmDAO.getById(Integer.parseInt(id));
 
-		if (germplasm != null)
-//			return germplasm;
-			return null;
+		List<BrapiGermplasm> result = new ArrayList<>();
 
-		throw new ResourceException(404);
+		if (germplasm != null)
+			result.add(germplasm);
+
+		return new BasicResource<>(result);
 	}
 }
