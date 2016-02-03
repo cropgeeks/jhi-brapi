@@ -13,13 +13,13 @@ public class GermplasmMarkerProfiles extends BaseBrapiServerResource
 {
 	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
-	private int id;
+	private String id;
 
 	@Override
 	public void doInit()
 	{
 		super.doInit();
-		this.id = Integer.parseInt(getRequestAttributes().get("id").toString());
+		this.id = getRequestAttributes().get("id").toString();
 	}
 
 	@Get("json")
@@ -27,6 +27,6 @@ public class GermplasmMarkerProfiles extends BaseBrapiServerResource
 	{
 		List<BrapiGermplasmMarkerProfiles> list = germplasmDAO.getMarkerProfilesFor(id);
 
-		return new BasicResource<BrapiGermplasmMarkerProfiles>(list);
+		return new BasicResource<>(list);
 	}
 }

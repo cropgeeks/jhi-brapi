@@ -21,13 +21,13 @@ public class GermplasmServerResource extends BaseBrapiServerResource
 	public void doInit()
 	{
 		super.doInit();
-		this.id = (String) getRequestAttributes().get("id");
+		this.id = getRequestAttributes().get("id").toString();
 	}
 
 	@Get("json")
 	public BasicResource<BrapiGermplasm> getJson()
 	{
-		BrapiGermplasm germplasm = germplasmDAO.getById(Integer.parseInt(id));
+		BrapiGermplasm germplasm = germplasmDAO.getById(id);
 
 		List<BrapiGermplasm> result = new ArrayList<>();
 
