@@ -28,14 +28,16 @@ public class Brapi extends Application
 		Filter encoder = new Encoder(getContext(), false, true, new EncoderService(true));
 		encoder.setNext(router);
 		CorsFilter corsFilter = new CorsFilter(getContext(), encoder);
-		corsFilter.setAllowedOrigins(new HashSet<String>(Arrays.asList("*")));
+		corsFilter.setAllowedOrigins(new HashSet<>(Arrays.asList("*")));
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(false);
 
-		router.attach("/germplasm", Germplasm.class); // FJ
+		router.attach("/germplasm", Germplasm.class); // FJ / GM
 		router.attach("/germplasm/", Germplasm.class);
 		router.attach("/germplasm/{id}", GermplasmServerResource.class);
 		router.attach("/germplasm/{id}/", GermplasmServerResource.class);
+		router.attach("/germplasm/{id}/mcpd", GermplasmMcpd.class); // GM
+		router.attach("/germplasm/{id}/mcpd/", GermplasmMcpd.class);
 		router.attach("/germplasm/{id}/markerprofiles", GermplasmMarkerProfiles.class);
 		router.attach("/germplasm/{id}/markerprofiles/", GermplasmMarkerProfiles.class);
 		router.attach("/germplasm/{id}/pedigree", GermplasmPedigreeServerResource.class);

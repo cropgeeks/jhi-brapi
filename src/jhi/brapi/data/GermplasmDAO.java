@@ -22,7 +22,7 @@ public class GermplasmDAO
 	private final String getLinesByNameRegex = "select * from germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ?";
 
 	// Simply selects all fields from germinatebase where the given id matches the id from the URI
-	private final String getSpecificLine = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id where germinatebase.id=?";
+	private final String getSpecificLine = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.id=?";
 
 	// Query to extract the markerprofiles which relate to the germplasm indicated by id
 	private final String markrerProfileIdQuery = "select DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=?";
@@ -51,7 +51,7 @@ public class GermplasmDAO
 		return list;
 	}
 
-	public BrapiGermplasm getById(int id)
+	public BrapiGermplasm getById(String id)
 	{
 		BrapiGermplasm germplasm = null;
 
@@ -82,19 +82,8 @@ public class GermplasmDAO
 		germplasm.setGermplasmName(resultSet.getString("germinatebase.name"));
 		germplasm.setAccessionNumber(resultSet.getString("germinatebase.number"));
 		germplasm.setSynonyms(getSynonyms(resultSet));
-		germplasm.setCommonCropName(null); // TODO
-		germplasm.setInstituteCode(resultSet.getString("institutions.code"));
-		germplasm.setInstituteName(resultSet.getString("institutions.name"));
-		germplasm.setBiologicalStatusOfGermplasmCode(null); // TODO
-		germplasm.setCountryOfOriginCode(resultSet.getString("countries.country_code3"));
-		germplasm.setTypeOfGermplasmStorageCode(null); // TODO
-		germplasm.setGenus(resultSet.getString("taxonomies.genus"));
-		germplasm.setSpecies(resultSet.getString("taxonomies.species"));
-		germplasm.setSpeciesAuthority(resultSet.getString("taxonomies.species_author"));
-		germplasm.setSubtaxa(resultSet.getString("subtaxa.taxonomic_identifier"));
-		germplasm.setSubtaxaAuthority(resultSet.getString("subtaxa.subtaxa_author"));
 		germplasm.setPedigree(resultSet.getString("pedigreedefinitions.definition"));
-		germplasm.setDefaultDisplayName(resultSet.getString("germinatebase.name"));
+		germplasm.setDefaultDisplayName(resultSet.getString("germinatebase.number")); // TODO: make this configurable. for some instances if may be 'name', for some 'number' or 'general_identifier'
 		germplasm.setSeedSource(null); // TODO
 
 		String donorCode = resultSet.getString("germinatebase.donor_code");
@@ -109,24 +98,78 @@ public class GermplasmDAO
 			donorList.add(donor);
 		}
 
-		germplasm.setDonors(donorList);
-		germplasm.setAcquisitionDate(FORMAT_OUTPUT.format(resultSet.getDate("germinatebase.colldate")));
-
 		return germplasm;
 	}
 
-	private PreparedStatement createByIdStatement(Connection con, String query, int id)
+	private PreparedStatement createByIdStatement(Connection con, String query, String id)
 			throws SQLException
 	{
 		// Prepare statement with ID
 		PreparedStatement statement = con.prepareStatement(query);
-		statement.setInt(1, id);
+		statement.setString(1, id);
 
 		return statement;
 	}
 
+	public List<BrapiGermplasmMcpd> getMcpdFor(String id)
+	{
+		List<BrapiGermplasmMcpd> list = new ArrayList<>();
 
-	public List<BrapiGermplasmMarkerProfiles> getMarkerProfilesFor(int id)
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = createByIdStatement(con, getSpecificLine, id);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			if (resultSet.next())
+			{
+				BrapiGermplasmMcpd mcpd = new BrapiGermplasmMcpd();
+
+				mcpd.setGermplasmDbId(resultSet.getString("germinatebase.id"));
+				mcpd.setGermplasmPUI(resultSet.getString("germinatebase.general_identifier"));
+				mcpd.setGermplasmName(resultSet.getString("germinatebase.name"));
+				mcpd.setAccessionNumber(resultSet.getString("germinatebase.number"));
+				mcpd.setSynonyms(getSynonyms(resultSet));
+				mcpd.setCommonCropName(null); // TODO
+				mcpd.setInstituteCode(resultSet.getString("institutions.code"));
+				mcpd.setInstituteName(resultSet.getString("institutions.name"));
+				mcpd.setBiologicalStatusOfGermplasmCode(null); // TODO
+				mcpd.setCountryOfOriginCode(resultSet.getString("countries.country_code3"));
+				mcpd.setTypeOfGermplasmStorageCode(null); // TODO
+				mcpd.setGenus(resultSet.getString("taxonomies.genus"));
+				mcpd.setSpecies(resultSet.getString("taxonomies.species"));
+				mcpd.setSpeciesAuthority(resultSet.getString("taxonomies.species_author"));
+				mcpd.setSubtaxa(resultSet.getString("subtaxa.taxonomic_identifier"));
+				mcpd.setSubtaxaAuthority(resultSet.getString("subtaxa.subtaxa_author"));
+				mcpd.setPedigree(resultSet.getString("pedigreedefinitions.definition"));
+				mcpd.setDefaultDisplayName(resultSet.getString("germinatebase.number")); // TODO: make this configurable. for some instances if may be 'name', for some 'number' or 'general_identifier'
+				mcpd.setSeedSource(null); // TODO
+
+				String donorCode = resultSet.getString("germinatebase.donor_code");
+				String donorNumber = resultSet.getString("germinatebase.donor_number");
+				List<Donor> donorList = new ArrayList<>();
+
+				if ((donorCode != null && !donorCode.equals("")) || (donorNumber != null && !donorNumber.equals("")))
+				{
+					Donor donor = new Donor();
+					donor.setDonorInstituteCode(donorCode);
+					donor.setDonorAccessionNumber(donorNumber);
+					donorList.add(donor);
+				}
+
+				mcpd.setDonors(donorList);
+				mcpd.setAcquisitionDate(FORMAT_OUTPUT.format(resultSet.getDate("germinatebase.colldate")));
+
+				list.add(mcpd);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
+	public List<BrapiGermplasmMarkerProfiles> getMarkerProfilesFor(String id)
 	{
 		List<BrapiGermplasmMarkerProfiles> list = new ArrayList<>();
 
