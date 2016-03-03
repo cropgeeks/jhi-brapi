@@ -26,8 +26,6 @@ public class GermplasmMcpd extends BaseBrapiServerResource
 	@Get("json")
 	public BasicResource<BrapiGermplasmMcpd> getJson()
 	{
-		List<BrapiGermplasmMcpd> list = germplasmDAO.getMcpdFor(id);
-
-		return new BasicResource<>(list);
+		return germplasmDAO.getMcpdFor(id);
 	}
 }

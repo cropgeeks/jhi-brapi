@@ -20,13 +20,29 @@ public class GermplasmMarkerProfiles extends BaseBrapiServerResource
 	{
 		super.doInit();
 		this.id = getRequestAttributes().get("id").toString();
+
+		try
+		{
+			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		try
+		{
+			this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Get("json")
 	public BasicResource<BrapiGermplasmMarkerProfiles> getJson()
 	{
-		List<BrapiGermplasmMarkerProfiles> list = germplasmDAO.getMarkerProfilesFor(id);
-
-		return new BasicResource<>(list);
+		return germplasmDAO.getMarkerProfilesFor(id, currentPage, pageSize);
 	}
 }

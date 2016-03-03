@@ -1,28 +1,52 @@
 package jhi.brapi.resource;
 
-import java.util.List;
+import java.util.*;
+
+import jhi.brapi.data.*;
 
 /**
  * Created by gs40939 on 03/11/2015.
  */
 public class BasicResource<T>
 {
-	private Metadata metadata;
+	private Metadata metadata = new Metadata();
 
-	private List<T> result;
+	private List<T> result = new ArrayList<T>();
 
-	public BasicResource() {}
+	public BasicResource()
+	{
+		metadata.setPagination(PaginationUtils.getEmptyPagination());
+	}
 
+	// TODO: kept in current version for compatability with calls in non Germplasm classes... will update other classes in forthcoming commit
 	public BasicResource(List<T> result)
 	{
 		this.result = result;
 	}
 
+	// Should be our default choice for Brapi calls which paginate over a list of entries
+	public BasicResource(List<T> result, int currentPage, long totalCount)
+	{
+		this.result = result;
+		metadata.setPagination(new Pagination(result.size(), currentPage, totalCount));
+	}
+
+	// Should be our default choice for Brapi calls which "paginate" over a single result
+	public BasicResource(T result)
+	{
+		this.result = Collections.singletonList(result);
+		metadata.setPagination(PaginationUtils.getPaginationForSingleResult());
+	}
+
+	// Should be our default choice for Brapi calls which paginate over a subset of a resource
+	public BasicResource(T result, int pageSize, int currentPage, long totalCount)
+	{
+		this.result = Collections.singletonList(result);
+		metadata.setPagination(new Pagination(pageSize, currentPage, totalCount));
+	}
+
 	public Metadata getMetadata()
 	{
-		if (metadata == null)
-			metadata = new Metadata();
-
 		return metadata;
 	}
 
