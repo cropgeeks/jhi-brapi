@@ -16,6 +16,14 @@ import org.restlet.resource.*;
  */
 public abstract class BaseBrapiServerResource<T> extends ServerResource
 {
+	protected static final String PARAM_PAGE_SIZE = "pageSize";
+	protected static final String PARAM_CURRENT_PAGE = "currentPage";
+
+	// TODO: do we want to configure this value in the environment somehow (e.g. properties file etc...)
+	// TODO: once finished testing set back to Integer.MAX_VALUE, or something more suitable
+	protected int pageSize = 5;//Integer.MAX_VALUE;
+	protected int currentPage = 0;
+
 	@Get("json")
 	public abstract T getJson();
 

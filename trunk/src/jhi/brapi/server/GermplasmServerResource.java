@@ -27,13 +27,6 @@ public class GermplasmServerResource extends BaseBrapiServerResource
 	@Get("json")
 	public BasicResource<BrapiGermplasm> getJson()
 	{
-		BrapiGermplasm germplasm = germplasmDAO.getById(id);
-
-		List<BrapiGermplasm> result = new ArrayList<>();
-
-		if (germplasm != null)
-			result.add(germplasm);
-
-		return new BasicResource<>(result);
+		return germplasmDAO.getById(id);
 	}
 }

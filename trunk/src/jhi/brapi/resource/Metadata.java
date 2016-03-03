@@ -11,11 +11,14 @@ public class Metadata
 
 	private List<Status> status;
 
+	public Metadata()
+	{
+		this.pagination = new Pagination();
+		this.status = new ArrayList<Status>();
+	}
+
 	public Pagination getPagination()
 	{
-		if (pagination == null)
-			pagination = new Pagination();
-
 		return pagination;
 	}
 
@@ -26,9 +29,6 @@ public class Metadata
 
 	public List<Status> getStatus()
 	{
-		if (status == null)
-			status = new ArrayList<>();
-
 		return status;
 	}
 

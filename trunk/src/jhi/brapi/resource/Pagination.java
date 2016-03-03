@@ -10,6 +10,18 @@ public class Pagination
 	private long totalCount;
 	private int totalPages;
 
+	public Pagination()
+	{
+	}
+
+	public Pagination(int pageSize, int currentPage, long totalCount)
+	{
+		this.pageSize = pageSize;
+		this.currentPage = currentPage;
+		this.totalCount = totalCount;
+		this.totalPages = (int)Math.ceil(totalCount/(float)pageSize);
+	}
+
 	public int getPageSize()
 	{
 		return pageSize;

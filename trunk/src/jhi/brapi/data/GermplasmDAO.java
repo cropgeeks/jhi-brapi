@@ -5,7 +5,6 @@ import java.text.*;
 import java.util.*;
 
 import jhi.brapi.resource.*;
-import jhi.brapi.server.*;
 
 /**
  * Specifies the public interface which any Germplasm data accessing classes must implement.
@@ -15,54 +14,73 @@ public class GermplasmDAO
 	private static final SimpleDateFormat FORMAT_OUTPUT = new SimpleDateFormat("YYYYMMDD");
 
 	// Simply selects all fields from germinatebase
-	private final String getLines = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id";
+	private final String getLines = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id LIMIT ?, ?";
 
-	private final String getLinesByNameExact = "select * from germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number = ? OR germinatebase.name = ? OR germinatebase.general_identifier = ?";
+	private final String getCountLines = "SELECT COUNT(*) AS total_count FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id";
 
-	private final String getLinesByNameRegex = "select * from germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ?";
+	private final String getLinesByNameExact = "select * from germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number = ? OR germinatebase.name = ? OR germinatebase.general_identifier = ? LIMIT ?, ?";
+
+	private final String getCountLinesByNameExact = "SELECT COUNT(*) AS total_count FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number = ? OR germinatebase.name = ? OR germinatebase.general_identifier = ?";
+
+	private final String getLinesByNameRegex = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ? LIMIT ?, ?";
+
+	private final String getCountLinesByNameRegex = "SELECT COUNT(*) AS total_count FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ?";
 
 	// Simply selects all fields from germinatebase where the given id matches the id from the URI
 	private final String getSpecificLine = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.id=?";
 
 	// Query to extract the markerprofiles which relate to the germplasm indicated by id
-	private final String markrerProfileIdQuery = "select DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=?";
+	private final String markrerProfileIdQuery = "select DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=? LIMIT ?, ?";
 
-	public List<BrapiGermplasm> getAll()
+	private final String markerProfileCountIdQuery = "SELECT COUNT(DISTINCT(dataset_id)) AS total_count, germinatebase_id from genotypes where germinatebase_id = ?";
+
+	public BasicResource<BrapiGermplasm> getAll(int currentPage, int pageSize)
 	{
-		List<BrapiGermplasm> list = new ArrayList<>();
+		// Create empty BasicResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
+		// this is what's returned
+		BasicResource<BrapiGermplasm> result = new BasicResource<>();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement statement = con.prepareStatement(getLines);
-			 ResultSet resultSet = statement.executeQuery())
+		long totalCount = DatabaseUtils.getTotalCount(getCountLines);
+
+		if (totalCount != -1)
 		{
-			while (resultSet.next())
+			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+			// prepared statement (which includes a limit statement)
+			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, getLines, currentPage, pageSize);
+				 ResultSet resultSet = statement.executeQuery())
 			{
-				// Set the Germplasm bean using the data returned from the database
-				BrapiGermplasm germplasm = getGermplasm(resultSet);
+				List<BrapiGermplasm> list = new ArrayList<>();
 
-				list.add(germplasm);
+				while (resultSet.next())
+					list.add(getBrapiGermplasm(resultSet));
+
+				System.out.println("List size: " + list.size());
+
+				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
+				result = new BasicResource<BrapiGermplasm>(list, currentPage, totalCount);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
 			}
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
 
-		return list;
+		return result;
 	}
 
-	public BrapiGermplasm getById(String id)
+	public BasicResource<BrapiGermplasm> getById(String id)
 	{
-		BrapiGermplasm germplasm = null;
+		BasicResource<BrapiGermplasm> wrappedResult = new BasicResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement statement = createByIdStatement(con, getSpecificLine, id);
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, getSpecificLine, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{
 			if (resultSet.first())
 			{
 				// Set the Germplasm bean using the data returned from the database
-				germplasm = getGermplasm(resultSet);
+				wrappedResult = new BasicResource<>(getBrapiGermplasm(resultSet));
 			}
 		}
 		catch (SQLException e)
@@ -70,10 +88,10 @@ public class GermplasmDAO
 			e.printStackTrace();
 		}
 
-		return germplasm;
+		return wrappedResult;
 	}
 
-	private BrapiGermplasm getGermplasm(ResultSet resultSet)
+	private BrapiGermplasm getBrapiGermplasm(ResultSet resultSet)
 			throws SQLException
 	{
 		BrapiGermplasm germplasm = new BrapiGermplasm();
@@ -83,8 +101,54 @@ public class GermplasmDAO
 		germplasm.setAccessionNumber(resultSet.getString("germinatebase.number"));
 		germplasm.setSynonyms(getSynonyms(resultSet));
 		germplasm.setPedigree(resultSet.getString("pedigreedefinitions.definition"));
-		germplasm.setDefaultDisplayName(resultSet.getString("germinatebase.number")); // TODO: make this configurable. for some instances if may be 'name', for some 'number' or 'general_identifier'
+		germplasm.setDefaultDisplayName(resultSet.getString("germinatebase.name"));
 		germplasm.setSeedSource(null); // TODO
+
+		return germplasm;
+	}
+
+	public BasicResource<BrapiGermplasmMcpd> getMcpdFor(String id)
+	{
+		BasicResource<BrapiGermplasmMcpd> result = new BasicResource<>();
+
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, getSpecificLine, id);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			if (resultSet.first())
+				result = new BasicResource<BrapiGermplasmMcpd>(getBrapiGermplasmMcpd(resultSet));
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	private BrapiGermplasmMcpd getBrapiGermplasmMcpd(ResultSet resultSet) throws SQLException
+	{
+		BrapiGermplasmMcpd mcpd = new BrapiGermplasmMcpd();
+
+		mcpd.setGermplasmDbId(resultSet.getString("germinatebase.id"));
+		mcpd.setGermplasmPUI(resultSet.getString("germinatebase.general_identifier"));
+		mcpd.setGermplasmName(resultSet.getString("germinatebase.name"));
+		mcpd.setAccessionNumber(resultSet.getString("germinatebase.number"));
+		mcpd.setSynonyms(getSynonyms(resultSet));
+		mcpd.setCommonCropName(null); // TODO
+		mcpd.setInstituteCode(resultSet.getString("institutions.code"));
+		mcpd.setInstituteName(resultSet.getString("institutions.name"));
+		mcpd.setBiologicalStatusOfGermplasmCode(null); // TODO
+		mcpd.setCountryOfOriginCode(resultSet.getString("countries.country_code3"));
+		mcpd.setTypeOfGermplasmStorageCode(null); // TODO
+		mcpd.setGenus(resultSet.getString("taxonomies.genus"));
+		mcpd.setSpecies(resultSet.getString("taxonomies.species"));
+		mcpd.setSpeciesAuthority(resultSet.getString("taxonomies.species_author"));
+		mcpd.setSubtaxa(resultSet.getString("subtaxa.taxonomic_identifier"));
+		mcpd.setSubtaxaAuthority(resultSet.getString("subtaxa.subtaxa_author"));
+		mcpd.setPedigree(resultSet.getString("pedigreedefinitions.definition"));
+		mcpd.setDefaultDisplayName(resultSet.getString("germinatebase.name"));
+		mcpd.setSeedSource(null); // TODO
 
 		String donorCode = resultSet.getString("germinatebase.donor_code");
 		String donorNumber = resultSet.getString("germinatebase.donor_number");
@@ -98,85 +162,24 @@ public class GermplasmDAO
 			donorList.add(donor);
 		}
 
-		return germplasm;
+		mcpd.setDonors(donorList);
+		mcpd.setAcquisitionDate(FORMAT_OUTPUT.format(resultSet.getDate("germinatebase.colldate")));
+
+		return mcpd;
 	}
 
-	private PreparedStatement createByIdStatement(Connection con, String query, String id)
-			throws SQLException
+	public BasicResource<BrapiGermplasmMarkerProfiles> getMarkerProfilesFor(String id, int currentPage, int pageSize)
 	{
-		// Prepare statement with ID
-		PreparedStatement statement = con.prepareStatement(query);
-		statement.setString(1, id);
+		BasicResource<BrapiGermplasmMarkerProfiles> result = new BasicResource<>();
 
-		return statement;
-	}
-
-	public List<BrapiGermplasmMcpd> getMcpdFor(String id)
-	{
-		List<BrapiGermplasmMcpd> list = new ArrayList<>();
+		long totalCount = DatabaseUtils.getTotalCountById(markerProfileCountIdQuery, id);
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement statement = createByIdStatement(con, getSpecificLine, id);
+			 PreparedStatement statement = DatabaseUtils.createByIdLimitStatement(con, markrerProfileIdQuery, id, currentPage, pageSize);
 			 ResultSet resultSet = statement.executeQuery())
 		{
-			if (resultSet.next())
-			{
-				BrapiGermplasmMcpd mcpd = new BrapiGermplasmMcpd();
+			List<BrapiGermplasmMarkerProfiles> list = new ArrayList<>();
 
-				mcpd.setGermplasmDbId(resultSet.getString("germinatebase.id"));
-				mcpd.setGermplasmPUI(resultSet.getString("germinatebase.general_identifier"));
-				mcpd.setGermplasmName(resultSet.getString("germinatebase.name"));
-				mcpd.setAccessionNumber(resultSet.getString("germinatebase.number"));
-				mcpd.setSynonyms(getSynonyms(resultSet));
-				mcpd.setCommonCropName(null); // TODO
-				mcpd.setInstituteCode(resultSet.getString("institutions.code"));
-				mcpd.setInstituteName(resultSet.getString("institutions.name"));
-				mcpd.setBiologicalStatusOfGermplasmCode(null); // TODO
-				mcpd.setCountryOfOriginCode(resultSet.getString("countries.country_code3"));
-				mcpd.setTypeOfGermplasmStorageCode(null); // TODO
-				mcpd.setGenus(resultSet.getString("taxonomies.genus"));
-				mcpd.setSpecies(resultSet.getString("taxonomies.species"));
-				mcpd.setSpeciesAuthority(resultSet.getString("taxonomies.species_author"));
-				mcpd.setSubtaxa(resultSet.getString("subtaxa.taxonomic_identifier"));
-				mcpd.setSubtaxaAuthority(resultSet.getString("subtaxa.subtaxa_author"));
-				mcpd.setPedigree(resultSet.getString("pedigreedefinitions.definition"));
-				mcpd.setDefaultDisplayName(resultSet.getString("germinatebase.number")); // TODO: make this configurable. for some instances if may be 'name', for some 'number' or 'general_identifier'
-				mcpd.setSeedSource(null); // TODO
-
-				String donorCode = resultSet.getString("germinatebase.donor_code");
-				String donorNumber = resultSet.getString("germinatebase.donor_number");
-				List<Donor> donorList = new ArrayList<>();
-
-				if ((donorCode != null && !donorCode.equals("")) || (donorNumber != null && !donorNumber.equals("")))
-				{
-					Donor donor = new Donor();
-					donor.setDonorInstituteCode(donorCode);
-					donor.setDonorAccessionNumber(donorNumber);
-					donorList.add(donor);
-				}
-
-				mcpd.setDonors(donorList);
-				mcpd.setAcquisitionDate(FORMAT_OUTPUT.format(resultSet.getDate("germinatebase.colldate")));
-
-				list.add(mcpd);
-			}
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return list;
-	}
-
-	public List<BrapiGermplasmMarkerProfiles> getMarkerProfilesFor(String id)
-	{
-		List<BrapiGermplasmMarkerProfiles> list = new ArrayList<>();
-
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement statement = createByIdStatement(con, markrerProfileIdQuery, id);
-			 ResultSet resultSet = statement.executeQuery())
-		{
 			BrapiGermplasmMarkerProfiles profiles = new BrapiGermplasmMarkerProfiles();
 			List<String> markerProfileIdList = new ArrayList<>();
 			while (resultSet.next())
@@ -187,13 +190,15 @@ public class GermplasmDAO
 			profiles.setMarkerProfiles(markerProfileIdList);
 
 			list.add(profiles);
+
+			result = new BasicResource<BrapiGermplasmMarkerProfiles>(profiles, list.size(), currentPage, totalCount);
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
 
-		return list;
+		return result;
 	}
 
 	public Pedigree getPedigreeById(int id)
@@ -218,52 +223,97 @@ public class GermplasmDAO
 		return synonyms;
 	}
 
-	public List<BrapiGermplasm> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod)
+	public BasicResource<BrapiGermplasm> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
 	{
 		List<BrapiGermplasm> resultGermplasm = new ArrayList<>();
+		BasicResource<BrapiGermplasm> wrappedList = new BasicResource<>();
+
+		String countQuery;
+		String getQuery;
+
+		switch (matchingMethod)
+		{
+			case WILDCARD:
+				countQuery = getCountLinesByNameRegex;
+				getQuery = getLinesByNameRegex;
+				break;
+			default:
+				countQuery = getCountLinesByNameExact;
+				getQuery = getLinesByNameExact;
+		}
+
+		long totalCount = getByNameTotalCount(name, countQuery);
+
+		if (totalCount != -1)
+		{
+			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+			// prepared statement (which includes a limit statement)
+			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+				 PreparedStatement statement = createByNameLimitStatement(con, name, getQuery, currentPage, pageSize);
+				 ResultSet resultSet = statement.executeQuery())
+			{
+				while (resultSet.next())
+				{
+					resultGermplasm.add(getBrapiGermplasm(resultSet));
+
+					// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
+					wrappedList = new BasicResource<BrapiGermplasm>(resultGermplasm, currentPage, totalCount);
+				}
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			wrappedList.getMetadata().setPagination(PaginationUtils.getEmptyPagination());
+		}
+
+		return wrappedList;
+	}
+
+	private long getByNameTotalCount(String name, String countQuery)
+	{
+		long totalCount = -1;
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement statement = createByNameStatement(con, name, matchingMethod);
+			 PreparedStatement statement = createByNameStatement(con, name, countQuery);
 			 ResultSet resultSet = statement.executeQuery())
 		{
-			// Keep count of the total number of accessions
-			while (resultSet.next())
-			{
-				resultGermplasm.add(getGermplasm(resultSet));
-			}
+			if (resultSet.first())
+				totalCount = resultSet.getLong("total_count");
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
-
-		return resultGermplasm;
+		return totalCount;
 	}
 
-	private PreparedStatement createByNameStatement(Connection con, String name, BrapiGermplasm.MatchingMethod matchingMethod)
-			throws SQLException
+	private PreparedStatement createByNameStatement(Connection con, String name, String query)
+		throws SQLException
 	{
 		// Replace the non-sql wildcards with sql wildcards
 		name = name.replace("*", "%");
 		name = name.replace("?", "_");
 
-		String query;
-
-		switch (matchingMethod)
-		{
-			case WILDCARD:
-				query = getLinesByNameRegex;
-				break;
-			default:
-				query = getLinesByNameExact;
-		}
-
 		// Prepare statement with NAME
 		PreparedStatement statement = con.prepareStatement(query);
-		int i = 1;
-		statement.setString(i++, name);
-		statement.setString(i++, name);
-		statement.setString(i++, name);
+		statement.setString(1, name);
+		statement.setString(2, name);
+		statement.setString(3, name);
+
+		return statement;
+	}
+
+	private PreparedStatement createByNameLimitStatement(Connection con, String name, String query, int currentPage, int pageSize)
+		throws SQLException
+	{
+		PreparedStatement statement = createByNameStatement(con, name, query);
+
+		statement.setInt(4, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(5, pageSize);
 
 		return statement;
 	}
