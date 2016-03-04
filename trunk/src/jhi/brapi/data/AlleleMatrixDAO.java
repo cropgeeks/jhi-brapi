@@ -17,8 +17,14 @@ public class AlleleMatrixDAO
 			"genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
 			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where ";
 
-	public List<BrapiAlleleMatrix> get(List<String> markerProfileDbIds)
+	private String countAllMarkers = "select COUNT(1) AS total_count, genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
+	"genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
+	"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where ";
+
+	public BasicResource<BrapiAlleleMatrix> get(List<String> markerProfileDbIds, int currentPage, int pageSize)
 	{
+		BasicResource<BrapiAlleleMatrix> result = new BasicResource<>();
+
 		List<Integer> datasetIds = new ArrayList<>();
 		List<Integer> germinatebaseIds = new ArrayList<>();
 
@@ -29,101 +35,86 @@ public class AlleleMatrixDAO
 			germinatebaseIds.add(Integer.parseInt(tokens[1]));
 		}
 
-		StringBuilder builder = new StringBuilder(allMarkers);
-		builder.append("germinatebase_id IN (");
-		boolean baseIdFirst = true;
-		for (Integer id : germinatebaseIds)
-		{
-			if (baseIdFirst)
-			{
-				builder.append("?");
-				baseIdFirst = false;
-			}
-			else
-			{
-				builder.append(",");
-				builder.append("?");
-			}
-		}
-		builder.append(")");
+		StringBuilder countBuilder = new StringBuilder(countAllMarkers);
+		buildInStatement(germinatebaseIds, countBuilder, "germinatebase_id IN (", ")");
+		buildInStatement(datasetIds, countBuilder, " AND datasets.id IN (", ") ");
 
-		builder.append(" AND datasets.id IN (");
-		boolean datasetIdFirst = true;
-		for (Integer id : datasetIds)
-		{
-			if (datasetIdFirst)
-			{
-				builder.append("?");
-				datasetIdFirst = false;
-			}
-			else
-			{
-				builder.append(",");
-				builder.append("?");
-			}
-		}
-		builder.append(") ");
-		builder.append("ORDER BY marker_name, dataset_id, germinatebase_id");
+		countBuilder.append("ORDER BY marker_name, dataset_id, germinatebase_id");
 
-		String query = builder.toString();
+		String countQuery = countBuilder.toString();
 
-		List<BrapiAlleleMatrix> list = new ArrayList<>();
+		long totalCount = -1;
 
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds);
+			 PreparedStatement statement = createByIdStatement(con, countQuery, germinatebaseIds, datasetIds);
 			 ResultSet resultSet = statement.executeQuery())
 		{
-			BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
-
-			HashMap<String, List<String>> scores = new HashMap<>();
-			HashSet<String> lines = new HashSet<>();
-
-			while(resultSet.next())
-			{
-				String markerName = resultSet.getString("marker_name");
-				String allele1 = resultSet.getString("allele1");
-				String allele2 = resultSet.getString("allele2");
-				String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
-
-				lines.add(lineName);
-
-				List<String> score = scores.get(markerName);
-				if (score == null)
-				{
-					score = new ArrayList<>();
-					score.add(allele1+allele2);
-					scores.put(markerName, score);
-				}
-				else
-				{
-					score.add(allele1+allele2);
-					scores.put(markerName, score);
-				}
-			}
-			matrix.setMarkerprofileIds(new ArrayList<>(lines));
-			matrix.setScores(scores);
-
-			list.add(matrix);
+			if (resultSet.first())
+				totalCount = resultSet.getInt("total_count");
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
-		return list;
+		if (totalCount != -1)
+		{
+			StringBuilder builder = new StringBuilder(allMarkers);
+			buildInStatement(germinatebaseIds, builder, "germinatebase_id IN (", ")");
+			buildInStatement(datasetIds, builder, " AND datasets.id IN (", ") ");
+
+			builder.append("ORDER BY marker_name, dataset_id, germinatebase_id");
+			builder.append(" LIMIT ?, ?");
+
+			String query = builder.toString();
+
+			List<BrapiAlleleMatrix> list = new ArrayList<>();
+
+			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+				 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds, currentPage, pageSize);
+				 ResultSet resultSet = statement.executeQuery())
+			{
+				BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
+
+				HashMap<String, List<String>> scores = new HashMap<>();
+				HashSet<String> lines = new HashSet<>();
+
+				while (resultSet.next())
+				{
+					String markerName = resultSet.getString("marker_name");
+					String allele1 = resultSet.getString("allele1");
+					String allele2 = resultSet.getString("allele2");
+					String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
+
+					lines.add(lineName);
+
+					List<String> score = scores.get(markerName);
+					if (score == null)
+					{
+						score = new ArrayList<>();
+						score.add(allele1 + allele2);
+						scores.put(markerName, score);
+					} else
+					{
+						score.add(allele1 + allele2);
+						scores.put(markerName, score);
+					}
+				}
+				matrix.setMarkerprofileIds(new ArrayList<>(lines));
+				matrix.setScores(scores);
+
+				list.add(matrix);
+				result = new BasicResource<>(matrix, pageSize, currentPage, totalCount);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return result;
 	}
 
-	public BrapiAlleleMatrix get(List<String> markerProfileIds, List<String> markerIds)
+	private void buildInStatement(List<Integer> germinatebaseIds, StringBuilder builder, String inClause, String closeInClause)
 	{
-		List<Integer> datasetIds = new ArrayList<>();
-		List<Integer> germinatebaseIds = new ArrayList<>();
-
-		for (String profileId : markerProfileIds)
-		{
-			String[] tokens = profileId.split("-");
-			datasetIds.add(Integer.parseInt(tokens[0]));
-			germinatebaseIds.add(Integer.parseInt(tokens[1]));
-		}
-
-		StringBuilder builder = new StringBuilder(allMarkers);
-		builder.append("germinatebase_id IN (");
+		builder.append(inClause);
 		boolean baseIdFirst = true;
 		for (Integer id : germinatebaseIds)
 		{
@@ -131,73 +122,104 @@ public class AlleleMatrixDAO
 			{
 				builder.append("?");
 				baseIdFirst = false;
-			}
-			else
+			} else
 			{
 				builder.append(",");
 				builder.append("?");
 			}
 		}
-		builder.append(")");
-
-		builder.append(" AND datasets.id IN (");
-		boolean datasetIdFirst = true;
-		for (Integer id : datasetIds)
-		{
-			if (datasetIdFirst)
-			{
-				builder.append("?");
-				datasetIdFirst = false;
-			}
-			else
-			{
-				builder.append(",");
-				builder.append("?");
-			}
-		}
-		builder.append(") ");
-		builder.append("ORDER BY marker_name, dataset_id, germinatebase_id");
-
-		String query = builder.toString();
-
-		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
-
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds);
-			 ResultSet resultSet = statement.executeQuery())
-		{
-			HashMap<String, List<String>> scores = new HashMap<>();
-			HashSet<String> lines = new HashSet<>();
-
-			while(resultSet.next())
-			{
-				String markerName = resultSet.getString("marker_name");
-				String allele1 = resultSet.getString("allele1");
-				String allele2 = resultSet.getString("allele2");
-				String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
-
-				lines.add(lineName);
-
-				List<String> score = scores.get(markerName);
-				if (score == null)
-				{
-					score = new ArrayList<>();
-					score.add(allele1+allele2);
-					scores.put(markerName, score);
-				}
-				else
-				{
-					score.add(allele1+allele2);
-					scores.put(markerName, score);
-				}
-			}
-			matrix.setMarkerprofileIds(new ArrayList<>(lines));
-			matrix.setScores(scores);
-		}
-		catch (SQLException e) { e.printStackTrace(); }
-
-		return matrix;
+		builder.append(closeInClause);
 	}
+
+	//	public BrapiAlleleMatrix get(List<String> markerProfileIds, List<String> markerIds, int currentPage, int pageSize)
+//	{
+//		List<Integer> datasetIds = new ArrayList<>();
+//		List<Integer> germinatebaseIds = new ArrayList<>();
+//
+//		for (String profileId : markerProfileIds)
+//		{
+//			String[] tokens = profileId.split("-");
+//			datasetIds.add(Integer.parseInt(tokens[0]));
+//			germinatebaseIds.add(Integer.parseInt(tokens[1]));
+//		}
+//
+//		StringBuilder builder = new StringBuilder(allMarkers);
+//		builder.append("germinatebase_id IN (");
+//		boolean baseIdFirst = true;
+//		for (Integer id : germinatebaseIds)
+//		{
+//			if (baseIdFirst)
+//			{
+//				builder.append("?");
+//				baseIdFirst = false;
+//			}
+//			else
+//			{
+//				builder.append(",");
+//				builder.append("?");
+//			}
+//		}
+//		builder.append(")");
+//
+//		builder.append(" AND datasets.id IN (");
+//		boolean datasetIdFirst = true;
+//		for (Integer id : datasetIds)
+//		{
+//			if (datasetIdFirst)
+//			{
+//				builder.append("?");
+//				datasetIdFirst = false;
+//			}
+//			else
+//			{
+//				builder.append(",");
+//				builder.append("?");
+//			}
+//		}
+//		builder.append(") ");
+//		builder.append("ORDER BY marker_name, dataset_id, germinatebase_id");
+//		builder.append(" LIMIT ?, ?");
+//
+//		String query = builder.toString();
+//
+//		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
+//
+//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+//			 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds, currentPage, pageSize);
+//			 ResultSet resultSet = statement.executeQuery())
+//		{
+//			HashMap<String, List<String>> scores = new HashMap<>();
+//			HashSet<String> lines = new HashSet<>();
+//
+//			while(resultSet.next())
+//			{
+//				String markerName = resultSet.getString("marker_name");
+//				String allele1 = resultSet.getString("allele1");
+//				String allele2 = resultSet.getString("allele2");
+//				String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
+//
+//				lines.add(lineName);
+//
+//				List<String> score = scores.get(markerName);
+//				if (score == null)
+//				{
+//					score = new ArrayList<>();
+//					score.add(allele1+allele2);
+//					scores.put(markerName, score);
+//				}
+//				else
+//				{
+//					score.add(allele1+allele2);
+//					scores.put(markerName, score);
+//				}
+//			}
+//			matrix.setMarkerprofileIds(new ArrayList<>(lines));
+//			matrix.setScores(scores);
+//		}
+//		catch (SQLException e) { e.printStackTrace(); }
+//
+//		return matrix;
+//	}
 
 	private PreparedStatement createByIdStatement(Connection con, String query, List<Integer> germinatebaseIds, List<Integer> datasetIds)
 		throws SQLException
@@ -213,6 +235,27 @@ public class AlleleMatrixDAO
 
 		for (Integer id : datasetIds)
 			statement.setInt(counter++, id);
+
+		return statement;
+	}
+
+	private PreparedStatement createByIdStatement(Connection con, String query, List<Integer> germinatebaseIds, List<Integer> datasetIds, int currentPage, int pageSize)
+		throws SQLException
+	{
+		// Get the basic information on the map
+		PreparedStatement statement = con.prepareStatement(query);
+
+		System.out.println(statement.toString());
+
+		int counter = 1;
+		for (Integer id : germinatebaseIds)
+			statement.setInt(counter++, id);
+
+		for (Integer id : datasetIds)
+			statement.setInt(counter++, id);
+
+		statement.setInt(counter++, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(counter++, pageSize);
 
 		return statement;
 	}

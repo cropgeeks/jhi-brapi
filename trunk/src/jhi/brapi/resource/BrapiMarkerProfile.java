@@ -10,17 +10,6 @@ public class BrapiMarkerProfile
 	private int extractId;
 	private String analysisMethod;
 	private String encoding;
-	private int resultCount;
-
-	public int getResultCount()
-	{
-		return resultCount;
-	}
-
-	public void setResultCount(int resultCount)
-	{
-		this.resultCount = resultCount;
-	}
 
 	public String getMarkerprofileId()
 	{

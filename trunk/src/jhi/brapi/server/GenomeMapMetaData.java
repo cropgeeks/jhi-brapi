@@ -27,12 +27,6 @@ public class GenomeMapMetaData extends BaseBrapiServerResource
 	@Get("json")
 	public BasicResource<BrapiMapMetaData> getJson()
 	{
-		BrapiMapMetaData mapDetail = mapDAO.getById(Integer.parseInt(id));
-
-		List<BrapiMapMetaData> list = new ArrayList<>();
-		if (mapDetail != null)
-			list.add(mapDetail);
-
-		return new BasicResource<BrapiMapMetaData>(list);
+		return mapDAO.getById(id);
 	}
 }

@@ -7,8 +7,9 @@ import java.util.List;
 
 public class MarkerProfileMethodsDAO
 {
-	public List<BrapiMarkerProfileMethod> getAll()
+	public BasicResource<BrapiMarkerProfileMethod> getAll(int currentPage, int pageSize)
 	{
+		BasicResource<BrapiMarkerProfileMethod> result = new BasicResource<>();
 		// To store the Germplasm instances created from the results of the db query before adding them to the
 		// GermplasmList object
 		List<BrapiMarkerProfileMethod> methodsList = new ArrayList<>();
@@ -25,10 +26,11 @@ public class MarkerProfileMethodsDAO
 
 				methodsList.add(method);
 			}
+			result = new BasicResource<>(methodsList, currentPage, methodsList.size());
 
 		}
 		//		catch (SQLException e) { e.printStackTrace(); }
 
-		return methodsList;
+		return result;
 	}
 }
