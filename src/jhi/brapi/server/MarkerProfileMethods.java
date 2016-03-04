@@ -14,11 +14,33 @@ public class MarkerProfileMethods extends BaseBrapiServerResource
 {
 	private MarkerProfileMethodsDAO markerProfileMethodsDAO = new MarkerProfileMethodsDAO();
 
+	@Override
+	public void doInit()
+	{
+		super.doInit();
+
+		try
+		{
+			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		try
+		{
+			this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	@Get("json")
 	public BasicResource<BrapiMarkerProfileMethod> getJson()
 	{
-		List<BrapiMarkerProfileMethod> methodList = markerProfileMethodsDAO.getAll();
-
-		return new BasicResource<BrapiMarkerProfileMethod>(methodList);
+		return markerProfileMethodsDAO.getAll(currentPage, pageSize);
 	}
 }

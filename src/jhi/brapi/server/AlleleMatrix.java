@@ -16,17 +16,41 @@ import org.restlet.resource.*;
  * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the
  * Germplasm for API clients to consume.
  */
-public class AlleleMatrix extends ServerResource
+public class AlleleMatrix extends BaseBrapiServerResource
 {
 	private AlleleMatrixDAO alleleMatrixDAO = new AlleleMatrixDAO();
 
 	// Temporarily included markerProfileDAO for dummy HTML get of BrapiAlleleMatrix
 	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 
+	@Override
+	public void doInit()
+	{
+		super.doInit();
+
+		try
+		{
+			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		try
+		{
+			this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	// Temporary, TODO remove this after testing with large DB to find limits of call
 //	@Get("json")
-//	public BasicResource<BrapiAlleleMatrix> getJson()
-//	{
+	public BasicResource<BrapiAlleleMatrix> getJson()
+	{
 ////		List<String> profileIds = new ArrayList<>();
 ////
 ////		List<BrapiMarkerProfile> list = markerProfileDAO.getAll();
@@ -39,30 +63,30 @@ public class AlleleMatrix extends ServerResource
 //
 //		// Not implemented because we're not parsing the markerprofileDbId params yet
 //
-//		throw new ResourceException(404);
-//	}
-
-	@Get("json")
-	public Representation retrieve()
-	{
-		List<BrapiAlleleMatrix> list = new ArrayList<>();
-//		if (markerIds.isEmpty())
-//		list = alleleMatrixDAO.get(profileIds);
-//		else
-//			matrix = alleleMatrixDAO.get(profileIds, markerIds);
-
-		BasicResource<BrapiAlleleMatrix> br = new BasicResource<BrapiAlleleMatrix>(list);
-
-		return new JacksonRepresentation<>(br);
+		throw new ResourceException(404);
 	}
 
-	@Post("form:html")
-	public Representation post(Representation entity)
+//	@Get("json")
+//	public Representation retrieve()
+//	{
+//		List<BrapiAlleleMatrix> list = new ArrayList<>();
+////		if (markerIds.isEmpty())
+////		list = alleleMatrixDAO.get(profileIds);
+////		else
+////			matrix = alleleMatrixDAO.get(profileIds, markerIds);
+//
+//		BasicResource<BrapiAlleleMatrix> br = new BasicResource<BrapiAlleleMatrix>(list);
+//
+//		return new JacksonRepresentation<>(br);
+//	}
+
+	@Post
+	public JacksonRepresentation post(Representation rep)
 	{
 		List<String> profileIds = new ArrayList<>();
 		List<String> markerIds = new ArrayList<>();
 
-		Form form = new Form(entity);
+		Form form = new Form(rep);
 		for (Parameter parameter : form)
 		{
 			if (parameter.getName().equals("markerprofileDbId"))
@@ -72,14 +96,6 @@ public class AlleleMatrix extends ServerResource
 //				markerIds.add(parameter.getValue());
 		}
 
-		List<BrapiAlleleMatrix> list;
-//		if (markerIds.isEmpty())
-		list = alleleMatrixDAO.get(profileIds);
-//		else
-//			matrix = alleleMatrixDAO.get(profileIds, markerIds);
-
-		BasicResource<BrapiAlleleMatrix> br = new BasicResource<BrapiAlleleMatrix>(list);
-
-		return new JacksonRepresentation<>(br);
+		return new JacksonRepresentation(alleleMatrixDAO.get(profileIds, currentPage, pageSize));
 	}
 }

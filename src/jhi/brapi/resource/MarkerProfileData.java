@@ -8,8 +8,8 @@ import java.util.HashMap;
 public class MarkerProfileData
 {
 	private String markerprofileId;
-	private int germplasmId;
-	private int extractId;
+	private String germplasmId;
+	private String extractId;
 	private String analysisMethod;
 	private String encoding;
 	// Seems to be the best way to have Jackson automatically generate a data array in json with comma separated
@@ -26,22 +26,22 @@ public class MarkerProfileData
 		this.markerprofileId = markerprofileId;
 	}
 
-	public int getGermplasmId()
+	public String getGermplasmId()
 	{
 		return germplasmId;
 	}
 
-	public void setGermplasmId(int germplasmId)
+	public void setGermplasmId(String germplasmId)
 	{
 		this.germplasmId = germplasmId;
 	}
 
-	public int getExtractId()
+	public String getExtractId()
 	{
 		return extractId;
 	}
 
-	public void setExtractId(int extractId)
+	public void setExtractId(String extractId)
 	{
 		this.extractId = extractId;
 	}

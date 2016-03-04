@@ -16,29 +16,51 @@ import java.util.List;
 public class MarkerProfileDAO
 {
 	private final String allMarkers = "select genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
-			"genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
-			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where " +
-			"germinatebase_id=? AND datasets.id=?";
+		"genotypes.germinatebase_id, genotypes.dataset_id, CONCAT(genotypes.dataset_id, '-', genotypes.germinatebase_id) " +
+		"AS markerprofile_id, markers.marker_name from genotypes INNER JOIN markers ON genotypes.marker_id = markers.id " +
+		"INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id=? AND datasets.id=?";
 
-	private final String allMarkerProfiles = "select genotypes.marker_id, genotypes.germinatebase_id, " +
-			"genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
-			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id";
+	private final String allMarkerProfiles = "SELECT DISTINCT markerprofile_id, germinatebase_id FROM (select " +
+		"genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, " +
+		"CONCAT(genotypes.dataset_id, '-', genotypes.germinatebase_id) AS markerprofile_id from genotypes INNER JOIN " +
+		"markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id) AS " +
+		"markerprofiles";
 
+	private final String allMarkerProfilesCount = "SELECT COUNT(DISTINCT markerprofile_id) AS total_count FROM (select " +
+		"genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, " +
+		"CONCAT(genotypes.dataset_id, '-', genotypes.germinatebase_id) AS markerprofile_id from genotypes INNER JOIN " +
+		"markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id) AS " +
+		"markerprofiles";
+
+
+	// No longer used / not in the API... can ressurrect if need be
 	private final String markerCount = "select COUNT(DISTINCT genotypes.marker_id) AS markerCount, " +
 			"genotypes.germinatebase_id, genotypes.dataset_id from genotypes INNER JOIN markers ON genotypes.marker_id = " +
 			"markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id";
 
-	public List<BrapiMarkerProfile> getAll()
+	public BasicResource<BrapiMarkerProfile> getAll(int currentPage, int pageSize)
 	{
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement markerProfileStatement = con.prepareStatement(allMarkerProfiles);
-			 ResultSet resultSet = markerProfileStatement.executeQuery())
-		{
-			return getProfiles(resultSet);
-		}
-		catch (SQLException e) { e.printStackTrace(); }
+		BasicResource<BrapiMarkerProfile> result = new BasicResource<>();
 
-		return null;
+		long totalCount = DatabaseUtils.getTotalCount(allMarkerProfilesCount);
+
+		System.out.println("getAll totalCount: " + totalCount);
+
+		if (totalCount != -1)
+		{
+			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+				 PreparedStatement markerProfileStatement = con.prepareStatement(allMarkerProfiles);
+				 ResultSet resultSet = markerProfileStatement.executeQuery())
+			{
+				result = new BasicResource<>(getProfiles(resultSet), currentPage, totalCount);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return result;
 	}
 
 	/**
@@ -48,8 +70,10 @@ public class MarkerProfileDAO
 	 * @param id	The id of the BrapiMarkerProfile to getJson
 	 * @return		A BrapiMarkerProfile object identified by id (or null if none exists).
 	 */
-	public MarkerProfileData getById(String id)
+	public BasicResource<MarkerProfileData> getById(String id)
 	{
+		BasicResource<MarkerProfileData> result = new BasicResource<>();
+
 		String[] tokens = id.split("-");
 		int datasetId = Integer.parseInt(tokens[0]);
 		int germinatebaseId = Integer.parseInt(tokens[1]);
@@ -58,13 +82,11 @@ public class MarkerProfileDAO
 			 PreparedStatement markerProfileStatement = createByIdStatement(con, allMarkers, germinatebaseId, datasetId);
 			 ResultSet resultSet = markerProfileStatement.executeQuery())
 		{
-			MarkerProfileData profile = getProfile(resultSet);
-
-			return profile;
+			result = new BasicResource<>(getProfile(resultSet));
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
-		return null;
+		return result;
 	}
 
 	private PreparedStatement createByIdStatement(Connection con, String query, int germinatebaseId, int datasetId)
@@ -83,32 +105,18 @@ public class MarkerProfileDAO
 	private List<BrapiMarkerProfile> getProfiles(ResultSet resultSet)
 		throws SQLException
 	{
-		HashMap<String, BrapiMarkerProfile> markerProfiles = new HashMap<>();
-		HashMap<String, Integer> markerProfileCounts = new HashMap<>();
+		List<BrapiMarkerProfile> profiles = new ArrayList<>();
 
 		while (resultSet.next())
 		{
-			String markerprofileId = resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id");
-			String germplasmId = resultSet.getString("germinatebase_id");
-			BrapiMarkerProfile profile = markerProfiles.get(markerprofileId);
-			if (profile == null)
-			{
-				profile = new BrapiMarkerProfile();
-				profile.setMarkerprofileId(markerprofileId);
-				profile.setGermplasmId(germplasmId);
-				markerProfiles.put(markerprofileId, profile);
-				markerProfileCounts.put(markerprofileId, 1);
-				System.out.println();
-			}
-			else
-			{
-				int count = markerProfileCounts.get(markerprofileId);
-				markerProfileCounts.put(markerprofileId, ++count);
-				markerProfiles.get(markerprofileId).setResultCount(count);
-			}
+			BrapiMarkerProfile profile = new BrapiMarkerProfile();
+			profile.setMarkerprofileId(resultSet.getString("markerprofile_id"));
+			profile.setGermplasmId(resultSet.getString("germinatebase_id"));
+
+			profiles.add(profile);
 		}
 
-		return new ArrayList<>(markerProfiles.values());
+		return profiles;
 	}
 
 	// Given a ResultSet generated from the allMarkers query, returns a BrapiMarkerProfile object which has been initialized
@@ -120,54 +128,12 @@ public class MarkerProfileDAO
 		HashMap<String, String> alleles = new HashMap<>();
 		while (resultSet.next())
 		{
-			profile.setGermplasmId(resultSet.getInt("germinatebase_id"));
-			profile.setMarkerprofileId(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
+			profile.setGermplasmId(resultSet.getString("germinatebase_id"));
+			profile.setMarkerprofileId(resultSet.getString("markerprofile_id"));
 			alleles.put(resultSet.getString("marker_name"), resultSet.getString("allele1") + resultSet.getString("allele2"));
 		}
 		profile.setData(alleles);
 
 		return profile;
-	}
-
-	/**
-	 * Return a count of the Markers which are contained within the BrapiMarkerProfile in the form of a MarkerProfileCount.
-	 * Uses the markerCount query defined above to getJson the data from the database.
-	 *
-	 * @param id	The id of the BrapiMarkerProfile for which a count is desired.
-	 * @return		The MarkerProfileCount for the BrapiMarkerProfile with the given id.
-	 */
-	public MarkerProfileCount getCountById(String id)
-	{
-		String[] tokens = id.split("-");
-		int datasetId = Integer.parseInt(tokens[0]);
-		int germinatebaseId = Integer.parseInt(tokens[1]);
-
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement markerProfileStatement = createByIdStatement(con, markerCount, germinatebaseId, datasetId);
-			 ResultSet resultSet = markerProfileStatement.executeQuery())
-		{
-			MarkerProfileCount profile = getProfileCount(resultSet);
-
-			return profile;
-		}
-		catch (SQLException e) { e.printStackTrace(); }
-
-		return null;
-	}
-
-	// Given a ResultSet generated from the markerCount query, returns a MarkerProfileCount object which has been
-	// initialized with the information from the ResultSet
-	private MarkerProfileCount getProfileCount(ResultSet resultSet)
-		throws SQLException
-	{
-		MarkerProfileCount profileCount = new MarkerProfileCount();
-		while (resultSet.next())
-		{
-			profileCount.setMarkerProfileId(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
-			profileCount.setGermplasmId(resultSet.getInt("germinatebase_id"));
-			profileCount.setResultCount(resultSet.getInt("markerCount"));
-		}
-
-		return profileCount;
 	}
 }

@@ -18,12 +18,6 @@ public class BasicResource<T>
 		metadata.setPagination(PaginationUtils.getEmptyPagination());
 	}
 
-	// TODO: kept in current version for compatability with calls in non Germplasm classes... will update other classes in forthcoming commit
-	public BasicResource(List<T> result)
-	{
-		this.result = result;
-	}
-
 	// Should be our default choice for Brapi calls which paginate over a list of entries
 	public BasicResource(List<T> result, int currentPage, long totalCount)
 	{

@@ -22,13 +22,8 @@ public class MarkerProfileServerResource extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public MarkerProfileData getJson()
+	public BasicResource<MarkerProfileData> getJson()
 	{
-		MarkerProfileData profile = markerProfileDAO.getById(id);
-
-		if (profile != null)
-			return profile;
-
-		throw new ResourceException(404);
+		return markerProfileDAO.getById(id);
 	}
 }

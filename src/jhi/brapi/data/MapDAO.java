@@ -18,7 +18,9 @@ public class MapDAO
 	// mapdefinitions table so we can get a count of markers (by marker_id) and chromosomes.
 	private final String mapsQuery = "SELECT maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
 			"mapdefinitions.marker_id) AS markercount, COUNT(DISTINCT mapdefinitions.chromosome) AS chromosomeCount " +
-			"from maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id";
+			"from maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id LIMIT ?, ?";
+
+	private final String mapsCountQuery = "SELECT COUNT(1) AS total_count from maps";
 
 	private final String detailQuery = "SELECT maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
 			"mapdefinitions.marker_id) AS markercount, COUNT(DISTINCT mapdefinitions.chromosome) AS chromosomeCount from " +
@@ -40,26 +42,37 @@ public class MapDAO
 			"AS number_markers FROM mapdefinitions WHERE map_id=? GROUP BY chromosome";
 
 	private final String mapMarkersQuery = "SELECT map_id, chromosome, definition_start, marker_id, markers.marker_name" +
-			" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=?";
+			" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=? LIMIT ?, ?";
+
+	private final String mapMarkersCountQuery = "SELECT COUNT(1) AS total_count, map_id, chromosome, definition_start, marker_id, markers.marker_name" +
+		" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=?";
 
 	/**
 	 * Queries the database (using mapQuery defined above) for the complete list of Maps which the database holds.
 	 *
 	 * @return A MapList object which is a wrapper around a List of BrapiGenomeMap objects.
 	 */
-	public List<BrapiGenomeMap> getAll()
+	public BasicResource<BrapiGenomeMap> getAll(int currentPage, int pageSize)
 	{
-		List<BrapiGenomeMap> maps = new ArrayList<>();
+		BasicResource<BrapiGenomeMap> result = new BasicResource<>();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement statement = con.prepareStatement(mapsQuery);
-			 ResultSet resultSet = statement.executeQuery())
+		long totalCount = DatabaseUtils.getTotalCount(mapsCountQuery);
+
+		if (totalCount != -1)
 		{
-			maps = getMapsFromResultSet(resultSet);
+			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, mapsQuery, currentPage, pageSize);
+				 ResultSet resultSet = statement.executeQuery())
+			{
+				result = new BasicResource<BrapiGenomeMap>(getMapsFromResultSet(resultSet), currentPage, totalCount);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
-		catch (SQLException e) { e.printStackTrace(); }
 
-		return maps;
+		return result;
 	}
 
 	// Takes a resultSet and iterates over it adding each map object in turn to a list of BrapiGenomeMap objects, which is then
@@ -88,38 +101,16 @@ public class MapDAO
 	 * by the id given and the entries (MapEntry objects) which make up the detail of the map.
 	 *
 	 * @param id	The id of the
-	 * @return 		A BrapiMapMetaData object which itself holds a List of MapEntry objects. Or null if no BrapiMapMetaData exists for
- the supplied id.
+	 * @return 		A BrapiMapMetaData object which itself holds a List of MapEntry objects. Or null if no
+	 * 				BrapiMapMetaData exists for the supplied id.
 	 */
-	//	@Override
-	//	public BrapiMapMetaData getById(int id)
-	//	{
-	//		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
-	//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-	//			 PreparedStatement mapStatement = createByIdStatement(con, detailQuery, id);
-	//			 ResultSet resultSet = mapStatement.executeQuery())
-	//		{
-	//			mapDetail = getMapDetailFromResultSet(resultSet);
-	//		}
-	//		catch (SQLException e) { e.printStackTrace(); }
-	//
-	//		// Get the list of entries for the map (effectively the markers)
-	//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-	//			 PreparedStatement entriesStatement = createByIdStatement(con, entriesQuery, id);
-	//			 ResultSet resultSet = entriesStatement.executeQuery())
-	//		{
-	//				List<MapEntry> mapEntries = getMapEntriesFromResultSet(resultSet);
-	//				mapDetail.setEntries(mapEntries);
-	//		}
-	//		catch (SQLException e) { e.printStackTrace(); }
-	//
-	//		return mapDetail;
-	//	}
-	public BrapiMapMetaData getById(int id)
+	public BasicResource<BrapiMapMetaData> getById(String id)
 	{
+		BasicResource<BrapiMapMetaData> result = new BasicResource<>();
 		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
+
 		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement mapStatement = createByIdStatement(con, detailQuery, id);
+			 PreparedStatement mapStatement = DatabaseUtils.createByIdStatement(con, detailQuery, id);
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
 			mapDetail = getMapDetailFromResultSet(resultSet);
@@ -127,32 +118,25 @@ public class MapDAO
 		catch (SQLException e) { e.printStackTrace(); }
 
 		// Quit now if we didn't find a map with the given ID
-		if (mapDetail == null)
-			return null;
-
-		// Get the list of entries for the map (effectively the markers)
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement entriesStatement = createByIdStatement(con, linkageGroupQuery, id);
-			 ResultSet resultSet = entriesStatement.executeQuery())
+		if (mapDetail != null)
 		{
-			List<LinkageGroup> linkageGroups = getLinkageGroupsFromResultSet(resultSet);
-			mapDetail.setLinkageGroups(linkageGroups);
-			//			List<MapEntry> mapEntries = getMapEntriesFromResultSet(resultSet);
-			//			mapDetail.setEntries(mapEntries);
+			// Get the list of entries for the map (effectively the markers)
+			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+				 PreparedStatement entriesStatement = DatabaseUtils.createByIdStatement(con, linkageGroupQuery, id);
+				 ResultSet resultSet = entriesStatement.executeQuery())
+			{
+				List<LinkageGroup> linkageGroups = getLinkageGroupsFromResultSet(resultSet);
+				mapDetail.setLinkageGroups(linkageGroups);
+
+				result = new BasicResource<BrapiMapMetaData>(mapDetail);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
-		catch (SQLException e) { e.printStackTrace(); }
 
-		return mapDetail;
-	}
-
-	private PreparedStatement createByIdStatement(Connection con, String query, int id)
-		throws SQLException
-	{
-		PreparedStatement statement = con.prepareStatement(query);
-		// Get the basic information on the map
-		statement.setInt(1, id);
-
-		return statement;
+		return result;
 	}
 
 	// Takes a ResultSet which should represent the result of the detailQuery defined above and returns a new BrapiMapMetaData
@@ -201,8 +185,8 @@ public class MapDAO
 	 * by the id given and the entries (MapEntry objects) which make up the detail of the map.
 	 *
 	 * @param id	The id of the
-	 * @return 		A BrapiMapMetaData object which itself holds a List of MapEntry objects. Or null if no BrapiMapMetaData exists for
- the supplied id.
+	 * @return 		A BrapiMapMetaData object which itself holds a List of MapEntry objects. Or null if no
+	 * 				BrapiMapMetaData exists for the supplied id.
 	 */
 	public BrapiMapMetaData getByIdAndChromosome(int id, String chromosome)
 	{
@@ -241,22 +225,30 @@ public class MapDAO
 		return createByChromStatement(con, entriesByChromQuery, id, chromosome);
 	}
 
-	public ArrayList<BrapiMarker> getByIdMarkers(int id, String[] chromosomes)
+	public BasicResource<BrapiMarker> getByIdMarkers(String id, String[] chromosomes, int currentPage, int pageSize)
 	{
-		ArrayList<BrapiMarker> list = new ArrayList<>();
+		BasicResource<BrapiMarker> result = new BasicResource<>();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes);
-			 ResultSet resultSet = mapStatement.executeQuery())
+		long totalCount = DatabaseUtils.getTotalCountById(mapMarkersCountQuery, id);
+
+		if (totalCount != -1)
 		{
-			list = getMapMarkersListFromResultSet(resultSet);
+			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+				 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
+				 ResultSet resultSet = mapStatement.executeQuery())
+			{
+				result = new BasicResource<BrapiMarker>(getMapMarkersListFromResultSet(resultSet), currentPage, totalCount);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
-		catch (SQLException e) { e.printStackTrace(); }
 
-		return list;
+		return result;
 	}
 
-	private PreparedStatement createByIdStatementMarkers(Connection con, String query, int id, String[] chromosomes)
+	private PreparedStatement createByIdStatementMarkers(Connection con, String query, String id, String[] chromosomes, int currentPage, int pageSize)
 		throws SQLException
 	{
 		// Tweak the statement to include optional chromosome filters
@@ -270,9 +262,16 @@ public class MapDAO
 
 		PreparedStatement statement = con.prepareStatement(query);
 		// Get the basic information on the map
-		statement.setInt(1, id);
+		statement.setString(1, id);
+		int current = 2;
 		for (int i = 0; i < chromosomes.length; i++)
-			statement.setString(i+2, chromosomes[i]);
+		{
+			statement.setString(i + 2, chromosomes[i]);
+			current = i+2;
+		}
+
+		statement.setInt(current+1, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(current+2, pageSize);
 
 		return statement;
 	}

@@ -24,14 +24,30 @@ public class GenomeMapMarkerData extends BaseBrapiServerResource
 		super.doInit();
 		id = (String)getRequestAttributes().get("id");
 		linkageGroups = getLinkageGroups(getQueryValue("linkageGroupIdList"));
+
+		try
+		{
+			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		try
+		{
+			this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Get("json")
 	public BasicResource<BrapiMarker> getJson()
 	{
-		List<BrapiMarker> mapMarkers = mapDAO.getByIdMarkers(Integer.parseInt(id), linkageGroups);
-
-		return new BasicResource<BrapiMarker>(mapMarkers);
+		return mapDAO.getByIdMarkers(id, linkageGroups, currentPage, pageSize);
 	}
 
 	private String[] getLinkageGroups(String linkageGroupIdList)
