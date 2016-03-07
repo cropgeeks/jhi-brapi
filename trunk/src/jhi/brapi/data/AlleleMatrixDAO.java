@@ -101,7 +101,7 @@ public class AlleleMatrixDAO
 				matrix.setScores(scores);
 
 				list.add(matrix);
-				result = new BasicResource<>(matrix, pageSize, currentPage, totalCount);
+				result = new BasicResource<BrapiAlleleMatrix>(matrix, currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{

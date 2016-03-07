@@ -19,10 +19,10 @@ public class BasicResource<T>
 	}
 
 	// Should be our default choice for Brapi calls which paginate over a list of entries
-	public BasicResource(List<T> result, int currentPage, long totalCount)
+	public BasicResource(List<T> result, int currentPage, int pageSize, long totalCount)
 	{
 		this.result = result;
-		metadata.setPagination(new Pagination(result.size(), currentPage, totalCount));
+		metadata.setPagination(new Pagination(result.size(), currentPage, totalCount, pageSize));
 	}
 
 	// Should be our default choice for Brapi calls which "paginate" over a single result
@@ -33,10 +33,10 @@ public class BasicResource<T>
 	}
 
 	// Should be our default choice for Brapi calls which paginate over a subset of a resource
-	public BasicResource(T result, int pageSize, int currentPage, long totalCount)
+	public BasicResource(T result, int currentPage, int pageSize, long totalCount)
 	{
 		this.result = Collections.singletonList(result);
-		metadata.setPagination(new Pagination(pageSize, currentPage, totalCount));
+		metadata.setPagination(new Pagination(pageSize, currentPage, totalCount, pageSize));
 	}
 
 	public Metadata getMetadata()

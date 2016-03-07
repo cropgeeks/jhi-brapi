@@ -14,12 +14,14 @@ public class Pagination
 	{
 	}
 
-	public Pagination(int pageSize, int currentPage, long totalCount)
+	public Pagination(int pageSize, int currentPage, long totalCount, int desiredPageSize)
 	{
 		this.pageSize = pageSize;
 		this.currentPage = currentPage;
 		this.totalCount = totalCount;
-		this.totalPages = (int)Math.ceil(totalCount/(float)pageSize);
+		this.totalPages = (int)Math.ceil(totalCount/(float) desiredPageSize);
+
+		System.out.println(this);
 	}
 
 	public int getPageSize()
@@ -66,10 +68,10 @@ public class Pagination
 	public String toString()
 	{
 		return "Pagination{" +
-				"pageSize=" + pageSize +
-				", currentPage=" + currentPage +
-				", totalCount=" + totalCount +
-				", totalPages=" + totalPages +
-				'}';
+			"pageSize=" + pageSize +
+			", currentPage=" + currentPage +
+			", totalCount=" + totalCount +
+			", totalPages=" + totalPages +
+			'}';
 	}
 }
