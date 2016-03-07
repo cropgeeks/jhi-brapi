@@ -26,7 +26,7 @@ public class MarkerProfileMethodsDAO
 
 				methodsList.add(method);
 			}
-			result = new BasicResource<>(methodsList, currentPage, methodsList.size());
+			result = new BasicResource<>(methodsList, currentPage, pageSize, methodsList.size());
 
 		}
 		//		catch (SQLException e) { e.printStackTrace(); }

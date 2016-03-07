@@ -24,7 +24,7 @@ public class MarkerProfileDAO
 		"genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, " +
 		"CONCAT(genotypes.dataset_id, '-', genotypes.germinatebase_id) AS markerprofile_id from genotypes INNER JOIN " +
 		"markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id) AS " +
-		"markerprofiles";
+		"markerprofiles LIMIT ?, ?";
 
 	private final String allMarkerProfilesCount = "SELECT COUNT(DISTINCT markerprofile_id) AS total_count FROM (select " +
 		"genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, " +
@@ -44,15 +44,13 @@ public class MarkerProfileDAO
 
 		long totalCount = DatabaseUtils.getTotalCount(allMarkerProfilesCount);
 
-		System.out.println("getAll totalCount: " + totalCount);
-
 		if (totalCount != -1)
 		{
 			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-				 PreparedStatement markerProfileStatement = con.prepareStatement(allMarkerProfiles);
+				 PreparedStatement markerProfileStatement = DatabaseUtils.createLimitStatement(con, allMarkerProfiles, currentPage, pageSize);
 				 ResultSet resultSet = markerProfileStatement.executeQuery())
 			{
-				result = new BasicResource<>(getProfiles(resultSet), currentPage, totalCount);
+				result = new BasicResource<>(getProfiles(resultSet), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{

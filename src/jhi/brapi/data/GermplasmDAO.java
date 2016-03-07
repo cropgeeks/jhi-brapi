@@ -58,7 +58,7 @@ public class GermplasmDAO
 				System.out.println("List size: " + list.size());
 
 				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-				result = new BasicResource<BrapiGermplasm>(list, currentPage, totalCount);
+				result = new BasicResource<BrapiGermplasm>(list, currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -191,7 +191,7 @@ public class GermplasmDAO
 
 			list.add(profiles);
 
-			result = new BasicResource<BrapiGermplasmMarkerProfiles>(profiles, list.size(), currentPage, totalCount);
+			result = new BasicResource<BrapiGermplasmMarkerProfiles>(profiles, currentPage, list.size(), totalCount);
 		}
 		catch (SQLException e)
 		{
@@ -257,7 +257,7 @@ public class GermplasmDAO
 					resultGermplasm.add(getBrapiGermplasm(resultSet));
 
 					// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-					wrappedList = new BasicResource<BrapiGermplasm>(resultGermplasm, currentPage, totalCount);
+					wrappedList = new BasicResource<BrapiGermplasm>(resultGermplasm, currentPage, pageSize, totalCount);
 				}
 			}
 			catch (SQLException e)

@@ -64,7 +64,7 @@ public class MapDAO
 				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, mapsQuery, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
-				result = new BasicResource<BrapiGenomeMap>(getMapsFromResultSet(resultSet), currentPage, totalCount);
+				result = new BasicResource<BrapiGenomeMap>(getMapsFromResultSet(resultSet), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -237,7 +237,7 @@ public class MapDAO
 				 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
 				 ResultSet resultSet = mapStatement.executeQuery())
 			{
-				result = new BasicResource<BrapiMarker>(getMapMarkersListFromResultSet(resultSet), currentPage, totalCount);
+				result = new BasicResource<BrapiMarker>(getMapMarkersListFromResultSet(resultSet), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -270,8 +270,8 @@ public class MapDAO
 			current = i+2;
 		}
 
-		statement.setInt(current+1, PaginationUtils.getLowLimit(currentPage, pageSize));
-		statement.setInt(current+2, pageSize);
+		statement.setInt(current++, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(current++, pageSize);
 
 		return statement;
 	}
