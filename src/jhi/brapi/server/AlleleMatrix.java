@@ -23,30 +23,6 @@ public class AlleleMatrix extends BaseBrapiServerResource
 	// Temporarily included markerProfileDAO for dummy HTML get of BrapiAlleleMatrix
 	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 
-	@Override
-	public void doInit()
-	{
-		super.doInit();
-
-		try
-		{
-			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		try
-		{
-			this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-
 	// Temporary, TODO remove this after testing with large DB to find limits of call
 //	@Get("json")
 	public BasicResource<BrapiAlleleMatrix> getJson()

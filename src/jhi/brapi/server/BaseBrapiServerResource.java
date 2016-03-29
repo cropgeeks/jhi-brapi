@@ -24,6 +24,30 @@ public abstract class BaseBrapiServerResource<T> extends ServerResource
 	protected int pageSize = 5;//Integer.MAX_VALUE;
 	protected int currentPage = 0;
 
+	@Override
+	public void doInit()
+	{
+		super.doInit();
+
+		try
+		{
+			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		try
+		{
+			this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	@Get("json")
 	public abstract T getJson();
 
