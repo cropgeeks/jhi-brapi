@@ -27,24 +27,6 @@ public class Germplasm extends BaseBrapiServerResource
 
 		this.name = getQueryValue(PARAM_NAME);
 		this.matchingMethod = BrapiGermplasm.MatchingMethod.getValue(getQueryValue(PARAM_MATCHING_METHOD));
-
-		try
-		{
-			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		try
-		{
-			this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	@Get("json")

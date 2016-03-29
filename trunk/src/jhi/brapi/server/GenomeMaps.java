@@ -16,30 +16,6 @@ public class GenomeMaps extends BaseBrapiServerResource
 {
 	private MapDAO mapDAO = new MapDAO();
 
-	@Override
-	public void doInit()
-	{
-		super.doInit();
-
-		try
-		{
-			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		try
-		{
-			this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-
 	@Get("json")
 	public BasicResource<BrapiGenomeMap> getJson()
 	{
