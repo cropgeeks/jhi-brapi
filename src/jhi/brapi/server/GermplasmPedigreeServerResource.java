@@ -20,29 +20,17 @@ public class GermplasmPedigreeServerResource extends BaseBrapiServerResource
 	// The notation used to generate the pedigree string
 	private PedigreeNotation notation;
 
-	@Override
 	public void doInit()
 	{
 		super.doInit();
-		this.id = (String) getRequestAttributes().get("id");
+		this.id = (String)getRequestAttributes().get("id");
 		this.notation = PedigreeNotation.getValue(getQueryValue("notation"));
 	}
 
 	@Get("json")
-	public Pedigree getJson()
+	public BasicResource<BrapiGermplasmPedigree> getJson()
 	{
-		Pedigree pedigree = germplasmDAO.getPedigreeById(Integer.parseInt(id));
-
-		if (pedigree != null)
-			return pedigree;
-
-		throw new ResourceException(404);
-	}
-
-	@Put
-	public void store(Representation germplasm)
-	{
-		throw new UnsupportedOperationException("Not implemented yet");
+		return germplasmDAO.getPedigreeById(id);
 	}
 
 	public enum PedigreeNotation

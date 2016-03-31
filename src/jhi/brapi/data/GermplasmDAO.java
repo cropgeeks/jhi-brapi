@@ -34,6 +34,8 @@ public class GermplasmDAO
 
 	private final String markerProfileCountIdQuery = "SELECT COUNT(DISTINCT(dataset_id)) AS total_count, germinatebase_id from genotypes where germinatebase_id = ?";
 
+	private final String pedigreeByIdQuery = "SELECT p1.germinatebase_id, p1.parent_id as 'left_parent', p2.parent_id as 'right_parent', definition , name FROM pedigrees p1 INNER JOIN pedigrees p2 ON p1.germinatebase_id = p2.germinatebase_id and p1.pedigreedescription_id = 1 and p2.pedigreedescription_id = 2 JOIN germinatebase ON p1.germinatebase_id = germinatebase.id JOIN pedigreedefinitions ON p1.germinatebase_id WHERE p1.germinatebase_id = ?";
+
 	public BasicResource<BrapiGermplasm> getAll(int currentPage, int pageSize)
 	{
 		// Create empty BasicResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
@@ -201,12 +203,6 @@ public class GermplasmDAO
 		return result;
 	}
 
-	public Pedigree getPedigreeById(int id)
-	{
-		// Do black magic here, as we don't have the pedigree database structure yet
-		return null;
-	}
-
 	public static List<String> getSynonyms(ResultSet resultSet)
 			throws SQLException
 	{
@@ -316,5 +312,40 @@ public class GermplasmDAO
 		statement.setInt(5, pageSize);
 
 		return statement;
+	}
+
+	public BasicResource<BrapiGermplasmPedigree> getPedigreeById(String id)
+	{
+		BasicResource<BrapiGermplasmPedigree> wrappedResult = new BasicResource<>();
+
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, pedigreeByIdQuery, id);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			if (resultSet.first())
+			{
+				// Set the Germplasm bean using the data returned from the database
+				wrappedResult = new BasicResource<>(getBrapiGermplasmPedigree(resultSet));
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return wrappedResult;
+	}
+
+	private BrapiGermplasmPedigree getBrapiGermplasmPedigree(ResultSet resultSet)
+		throws SQLException
+	{
+		BrapiGermplasmPedigree pedigree = new BrapiGermplasmPedigree();
+		pedigree.setGermplasmDbId(resultSet.getString("p1.germinatebase_id"));
+		pedigree.setDefaultDisplayName(resultSet.getString("name"));
+		pedigree.setPedigree(resultSet.getString("definition"));
+		pedigree.setParent1Id(resultSet.getString("left_parent"));
+		pedigree.setParent2Id(resultSet.getString("right_parent"));
+
+		return pedigree;
 	}
 }
