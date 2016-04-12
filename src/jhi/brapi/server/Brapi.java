@@ -12,6 +12,8 @@ import org.restlet.service.*;
  */
 public class Brapi extends Application
 {
+	static TokenManager sessions = new TokenManager();
+
 	public Brapi()
 	{
 		setName("Germinate 3 API");
@@ -64,11 +66,18 @@ public class Brapi extends Application
 		router.attach("/traits/{id}/", TraitServerResource.class);
 		router.attach("/allelematrix", AlleleMatrix.class); // FJ
 		router.attach("/allelematrix/", AlleleMatrix.class);
+		router.attach("/token", TokenAuthenticator.class);
+		router.attach("/token/", TokenAuthenticator.class);
 
 //		router.attach("/authorize", AuthorizationServerResource.class);
 //		router.attach(HttpOAuthHelper.getAuthPage(getContext()),
 //			AuthPageServerResource.class);
 
 		return corsFilter;
+	}
+
+	static TokenManager getSessions()
+	{
+		return sessions;
 	}
 }
