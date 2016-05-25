@@ -30,9 +30,9 @@ public class Germplasm extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<BrapiGermplasm> getJson()
+	public BasicResource<DataResult<BrapiGermplasm>> getJson()
 	{
-		BasicResource<BrapiGermplasm> result;
+		BasicResource<DataResult<BrapiGermplasm>> result;
 		if (name == null || name.equals(""))
 			result = germplasmDAO.getAll(currentPage, pageSize);
 		else

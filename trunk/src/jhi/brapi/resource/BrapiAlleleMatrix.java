@@ -7,27 +7,27 @@ import java.util.*;
  */
 public class BrapiAlleleMatrix
 {
-	private List<String> markerprofileIds;
+	private List<String> markerprofileDbIds;
 
-	private HashMap<String, List<String>> scores;
+	private HashMap<String, List<String>> data;
 
-	public List<String> getMarkerprofileIds()
+	public List<String> getMarkerprofileDbIds()
 	{
-		return markerprofileIds;
+		return markerprofileDbIds;
 	}
 
-	public void setMarkerprofileIds(List<String> markerprofileIds)
+	public void setMarkerprofileDbIds(List<String> markerprofileDbIds)
 	{
-		this.markerprofileIds = markerprofileIds;
+		this.markerprofileDbIds = markerprofileDbIds;
 	}
 
-	public HashMap<String, List<String>> getScores()
+	public HashMap<String, List<String>> getData()
 	{
-		return scores;
+		return data;
 	}
 
-	public void setScores(HashMap<String, List<String>> scores)
+	public void setData(HashMap<String, List<String>> data)
 	{
-		this.scores = scores;
+		this.data = data;
 	}
 }

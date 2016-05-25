@@ -52,9 +52,9 @@ public class MapDAO
 	 *
 	 * @return A MapList object which is a wrapper around a List of BrapiGenomeMap objects.
 	 */
-	public BasicResource<BrapiGenomeMap> getAll(int currentPage, int pageSize)
+	public BasicResource<DataResult<BrapiGenomeMap>> getAll(int currentPage, int pageSize)
 	{
-		BasicResource<BrapiGenomeMap> result = new BasicResource<>();
+		BasicResource<DataResult<BrapiGenomeMap>> result = new BasicResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCount(mapsCountQuery);
 
@@ -64,7 +64,7 @@ public class MapDAO
 				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, mapsQuery, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
-				result = new BasicResource<BrapiGenomeMap>(getMapsFromResultSet(resultSet), currentPage, pageSize, totalCount);
+				result = new BasicResource<DataResult<BrapiGenomeMap>>(new DataResult<>(getMapsFromResultSet(resultSet)), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -85,7 +85,7 @@ public class MapDAO
 		while (resultSet.next())
 		{
 			BrapiGenomeMap map = new BrapiGenomeMap();
-			map.setMapId(resultSet.getString("id"));
+			map.setMapId(resultSet.getInt("id"));
 			map.setName(resultSet.getString("description"));
 			map.setPublishedDate(resultSet.getDate("created_on"));
 			map.setLinkageGroupCount(resultSet.getInt("chromosomeCount"));
@@ -225,9 +225,9 @@ public class MapDAO
 		return createByChromStatement(con, entriesByChromQuery, id, chromosome);
 	}
 
-	public BasicResource<BrapiMarker> getByIdMarkers(String id, String[] chromosomes, int currentPage, int pageSize)
+	public BasicResource<DataResult<BrapiMarker>> getByIdMarkers(String id, String[] chromosomes, int currentPage, int pageSize)
 	{
-		BasicResource<BrapiMarker> result = new BasicResource<>();
+		BasicResource<DataResult<BrapiMarker>> result = new BasicResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCountById(mapMarkersCountQuery, id);
 
@@ -237,7 +237,7 @@ public class MapDAO
 				 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
 				 ResultSet resultSet = mapStatement.executeQuery())
 			{
-				result = new BasicResource<BrapiMarker>(getMapMarkersListFromResultSet(resultSet), currentPage, pageSize, totalCount);
+				result = new BasicResource<DataResult<BrapiMarker>>(new DataResult(getMapMarkersListFromResultSet(resultSet)), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{

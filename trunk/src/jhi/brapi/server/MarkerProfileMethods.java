@@ -15,7 +15,7 @@ public class MarkerProfileMethods extends BaseBrapiServerResource
 	private MarkerProfileMethodsDAO markerProfileMethodsDAO = new MarkerProfileMethodsDAO();
 
 	@Get("json")
-	public BasicResource<BrapiMarkerProfileMethod> getJson()
+	public BasicResource<DataResult<BrapiMarkerProfileMethod>> getJson()
 	{
 		return markerProfileMethodsDAO.getAll(currentPage, pageSize);
 	}
