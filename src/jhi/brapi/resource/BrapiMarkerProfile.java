@@ -5,40 +5,40 @@ package jhi.brapi.resource;
  */
 public class BrapiMarkerProfile
 {
-	private String markerprofileId;
-	private String germplasmId;
-	private int extractId;
+	private String markerProfileDbId;
+	private int germplasmDbId;
+	private int extractDbId;
 	private String analysisMethod;
-	private String encoding;
+	private int resultCount;
 
-	public String getMarkerprofileId()
+	public String getMarkerProfileDbId()
 	{
-		return markerprofileId;
+		return markerProfileDbId;
 	}
 
-	public void setMarkerprofileId(String markerprofileId)
+	public void setMarkerProfileDbId(String markerProfileDbId)
 	{
-		this.markerprofileId = markerprofileId;
+		this.markerProfileDbId = markerProfileDbId;
 	}
 
-	public String getGermplasmId()
+	public int getGermplasmDbId()
 	{
-		return germplasmId;
+		return germplasmDbId;
 	}
 
-	public void setGermplasmId(String germplasmId)
+	public void setGermplasmDbId(int germplasmDbId)
 	{
-		this.germplasmId = germplasmId;
+		this.germplasmDbId = germplasmDbId;
 	}
 
-	public int getExtractId()
+	public int getExtractDbId()
 	{
-		return extractId;
+		return extractDbId;
 	}
 
-	public void setExtractId(int extractId)
+	public void setExtractDbId(int extractDbId)
 	{
-		this.extractId = extractId;
+		this.extractDbId = extractDbId;
 	}
 
 	public String getAnalysisMethod()
@@ -51,25 +51,25 @@ public class BrapiMarkerProfile
 		this.analysisMethod = analysisMethod;
 	}
 
-	public String getEncoding()
+	public int getResultCount()
 	{
-		return encoding;
+		return resultCount;
 	}
 
-	public void setEncoding(String encoding)
+	public void setResultCount(int resultCount)
 	{
-		this.encoding = encoding;
+		this.resultCount = resultCount;
 	}
 
 	@Override
 	public String toString()
 	{
 		return "MarkerProfile{" +
-			"markerprofileId=" + markerprofileId +
-			", germplasmId=" + germplasmId +
-			", extractId=" + extractId +
+			"markerProfileDbId=" + markerProfileDbId +
+			", germplasmDbId=" + germplasmDbId +
+			", extractDbId=" + extractDbId +
 			", analysisMethod='" + analysisMethod + '\'' +
-			", encoding='" + encoding + '\'' +
+			", resultCount='" + resultCount + '\'' +
 			'}';
 	}
 }

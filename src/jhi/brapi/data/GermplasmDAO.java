@@ -36,11 +36,11 @@ public class GermplasmDAO
 
 	private final String pedigreeByIdQuery = "SELECT p1.germinatebase_id, p1.parent_id as 'left_parent', p2.parent_id as 'right_parent', definition , name FROM pedigrees p1 INNER JOIN pedigrees p2 ON p1.germinatebase_id = p2.germinatebase_id and p1.pedigreedescription_id = 1 and p2.pedigreedescription_id = 2 JOIN germinatebase ON p1.germinatebase_id = germinatebase.id JOIN pedigreedefinitions ON p1.germinatebase_id WHERE p1.germinatebase_id = ?";
 
-	public BasicResource<BrapiGermplasm> getAll(int currentPage, int pageSize)
+	public BasicResource<DataResult<BrapiGermplasm>> getAll(int currentPage, int pageSize)
 	{
 		// Create empty BasicResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
 		// this is what's returned
-		BasicResource<BrapiGermplasm> result = new BasicResource<>();
+		BasicResource<DataResult<BrapiGermplasm>> result = new BasicResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCount(getCountLines);
 
@@ -60,7 +60,7 @@ public class GermplasmDAO
 				System.out.println("List size: " + list.size());
 
 				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-				result = new BasicResource<BrapiGermplasm>(list, currentPage, pageSize, totalCount);
+				result = new BasicResource<DataResult<BrapiGermplasm>>(new DataResult(list), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -219,10 +219,10 @@ public class GermplasmDAO
 		return synonyms;
 	}
 
-	public BasicResource<BrapiGermplasm> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
+	public BasicResource<DataResult<BrapiGermplasm>> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
 	{
 		List<BrapiGermplasm> resultGermplasm = new ArrayList<>();
-		BasicResource<BrapiGermplasm> wrappedList = new BasicResource<>();
+		BasicResource<DataResult<BrapiGermplasm>> wrappedList = new BasicResource<>();
 
 		String countQuery;
 		String getQuery;
@@ -253,7 +253,7 @@ public class GermplasmDAO
 					resultGermplasm.add(getBrapiGermplasm(resultSet));
 
 					// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-					wrappedList = new BasicResource<BrapiGermplasm>(resultGermplasm, currentPage, pageSize, totalCount);
+					wrappedList = new BasicResource<DataResult<BrapiGermplasm>>(new DataResult(resultGermplasm), currentPage, pageSize, totalCount);
 				}
 			}
 			catch (SQLException e)

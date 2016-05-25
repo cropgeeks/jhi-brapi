@@ -65,8 +65,6 @@ public class AlleleMatrixDAO
 
 			String query = builder.toString();
 
-			List<BrapiAlleleMatrix> list = new ArrayList<>();
-
 			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
 				 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
@@ -97,10 +95,9 @@ public class AlleleMatrixDAO
 						scores.put(markerName, score);
 					}
 				}
-				matrix.setMarkerprofileIds(new ArrayList<>(lines));
-				matrix.setScores(scores);
+				matrix.setMarkerprofileDbIds(new ArrayList<>(lines));
+				matrix.setData(scores);
 
-				list.add(matrix);
 				result = new BasicResource<BrapiAlleleMatrix>(matrix, currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
@@ -213,7 +210,7 @@ public class AlleleMatrixDAO
 //					scores.put(markerName, score);
 //				}
 //			}
-//			matrix.setMarkerprofileIds(new ArrayList<>(lines));
+//			matrix.setMarkerprofileDbIds(new ArrayList<>(lines));
 //			matrix.setScores(scores);
 //		}
 //		catch (SQLException e) { e.printStackTrace(); }

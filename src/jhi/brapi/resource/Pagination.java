@@ -21,7 +21,7 @@ public class Pagination
 		this.totalCount = totalCount;
 		this.totalPages = (int)Math.ceil(totalCount/(float) desiredPageSize);
 
-		System.out.println(this);
+//		System.out.println(this);
 	}
 
 	public int getPageSize()

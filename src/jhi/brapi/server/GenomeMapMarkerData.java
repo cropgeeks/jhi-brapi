@@ -27,7 +27,7 @@ public class GenomeMapMarkerData extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<BrapiMarker> getJson()
+	public BasicResource<DataResult<BrapiMarker>> getJson()
 	{
 		return mapDAO.getByIdMarkers(id, linkageGroups, currentPage, pageSize);
 	}

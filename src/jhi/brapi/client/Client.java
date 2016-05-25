@@ -58,9 +58,9 @@ public class Client
 		BasicResource<BrapiGenomeMap> br = new ObjectMapper().convertValue(hashMap,
 			new TypeReference<BasicResource<BrapiGenomeMap>>() {});
 		
-		List<BrapiGenomeMap> maps = br.getResult();
-
-		System.out.println(maps);
+//		List<BrapiGenomeMap> maps = br.getResult();
+//
+//		System.out.println(maps);
 	}
 
 	private void testMap()

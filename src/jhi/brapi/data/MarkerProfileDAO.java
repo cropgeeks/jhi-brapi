@@ -38,9 +38,9 @@ public class MarkerProfileDAO
 			"genotypes.germinatebase_id, genotypes.dataset_id from genotypes INNER JOIN markers ON genotypes.marker_id = " +
 			"markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id";
 
-	public BasicResource<BrapiMarkerProfile> getAll(int currentPage, int pageSize)
+	public BasicResource<DataResult<BrapiMarkerProfile>> getAll(int currentPage, int pageSize)
 	{
-		BasicResource<BrapiMarkerProfile> result = new BasicResource<>();
+		BasicResource<DataResult<BrapiMarkerProfile>> result = new BasicResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCount(allMarkerProfilesCount);
 
@@ -50,7 +50,7 @@ public class MarkerProfileDAO
 				 PreparedStatement markerProfileStatement = DatabaseUtils.createLimitStatement(con, allMarkerProfiles, currentPage, pageSize);
 				 ResultSet resultSet = markerProfileStatement.executeQuery())
 			{
-				result = new BasicResource<>(getProfiles(resultSet), currentPage, pageSize, totalCount);
+				result = new BasicResource<DataResult<BrapiMarkerProfile>>(new DataResult(getProfiles(resultSet)), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -108,8 +108,8 @@ public class MarkerProfileDAO
 		while (resultSet.next())
 		{
 			BrapiMarkerProfile profile = new BrapiMarkerProfile();
-			profile.setMarkerprofileId(resultSet.getString("markerprofile_id"));
-			profile.setGermplasmId(resultSet.getString("germinatebase_id"));
+			profile.setMarkerProfileDbId(resultSet.getString("markerprofile_id"));
+			profile.setGermplasmDbId(Integer.parseInt(resultSet.getString("germinatebase_id")));
 
 			profiles.add(profile);
 		}

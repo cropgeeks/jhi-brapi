@@ -10,13 +10,13 @@ import java.util.*;
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BrapiGermplasm
 {
-	private String       germplasmDbId;
-	private String       defaultDisplayName;
-	private String       germplasmName;
-	private String       accessionNumber;
-	private String       germplasmPUI;
-	private String       pedigree;
-	private String       seedSource;
+	private String germplasmDbId;
+	private String defaultDisplayName;
+	private String germplasmName;
+	private String accessionNumber;
+	private String germplasmPUI;
+	private String pedigree;
+	private String seedSource;
 	private List<String> synonyms;
 
 	public String getGermplasmDbId()
