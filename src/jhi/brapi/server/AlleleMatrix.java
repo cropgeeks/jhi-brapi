@@ -31,7 +31,7 @@ public class AlleleMatrix extends BaseBrapiServerResource
 ////
 ////		List<BrapiMarkerProfile> list = markerProfileDAO.getAll();
 ////		for (BrapiMarkerProfile profile : list)
-////			profileIds.add(profile.getMarkerProfileDbId());
+////			profileIds.add(profile.getMarkerprofileDbId());
 ////
 ////		List<BrapiAlleleMatrix> list = alleleMatrixDAO.get(profileIds);
 ////

@@ -1,9 +1,6 @@
 package jhi.brapi.data;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 import jhi.brapi.resource.*;
@@ -89,14 +86,25 @@ public class AlleleMatrixDAO
 						score = new ArrayList<>();
 						score.add(allele1 + allele2);
 						scores.put(markerName, score);
-					} else
+					}
+					else
 					{
 						score.add(allele1 + allele2);
 						scores.put(markerName, score);
 					}
 				}
 				matrix.setMarkerprofileDbIds(new ArrayList<>(lines));
-				matrix.setData(scores);
+
+				List<LinkedHashMap<String, List<String>>> finalScores = new ArrayList<>();
+
+				for (Map.Entry<String, List<String>> entry : scores.entrySet())
+				{
+					LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
+					map.put(entry.getKey(), entry.getValue());
+					finalScores.add(map);
+				}
+
+				matrix.setData(finalScores);
 
 				result = new BasicResource<BrapiAlleleMatrix>(matrix, currentPage, pageSize, totalCount);
 			}

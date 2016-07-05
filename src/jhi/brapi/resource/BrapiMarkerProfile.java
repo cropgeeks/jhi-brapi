@@ -5,20 +5,20 @@ package jhi.brapi.resource;
  */
 public class BrapiMarkerProfile
 {
-	private String markerProfileDbId;
+	private String markerprofileDbId;
 	private int germplasmDbId;
 	private int extractDbId;
 	private String analysisMethod;
 	private int resultCount;
 
-	public String getMarkerProfileDbId()
+	public String getMarkerprofileDbId()
 	{
-		return markerProfileDbId;
+		return markerprofileDbId;
 	}
 
-	public void setMarkerProfileDbId(String markerProfileDbId)
+	public void setMarkerprofileDbId(String markerprofileDbId)
 	{
-		this.markerProfileDbId = markerProfileDbId;
+		this.markerprofileDbId = markerprofileDbId;
 	}
 
 	public int getGermplasmDbId()
@@ -65,7 +65,7 @@ public class BrapiMarkerProfile
 	public String toString()
 	{
 		return "MarkerProfile{" +
-			"markerProfileDbId=" + markerProfileDbId +
+			"markerprofileDbId=" + markerprofileDbId +
 			", germplasmDbId=" + germplasmDbId +
 			", extractDbId=" + extractDbId +
 			", analysisMethod='" + analysisMethod + '\'' +

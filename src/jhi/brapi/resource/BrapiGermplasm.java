@@ -1,5 +1,7 @@
 package jhi.brapi.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.*;
 
 /**
@@ -8,6 +10,7 @@ import java.util.*;
 
 // Exclude non-null fields from the output
 //@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiGermplasm
 {
 	private String germplasmDbId;
