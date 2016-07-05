@@ -9,7 +9,7 @@ public class BrapiAlleleMatrix
 {
 	private List<String> markerprofileDbIds;
 
-	private HashMap<String, List<String>> data;
+	private List<LinkedHashMap<String, List<String>>> data;
 
 	public List<String> getMarkerprofileDbIds()
 	{
@@ -21,12 +21,12 @@ public class BrapiAlleleMatrix
 		this.markerprofileDbIds = markerprofileDbIds;
 	}
 
-	public HashMap<String, List<String>> getData()
+	public List<LinkedHashMap<String, List<String>>> getData()
 	{
 		return data;
 	}
 
-	public void setData(HashMap<String, List<String>> data)
+	public void setData(List<LinkedHashMap<String, List<String>>> data)
 	{
 		this.data = data;
 	}
