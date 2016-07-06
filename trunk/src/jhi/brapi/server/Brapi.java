@@ -68,6 +68,8 @@ public class Brapi extends Application
 		router.attach("/allelematrix/", AlleleMatrix.class);
 		router.attach("/token", TokenAuthenticator.class);
 		router.attach("/token/", TokenAuthenticator.class);
+		router.attach("/locations", Locations.class);
+		router.attach("/locations/", Locations.class);
 
 //		router.attach("/authorize", AuthorizationServerResource.class);
 //		router.attach(HttpOAuthHelper.getAuthPage(getContext()),
