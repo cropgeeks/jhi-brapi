@@ -7,8 +7,6 @@ import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
- * Created by gs40939 on 26/06/2015.
- *
  * Base ServerResource type for our BRAPI API implementation. All ServerResource objects should extend from this.
  * The format of our base call T getJson() is set out using an abstract method. In addition to this a concrete
  * implementation of the getHtml() method is provided which will respond to request for the ServerResource in html
@@ -17,7 +15,7 @@ import org.restlet.resource.*;
 public abstract class BaseBrapiServerResource<T> extends ServerResource
 {
 	protected static final String PARAM_PAGE_SIZE = "pageSize";
-	protected static final String PARAM_CURRENT_PAGE = "currentPage";
+	protected static final String PARAM_CURRENT_PAGE = "page";
 
 	// TODO: do we want to configure this value in the environment somehow (e.g. properties file etc...)
 	// TODO: once finished testing set back to Integer.MAX_VALUE, or something more suitable
