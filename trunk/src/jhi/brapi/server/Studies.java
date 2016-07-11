@@ -38,7 +38,7 @@ public class Studies extends BaseBrapiServerResource
 	{
 		BasicResource<DataResult<BrapiStudies>> result;
 
-		result = studiesDAO.getAll(currentPage, pageSize);
+		result = studiesDAO.getAll(currentPage, pageSize, programId, locationId, seasonId);
 
 		return result;
 	}
