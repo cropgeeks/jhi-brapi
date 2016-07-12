@@ -27,22 +27,30 @@ public abstract class BaseBrapiServerResource<T> extends ServerResource
 	{
 		super.doInit();
 
-		try
+		String pageSize = getQueryValue(PARAM_PAGE_SIZE);
+		if (pageSize != null)
 		{
-			this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+			try
+			{
+				this.pageSize = Integer.parseInt(getQueryValue(PARAM_PAGE_SIZE));
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 
-		try
+		String page = getQueryValue(PARAM_CURRENT_PAGE);
+		if (page != null)
 		{
-			this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+			try
+			{
+				this.currentPage = Integer.parseInt(getQueryValue(PARAM_CURRENT_PAGE));
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
