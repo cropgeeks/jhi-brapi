@@ -57,8 +57,6 @@ public class GermplasmDAO
 				while (resultSet.next())
 					list.add(getBrapiGermplasm(resultSet));
 
-				System.out.println("List size: " + list.size());
-
 				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
 				result = new BasicResource<DataResult<BrapiGermplasm>>(new DataResult(list), currentPage, pageSize, totalCount);
 			}
