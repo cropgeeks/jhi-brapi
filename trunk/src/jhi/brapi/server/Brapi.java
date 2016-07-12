@@ -72,6 +72,8 @@ public class Brapi extends Application
 		router.attach("/locations/", Locations.class);
 		router.attach("/studies", Studies.class);
 		router.attach("/studies/", Studies.class);
+		router.attach("/studies/{id}/table", StudiesAsTable.class);
+		router.attach("/studies/{id}/table/", StudiesAsTable.class);
 
 //		router.attach("/authorize", AuthorizationServerResource.class);
 //		router.attach(HttpOAuthHelper.getAuthPage(getContext()),

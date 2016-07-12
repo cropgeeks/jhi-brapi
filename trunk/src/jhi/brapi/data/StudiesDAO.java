@@ -15,6 +15,10 @@ public class StudiesDAO
 
 	private final String getCountStudies = "SELECT COUNT(DISTINCT datasets.id) AS total_count FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.description = \"trials\" GROUP BY datasets.id %s";
 
+	private final String studyDetailsTable = "call phenotype_data_complete (?)";
+
+	private final String studyDetailsTablePhenotypes = "select DISTINCT(phenotypes.id) from phenotypes LEFT JOIN phenotypedata ON phenotypes.id = phenotypedata.phenotype_id WHERE dataset_id = ?";
+
 	public BasicResource<DataResult<BrapiStudies>> getAll(int currentPage, int pageSize, String programId, String locationId, String seasonId)
 	{
 		// Create empty BasicResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
@@ -75,5 +79,68 @@ public class StudiesDAO
 		studies.setYears(Arrays.asList(yearArray));
 
 		return studies;
+	}
+
+	public BasicResource<BrapiStudiesAsTable> getTableById(String id)
+	{
+		// Create empty BasicResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
+		// this is what's returned
+		BasicResource<BrapiStudiesAsTable> result = new BasicResource<>();
+
+		System.out.println("ID: " + id);
+
+		List<String> phenotypeIds = new ArrayList<>();
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, studyDetailsTablePhenotypes, id);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			while (resultSet.next())
+				phenotypeIds.add(resultSet.getString(1));
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+
+		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+		// prepared statement (which includes a limit statement)
+		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, studyDetailsTable, id);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			BrapiStudiesAsTable studiesAsTable = new BrapiStudiesAsTable();
+			studiesAsTable.setStudyDbId(id);
+			studiesAsTable.setObservationVariableDbId(phenotypeIds);
+
+			List<String> colNames = new ArrayList<>();
+			for (int i=4; i <= resultSet.getMetaData().getColumnCount(); i++)
+				colNames.add(resultSet.getMetaData().getColumnName(i));
+
+			studiesAsTable.setObservationVariableName(colNames);
+
+			List<List<String>> data = new ArrayList<>();
+			while (resultSet.next())
+			{
+				List<String> list = new ArrayList<>();
+				list.add("1");
+				list.add("1");
+				list.add("1");
+				list.add(resultSet.getString("general_identifier"));
+
+				for (int i=4; i <= resultSet.getMetaData().getColumnCount(); i++)
+					list.add(resultSet.getString(i));
+
+				data.add(list);
+//				studiesAsTable.setStudyDbId();
+			}
+			studiesAsTable.setData(data);
+
+			// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
+			result = new BasicResource<BrapiStudiesAsTable>(studiesAsTable);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 }
