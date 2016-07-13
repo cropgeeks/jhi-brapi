@@ -1,10 +1,12 @@
 package jhi.brapi.server;
 
 import jhi.brapi.resource.*;
+import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
 
 import org.restlet.resource.*;
 
-public class TokenAuthenticator extends ServerResource
+public class TokenAuthenticator extends BaseBrapiServerResource
 {
 	private String grantType;
 	private String username;
@@ -45,14 +47,14 @@ public class TokenAuthenticator extends ServerResource
 		}
 	}
 
-	@Get
+	@Get("json")
 	public BrapiSessionToken getJson()
 	{
-		return login();
+		throw new ResourceException(404);
 	}
 
 	@Post
-	public BrapiSessionToken login()
+	public BrapiSessionToken login(Representation rep)
 	{
 		String token = "blah" + System.currentTimeMillis();
 
@@ -61,6 +63,12 @@ public class TokenAuthenticator extends ServerResource
 
 		BrapiSessionToken sessionToken = new BrapiSessionToken();
 		sessionToken.setSessionToken(token);
+
+		// BrapiSessionToken is a special case and doesn't get metadata by
+		// default, so we need to include it here (even though it isn't used)
+		Metadata md = new Metadata();
+		md.setPagination(PaginationUtils.getEmptyPagination());
+		sessionToken.setMetadata(md);
 
 		return sessionToken;
 	}

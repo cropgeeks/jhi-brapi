@@ -2,9 +2,8 @@ package jhi.brapi.data;
 
 import java.sql.*;
 
-/**
- * Created by gs40939 on 03/03/2016.
- */
+import jhi.brapi.resource.*;
+
 public class DatabaseUtils
 {
 	public static long getTotalCount(String sql)

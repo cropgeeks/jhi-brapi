@@ -1,6 +1,4 @@
-package jhi.brapi.data;
-
-import jhi.brapi.resource.Pagination;
+package jhi.brapi.resource;
 
 /**
  * Created by gs40939 on 02/03/2016.

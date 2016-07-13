@@ -5,7 +5,13 @@ package jhi.brapi.resource;
  */
 public class BrapiSessionToken
 {
+	private Metadata metadata;
+
 	private String sessionToken;
+
+	public BrapiSessionToken()
+	{
+	}
 
 	public String getSessionToken()
 	{
@@ -17,11 +23,13 @@ public class BrapiSessionToken
 		this.sessionToken = sessionToken;
 	}
 
-	@Override
-	public String toString()
+	public Metadata getMetadata()
 	{
-		return "BrapiSessionToken{" +
-			"sessionToken='" + sessionToken + '\'' +
-			'}';
+		return metadata;
+	}
+
+	public void setMetadata(Metadata metadata)
+	{
+		this.metadata = metadata;
 	}
 }
