@@ -12,16 +12,17 @@ public enum Database
 {
 	INSTANCE;
 
-	private DataSource dataSource;
+	private DataSource dataSourceGerminate, dataSourceGatekeeper;
 
 	private Database()
 	{
 		try
 		{
 			Context ctx = new InitialContext();
-			dataSource = (DataSource) ctx.lookup("java:comp/env/jdbc/germinate");
+			dataSourceGerminate = (DataSource) ctx.lookup("java:comp/env/jdbc/germinate");
+			dataSourceGatekeeper = (DataSource) ctx.lookup("java:comp/env/jdbc/gatekeeper");
 //			dataSource = (DataSource) ctx.lookup("jdbc/germinate");
-			System.out.println(dataSource);
+			System.out.println(dataSourceGerminate);
 		}
 		catch (NamingException e)
 		{
@@ -29,8 +30,13 @@ public enum Database
 		}
 	}
 
-	public DataSource getDataSource()
+	public DataSource getDataSourceGerminate()
 	{
-		return dataSource;
+		return dataSourceGerminate;
+	}
+
+	public DataSource getDataSourceGatekeeper()
+	{
+		return dataSourceGatekeeper;
 	}
 }

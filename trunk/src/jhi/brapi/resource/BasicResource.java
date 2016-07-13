@@ -1,10 +1,5 @@
 package jhi.brapi.resource;
 
-import jhi.brapi.data.*;
-
-/**
- * Created by gs40939 on 03/11/2015.
- */
 public class BasicResource<T>
 {
 	private Metadata metadata = new Metadata();

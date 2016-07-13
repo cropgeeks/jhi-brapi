@@ -42,7 +42,7 @@ public class AlleleMatrixDAO
 
 		long totalCount = -1;
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = createByIdStatement(con, countQuery, germinatebaseIds, datasetIds);
 			 ResultSet resultSet = statement.executeQuery())
 		{
@@ -62,7 +62,7 @@ public class AlleleMatrixDAO
 
 			String query = builder.toString();
 
-			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{

@@ -46,7 +46,7 @@ public class MarkerProfileDAO
 
 		if (totalCount != -1)
 		{
-			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement markerProfileStatement = DatabaseUtils.createLimitStatement(con, allMarkerProfiles, currentPage, pageSize);
 				 ResultSet resultSet = markerProfileStatement.executeQuery())
 			{
@@ -76,7 +76,7 @@ public class MarkerProfileDAO
 		int datasetId = Integer.parseInt(tokens[0]);
 		int germinatebaseId = Integer.parseInt(tokens[1]);
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement markerProfileStatement = createByIdStatement(con, allMarkers, germinatebaseId, datasetId);
 			 ResultSet resultSet = markerProfileStatement.executeQuery())
 		{
