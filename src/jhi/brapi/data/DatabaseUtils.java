@@ -9,7 +9,7 @@ public class DatabaseUtils
 	public static long getTotalCount(String sql)
 	{
 		// Query for count the total number of items defined by the resource
-		try(Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try(Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			PreparedStatement statement = con.prepareStatement(sql);
 			ResultSet resultSet = statement.executeQuery())
 		{
@@ -27,7 +27,7 @@ public class DatabaseUtils
 	public static long getTotalCountById(String sql, String id)
 	{
 		// Query for count the total number of items defined by the resource
-		try(Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try(Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			PreparedStatement statement = createByIdStatement(con, sql, id);
 			ResultSet resultSet = statement.executeQuery())
 		{

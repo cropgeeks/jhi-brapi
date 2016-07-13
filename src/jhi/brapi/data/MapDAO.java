@@ -60,7 +60,7 @@ public class MapDAO
 
 		if (totalCount != -1)
 		{
-			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, mapsQuery, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
@@ -109,7 +109,7 @@ public class MapDAO
 		BasicResource<BrapiMapMetaData> result = new BasicResource<>();
 		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement mapStatement = DatabaseUtils.createByIdStatement(con, detailQuery, id);
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
@@ -121,7 +121,7 @@ public class MapDAO
 		if (mapDetail != null)
 		{
 			// Get the list of entries for the map (effectively the markers)
-			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement entriesStatement = DatabaseUtils.createByIdStatement(con, linkageGroupQuery, id);
 				 ResultSet resultSet = entriesStatement.executeQuery())
 			{
@@ -191,7 +191,7 @@ public class MapDAO
 	public BrapiMapMetaData getByIdAndChromosome(int id, String chromosome)
 	{
 		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
-		try (Connection con = jhi.brapi.data.Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = jhi.brapi.data.Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement mapStatement = createDetailByChromStatement(con, id, chromosome);
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
@@ -233,7 +233,7 @@ public class MapDAO
 
 		if (totalCount != -1)
 		{
-			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
 				 ResultSet resultSet = mapStatement.executeQuery())
 			{

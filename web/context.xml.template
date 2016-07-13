@@ -34,9 +34,15 @@
     <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />
     -->
 
-    <Resource name="@datasource.name@" auth="Container" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-        type="javax.sql.DataSource" maxTotal="100" maxIdle="30" maxWaitMillis="10000" username="@database.username@"
-        password="@database.password@" driverClassName="com.mysql.jdbc.Driver" url="@database.url@"
+    <Resource name="@datasource.germinate@" auth="Container" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+        type="javax.sql.DataSource" maxTotal="30" maxIdle="10" maxWaitMillis="10000" username="@database.germinate.username@"
+        password="@database.germinate.password@" driverClassName="com.mysql.jdbc.Driver" url="@database.germinate.url@"
+        removeAbandoned="true" logAbandoned="true" timeBetweenEvictionRunsMillis = "34000" validationQuery="SELECT 1"
+        validationInterval="34" testOnBorrow="true" removeAbandonedTimeout="55"/>
+		
+	<Resource name="@datasource.gatekeeper@" auth="Container" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+        type="javax.sql.DataSource" maxTotal="15" maxIdle="5" maxWaitMillis="10000" username="@database.gatekeeper.username@"
+        password="@database.gatekeeper.password@" driverClassName="com.mysql.jdbc.Driver" url="@database.gatekeeper.url@"
         removeAbandoned="true" logAbandoned="true" timeBetweenEvictionRunsMillis = "34000" validationQuery="SELECT 1"
         validationInterval="34" testOnBorrow="true" removeAbandonedTimeout="55"/>
 </Context>

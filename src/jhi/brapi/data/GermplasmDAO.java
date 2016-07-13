@@ -48,7 +48,7 @@ public class GermplasmDAO
 		{
 			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 			// prepared statement (which includes a limit statement)
-			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, getLines, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
@@ -73,7 +73,7 @@ public class GermplasmDAO
 	{
 		BasicResource<BrapiGermplasm> wrappedResult = new BasicResource<>();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, getSpecificLine, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{
@@ -111,7 +111,7 @@ public class GermplasmDAO
 	{
 		BasicResource<BrapiGermplasmMcpd> result = new BasicResource<>();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, getSpecificLine, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{
@@ -174,7 +174,7 @@ public class GermplasmDAO
 
 		long totalCount = DatabaseUtils.getTotalCountById(markerProfileCountIdQuery, id);
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdLimitStatement(con, markrerProfileIdQuery, id, currentPage, pageSize);
 			 ResultSet resultSet = statement.executeQuery())
 		{
@@ -242,7 +242,7 @@ public class GermplasmDAO
 		{
 			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 			// prepared statement (which includes a limit statement)
-			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement statement = createByNameLimitStatement(con, name, getQuery, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
@@ -271,7 +271,7 @@ public class GermplasmDAO
 	{
 		long totalCount = -1;
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = createByNameStatement(con, name, countQuery);
 			 ResultSet resultSet = statement.executeQuery())
 		{
@@ -316,7 +316,7 @@ public class GermplasmDAO
 	{
 		BasicResource<BrapiGermplasmPedigree> wrappedResult = new BasicResource<>();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, pedigreeByIdQuery, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{

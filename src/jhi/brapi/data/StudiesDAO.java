@@ -43,7 +43,7 @@ public class StudiesDAO
 		{
 			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 			// prepared statement (which includes a limit statement)
-			try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, finalGetStudies, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{

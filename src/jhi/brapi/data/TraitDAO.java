@@ -26,7 +26,7 @@ public class TraitDAO
 	{
 		TraitList allTraits = new TraitList();
 
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = con.prepareStatement(getTraits);
 			 ResultSet resultSet = statement.executeQuery())
 		{
@@ -61,7 +61,7 @@ public class TraitDAO
 	 */
 	public Trait getById(int id)
 	{
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = createByIdStatement(con, getTrait, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{
