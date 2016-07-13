@@ -111,7 +111,7 @@ public class StudiesDAO
 			studiesAsTable.setObservationVariableDbId(phenotypeIds);
 
 			List<String> colNames = new ArrayList<>();
-			for (int i=4; i <= resultSet.getMetaData().getColumnCount(); i++)
+			for (int i=5; i <= resultSet.getMetaData().getColumnCount(); i++)
 				colNames.add(resultSet.getMetaData().getColumnName(i));
 
 			studiesAsTable.setObservationVariableName(colNames);
@@ -125,7 +125,7 @@ public class StudiesDAO
 				list.add("1");
 				list.add(resultSet.getString("general_identifier"));
 
-				for (int i=4; i <= resultSet.getMetaData().getColumnCount(); i++)
+				for (int i=5; i <= resultSet.getMetaData().getColumnCount(); i++)
 					list.add(resultSet.getString(i));
 
 				data.add(list);
