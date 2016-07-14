@@ -90,7 +90,7 @@ public class StudiesDAO
 		System.out.println("ID: " + id);
 
 		List<String> phenotypeIds = new ArrayList<>();
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, studyDetailsTablePhenotypes, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{
@@ -102,7 +102,7 @@ public class StudiesDAO
 
 		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 		// prepared statement (which includes a limit statement)
-		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, studyDetailsTable, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{
