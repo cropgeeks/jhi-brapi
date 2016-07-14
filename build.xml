@@ -79,10 +79,15 @@
 				tofile="web/context.xml"
 				overwrite="true">
 			<filterset>
-				<filter token="datasource.name" value="${datasource.name}"/>
-				<filter token="database.username" value="${database.username}"/>
-				<filter token="database.password" value="${database.password}"/>
-				<filter token="database.url" value="${database.url}"/>
+				<filter token="datasource.germinate" value="${datasource.germinate}"/>
+				<filter token="database.germinate.username" value="${database.germinate.username}"/>
+				<filter token="database.germinate.password" value="${database.germinate.password}"/>
+				<filter token="database.germinate.url" value="${database.germinate.url}"/>
+				
+				<filter token="datasource.gatekeeper" value="${datasource.gatekeeper}"/>
+				<filter token="database.gatekeeper.username" value="${database.gatekeeper.username}"/>
+				<filter token="database.gatekeeper.password" value="${database.gatekeeper.password}"/>
+				<filter token="database.gatekeeper.url" value="${database.gatekeeper.url}"/>
 			</filterset>
 		</copy>
 
