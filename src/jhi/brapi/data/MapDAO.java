@@ -225,9 +225,9 @@ public class MapDAO
 		return createByChromStatement(con, entriesByChromQuery, id, chromosome);
 	}
 
-	public BasicResource<DataResult<BrapiMarker>> getByIdMarkers(String id, String[] chromosomes, int currentPage, int pageSize)
+	public BasicResource<DataResult<BrapiMarkerPosition>> getByIdMarkers(String id, String[] chromosomes, int currentPage, int pageSize)
 	{
-		BasicResource<DataResult<BrapiMarker>> result = new BasicResource<>();
+		BasicResource<DataResult<BrapiMarkerPosition>> result = new BasicResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCountById(mapMarkersCountQuery, id);
 
@@ -237,7 +237,7 @@ public class MapDAO
 				 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
 				 ResultSet resultSet = mapStatement.executeQuery())
 			{
-				result = new BasicResource<DataResult<BrapiMarker>>(new DataResult(getMapMarkersListFromResultSet(resultSet)), currentPage, pageSize, totalCount);
+				result = new BasicResource<DataResult<BrapiMarkerPosition>>(new DataResult(getMapMarkersListFromResultSet(resultSet)), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -278,14 +278,14 @@ public class MapDAO
 
 	// Takes a ResultSet which should represent the result of the linkageGroupsQuery defined above and returns a List of
 	// LinkageGroup objects, each of which has been initialized with the values from the ResultSet
-	private ArrayList<BrapiMarker> getMapMarkersListFromResultSet(ResultSet resultSet)
+	private ArrayList<BrapiMarkerPosition> getMapMarkersListFromResultSet(ResultSet resultSet)
 		throws SQLException
 	{
-		ArrayList<BrapiMarker> mapMarkers = new ArrayList<>();
+		ArrayList<BrapiMarkerPosition> mapMarkers = new ArrayList<>();
 
 		while (resultSet.next())
 		{
-			BrapiMarker mapMarker = new BrapiMarker();
+			BrapiMarkerPosition mapMarker = new BrapiMarkerPosition();
 			mapMarker.setMarkerId(resultSet.getString("marker_id"));
 			mapMarker.setMarkerName(resultSet.getString("marker_name"));
 			mapMarker.setLocation(resultSet.getString("definition_start"));

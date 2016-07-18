@@ -71,7 +71,7 @@ public class StudiesDAO
 					list.add(getBrapiStudies(resultSet));
 
 				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-				result = new BasicResource<DataResult<BrapiStudies>>(new DataResult(list), currentPage, pageSize, totalCount);
+				result = new BasicResource<DataResult<BrapiStudies>>(new DataResult<BrapiStudies>(list), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{

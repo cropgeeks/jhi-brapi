@@ -60,6 +60,8 @@ public class Brapi extends Application
 		router.attach("/markerprofiles/{id}/", MarkerProfileServerResource.class);
 //		router.attach("/markerprofiles/{id}/count", MarkerProfileCountServerResource.class);
 //		router.attach("/markerprofiles/{id}/count/", MarkerProfileCountServerResource.class);
+		router.attach("/markers", Markers.class);
+		router.attach("/markers/", Markers.class);
 		router.attach("/traits", TraitListServerResource.class);
 		router.attach("/traits/", TraitListServerResource.class);
 		router.attach("/traits/{id}", TraitServerResource.class);

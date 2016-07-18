@@ -1,7 +1,5 @@
 package jhi.brapi.server;
 
-import java.util.*;
-
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -27,7 +25,7 @@ public class GenomeMapMarkerData extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<DataResult<BrapiMarker>> getJson()
+	public BasicResource<DataResult<BrapiMarkerPosition>> getJson()
 	{
 		return mapDAO.getByIdMarkers(id, linkageGroups, currentPage, pageSize);
 	}
