@@ -11,13 +11,31 @@ import java.util.*;
 public class StudiesDAO
 {
 	// Simply selects all fields from germinatebase
-	private final String getStudies = "SELECT datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date)) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.description = \"trials\" %s GROUP BY datasets.id LIMIT ?, ?";
+	private final String getStudyDetails = "SELECT datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE datasets.id = ?";
+
+	private final String getStudies = "SELECT datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.description = 'trials' %s GROUP BY datasets.id LIMIT ?, ?";
 
 	private final String getCountStudies = "SELECT COUNT(DISTINCT datasets.id) AS total_count FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.description = \"trials\" GROUP BY datasets.id %s";
 
 	private final String studyDetailsTable = "call phenotype_data_complete (?)";
 
 	private final String studyDetailsTablePhenotypes = "select DISTINCT(phenotypes.id) from phenotypes LEFT JOIN phenotypedata ON phenotypes.id = phenotypedata.phenotype_id WHERE dataset_id = ?";
+
+	public BasicResource<BrapiStudies> getById(String id)
+	{
+		BasicResource<BrapiStudies> result = new BasicResource<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement mapStatement = DatabaseUtils.createByIdStatement(con, getStudyDetails, id);
+			 ResultSet resultSet = mapStatement.executeQuery())
+		{
+			if(resultSet.next())
+				result = new BasicResource<>(getBrapiStudies(resultSet));
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+		return result;
+	}
 
 	public BasicResource<DataResult<BrapiStudies>> getAll(int currentPage, int pageSize, String programId, String locationId, String seasonId)
 	{
@@ -87,8 +105,6 @@ public class StudiesDAO
 		// this is what's returned
 		BasicResource<BrapiStudiesAsTable> result = new BasicResource<>();
 
-		System.out.println("ID: " + id);
-
 		List<String> phenotypeIds = new ArrayList<>();
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, studyDetailsTablePhenotypes, id);
@@ -111,7 +127,7 @@ public class StudiesDAO
 			studiesAsTable.setObservationVariableDbId(phenotypeIds);
 
 			List<String> colNames = new ArrayList<>();
-			for (int i=5; i <= resultSet.getMetaData().getColumnCount(); i++)
+			for (int i=6; i <= resultSet.getMetaData().getColumnCount(); i++)
 				colNames.add(resultSet.getMetaData().getColumnName(i));
 
 			studiesAsTable.setObservationVariableName(colNames);
@@ -125,7 +141,7 @@ public class StudiesDAO
 				list.add("1");
 				list.add(resultSet.getString("general_identifier"));
 
-				for (int i=5; i <= resultSet.getMetaData().getColumnCount(); i++)
+				for (int i=6; i <= resultSet.getMetaData().getColumnCount(); i++)
 					list.add(resultSet.getString(i));
 
 				data.add(list);

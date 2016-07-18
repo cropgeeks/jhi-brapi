@@ -68,8 +68,8 @@ public class AlleleMatrixDAO
 			{
 				BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
-				HashMap<String, List<String>> scores = new HashMap<>();
-				HashSet<String> lines = new HashSet<>();
+				LinkedHashMap<String, List<String>> scores = new LinkedHashMap<>();
+				LinkedHashSet<String> lines = new LinkedHashSet<>();
 
 				while (resultSet.next())
 				{
@@ -93,16 +93,25 @@ public class AlleleMatrixDAO
 						scores.put(markerName, score);
 					}
 				}
-				matrix.setMarkerprofileDbIds(new ArrayList<>(lines));
+
+				/*
+				 * The sorting is required because the first marker may have been split across two pages. In that case, the markerprofiles won't be
+				 * in the correct order, as the code will start with the rest of this marker and then jump to the next
+				 */
+				List<String> linesSorted = new ArrayList<>(lines);
+				Collections.sort(linesSorted);
+				matrix.setMarkerprofileDbIds(linesSorted);
 
 				List<LinkedHashMap<String, List<String>>> finalScores = new ArrayList<>();
 
-				for (Map.Entry<String, List<String>> entry : scores.entrySet())
-				{
-					LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
-					map.put(entry.getKey(), entry.getValue());
-					finalScores.add(map);
-				}
+//				for (Map.Entry<String, List<String>> entry : scores.entrySet())
+//				{
+//					LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
+//					map.put(entry.getKey(), entry.getValue());
+//					finalScores.add(map);
+//				}
+
+				finalScores.add(scores);
 
 				matrix.setData(finalScores);
 
@@ -127,7 +136,8 @@ public class AlleleMatrixDAO
 			{
 				builder.append("?");
 				baseIdFirst = false;
-			} else
+			}
+			else
 			{
 				builder.append(",");
 				builder.append("?");
