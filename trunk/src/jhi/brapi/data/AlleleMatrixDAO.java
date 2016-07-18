@@ -242,8 +242,6 @@ public class AlleleMatrixDAO
 		// Get the basic information on the map
 		PreparedStatement statement = con.prepareStatement(query);
 
-		System.out.println(statement.toString());
-
 		int counter = 1;
 		for (Integer id : germinatebaseIds)
 			statement.setInt(counter++, id);
@@ -259,8 +257,6 @@ public class AlleleMatrixDAO
 	{
 		// Get the basic information on the map
 		PreparedStatement statement = con.prepareStatement(query);
-
-		System.out.println(statement.toString());
 
 		int counter = 1;
 		for (Integer id : germinatebaseIds)

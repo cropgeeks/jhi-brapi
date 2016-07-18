@@ -22,7 +22,6 @@ public enum Database
 			dataSourceGerminate = (DataSource) ctx.lookup("java:comp/env/jdbc/germinate");
 			dataSourceGatekeeper = (DataSource) ctx.lookup("java:comp/env/jdbc/gatekeeper");
 //			dataSource = (DataSource) ctx.lookup("jdbc/germinate");
-			System.out.println(dataSourceGerminate);
 		}
 		catch (NamingException e)
 		{
