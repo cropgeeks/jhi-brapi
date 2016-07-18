@@ -1,52 +1,43 @@
 package jhi.brapi.resource;
 
+import java.util.*;
+
 /**
  * Created by gs40939 on 17/06/2015.
  */
 public class BrapiMarker
 {
-	private String markerId;
-	private String markerName;
-	private String location;
-	private String linkageGroup;
+	private String       markerDbId;
+	private String       defaultDisplayName;
+	private List<String> synonyms;
 
-	public String getMarkerId()
+	public String getMarkerDbId()
 	{
-		return markerId;
+		return markerDbId;
 	}
 
-	public void setMarkerId(String markerId)
+	public void setMarkerDbId(String markerDbId)
 	{
-		this.markerId = markerId;
+		this.markerDbId = markerDbId;
 	}
 
-	public String getMarkerName()
+	public String getDefaultDisplayName()
 	{
-		return markerName;
+		return defaultDisplayName;
 	}
 
-	public void setMarkerName(String markerName)
+	public void setDefaultDisplayName(String defaultDisplayName)
 	{
-		this.markerName = markerName;
+		this.defaultDisplayName = defaultDisplayName;
 	}
 
-	public String getLocation()
+	public List<String> getSynonyms()
 	{
-		return location;
+		return synonyms;
 	}
 
-	public void setLocation(String location)
+	public void setSynonyms(List<String> synonyms)
 	{
-		this.location = location;
-	}
-
-	public String getLinkageGroup()
-	{
-		return linkageGroup;
-	}
-
-	public void setLinkageGroup(String linkageGroup)
-	{
-		this.linkageGroup = linkageGroup;
+		this.synonyms = synonyms;
 	}
 }

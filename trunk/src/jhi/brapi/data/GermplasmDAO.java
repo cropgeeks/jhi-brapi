@@ -99,7 +99,7 @@ public class GermplasmDAO
 		germplasm.setGermplasmPUI(resultSet.getString("germinatebase.general_identifier"));
 		germplasm.setGermplasmName(resultSet.getString("germinatebase.name"));
 		germplasm.setAccessionNumber(resultSet.getString("germinatebase.number"));
-		germplasm.setSynonyms(getSynonyms(resultSet));
+		germplasm.setSynonyms(getSynonyms(resultSet)); // TODO: get synonyms from synonyms table
 		germplasm.setPedigree(resultSet.getString("pedigreedefinitions.definition"));
 		germplasm.setDefaultDisplayName(resultSet.getString("germinatebase.name"));
 		germplasm.setSeedSource(null); // TODO

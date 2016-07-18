@@ -104,14 +104,14 @@ public class AlleleMatrixDAO
 
 				List<LinkedHashMap<String, List<String>>> finalScores = new ArrayList<>();
 
-//				for (Map.Entry<String, List<String>> entry : scores.entrySet())
-//				{
-//					LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
-//					map.put(entry.getKey(), entry.getValue());
-//					finalScores.add(map);
-//				}
+				for (Map.Entry<String, List<String>> entry : scores.entrySet())
+				{
+					LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
+					map.put(entry.getKey(), entry.getValue());
+					finalScores.add(map);
+				}
 
-				finalScores.add(scores);
+//				finalScores.add(scores);
 
 				matrix.setData(finalScores);
 
