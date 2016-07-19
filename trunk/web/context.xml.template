@@ -38,11 +38,11 @@
         type="javax.sql.DataSource" maxTotal="30" maxIdle="10" maxWaitMillis="10000" username="@database.germinate.username@"
         password="@database.germinate.password@" driverClassName="com.mysql.jdbc.Driver" url="@database.germinate.url@"
         removeAbandoned="true" logAbandoned="true" timeBetweenEvictionRunsMillis = "34000" validationQuery="SELECT 1"
-        validationInterval="34" testOnBorrow="true" removeAbandonedTimeout="55" minEvictableIdleTimeMillis="30000"/>
+        validationInterval="34" testOnBorrow="true" removeAbandonedTimeout="55" minEvictableIdleTimeMillis="30000" closeMethod="close"/>
 		
 	<Resource name="@datasource.gatekeeper@" auth="Container" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
         type="javax.sql.DataSource" maxTotal="15" maxIdle="5" maxWaitMillis="10000" username="@database.gatekeeper.username@"
         password="@database.gatekeeper.password@" driverClassName="com.mysql.jdbc.Driver" url="@database.gatekeeper.url@"
         removeAbandoned="true" logAbandoned="true" timeBetweenEvictionRunsMillis = "34000" validationQuery="SELECT 1"
-        validationInterval="34" testOnBorrow="true" removeAbandonedTimeout="55" minEvictableIdleTimeMillis="30000"/>
+        validationInterval="34" testOnBorrow="true" removeAbandonedTimeout="55" minEvictableIdleTimeMillis="30000" closeMethod="close"/>
 </Context>
