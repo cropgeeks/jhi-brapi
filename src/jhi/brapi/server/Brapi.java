@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.restlet.*;
 import org.restlet.engine.application.*;
+import org.restlet.resource.*;
 import org.restlet.routing.*;
 import org.restlet.service.*;
 
@@ -34,56 +35,40 @@ public class Brapi extends Application
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(false);
 
-		router.attach("/germplasm", Germplasm.class); // FJ / GM
-		router.attach("/germplasm/", Germplasm.class);
-		router.attach("/germplasm/{id}", GermplasmServerResource.class);
-		router.attach("/germplasm/{id}/", GermplasmServerResource.class);
-		router.attach("/germplasm/{id}/mcpd", GermplasmMcpd.class); // GM
-		router.attach("/germplasm/{id}/mcpd/", GermplasmMcpd.class);
-		router.attach("/germplasm/{id}/markerprofiles", GermplasmMarkerProfiles.class);
-		router.attach("/germplasm/{id}/markerprofiles/", GermplasmMarkerProfiles.class);
-		router.attach("/germplasm/{id}/pedigree", GermplasmPedigreeServerResource.class);
-		router.attach("/germplasm/{id}/pedigree/", GermplasmPedigreeServerResource.class);
-		router.attach("/maps", GenomeMaps.class); // FJ
-		router.attach("/maps/", GenomeMaps.class);
-		router.attach("/maps/{id}", GenomeMapMetaData.class);
-		router.attach("/maps/{id}/", GenomeMapMetaData.class);
-		router.attach("/maps/{id}/positions", GenomeMapMarkerData.class); // FJ
-		router.attach("/maps/{id}/positions/", GenomeMapMarkerData.class);
-		router.attach("/markerprofiles", MarkerProfiles.class); // FJ
-		router.attach("/markerprofiles/", MarkerProfiles.class);
-		router.attach("/markerprofiles/methods", MarkerProfileMethods.class); // FJ
-		router.attach("/markerprofiles/methods/", MarkerProfileMethods.class);
-//		router.attach("/markerprofiles/count", MarkerProfileCountServerResource.class);
-//		router.attach("/markerprofiles/count/", MarkerProfileCountServerResource.class);
-		router.attach("/markerprofiles/{id}", MarkerProfileServerResource.class);
-		router.attach("/markerprofiles/{id}/", MarkerProfileServerResource.class);
-//		router.attach("/markerprofiles/{id}/count", MarkerProfileCountServerResource.class);
-//		router.attach("/markerprofiles/{id}/count/", MarkerProfileCountServerResource.class);
-		router.attach("/markers", Markers.class);
-		router.attach("/markers/", Markers.class);
-		router.attach("/traits", TraitListServerResource.class);
-		router.attach("/traits/", TraitListServerResource.class);
-		router.attach("/traits/{id}", TraitServerResource.class);
-		router.attach("/traits/{id}/", TraitServerResource.class);
-		router.attach("/allelematrix", AlleleMatrix.class); // FJ
-		router.attach("/allelematrix/", AlleleMatrix.class);
-		router.attach("/token", TokenAuthenticator.class);
-		router.attach("/token/", TokenAuthenticator.class);
-		router.attach("/locations", Locations.class);
-		router.attach("/locations/", Locations.class);
-		router.attach("/studies", Studies.class);
-		router.attach("/studies/", Studies.class);
-		router.attach("/studies/{id}", StudyDetails.class);
-		router.attach("/studies/{id}/", StudyDetails.class);
-		router.attach("/studies/{id}/table", StudiesAsTable.class);
-		router.attach("/studies/{id}/table/", StudiesAsTable.class);
+		attachToRouter(router, "/germplasm", Germplasm.class); // FJ / GM
+		attachToRouter(router, "/germplasm/{id}", GermplasmServerResource.class);
+		attachToRouter(router, "/germplasm/{id}/mcpd", GermplasmMcpd.class); // GM
+		attachToRouter(router, "/germplasm/{id}/markerprofiles", GermplasmMarkerProfiles.class);
+		attachToRouter(router, "/germplasm/{id}/pedigree", GermplasmPedigreeServerResource.class);
+		attachToRouter(router, "/germplasm/mcpd", GermplasmMcpdSearch.class); // TODO: Find out why this won't work!!! /germplasm/{id}/mcpd2 works fine
+		attachToRouter(router, "/maps", GenomeMaps.class); // FJ
+		attachToRouter(router, "/maps/{id}", GenomeMapMetaData.class);
+		attachToRouter(router, "/maps/{id}/positions", GenomeMapMarkerData.class); // FJ
+		attachToRouter(router, "/markerprofiles", MarkerProfiles.class); // FJ
+		attachToRouter(router, "/markerprofiles/methods", MarkerProfileMethods.class); // FJ
+//		attachToRouter(router, "/markerprofiles/count", MarkerProfileCountServerResource.class);
+		attachToRouter(router, "/markerprofiles/{id}", MarkerProfileServerResource.class);
+//		attachToRouter(router, "/markerprofiles/{id}/count", MarkerProfileCountServerResource.class);
+		attachToRouter(router, "/markers", Markers.class);
+		attachToRouter(router, "/traits", TraitListServerResource.class);
+		attachToRouter(router, "/traits/{id}", TraitServerResource.class);
+		attachToRouter(router, "/allelematrix", AlleleMatrix.class); // FJ
+		attachToRouter(router, "/token", TokenAuthenticator.class);
+		attachToRouter(router, "/locations", Locations.class);
+		attachToRouter(router, "/studies", Studies.class);
+		attachToRouter(router, "/studies/{id}", StudyDetails.class);
+		attachToRouter(router, "/studies/{id}/table", StudiesAsTable.class);
 
-//		router.attach("/authorize", AuthorizationServerResource.class);
-//		router.attach(HttpOAuthHelper.getAuthPage(getContext()),
-//			AuthPageServerResource.class);
+//		attachToRouter(router, "/authorize", AuthorizationServerResource.class);
+//		attachToRouter(router, HttpOAuthHelper.getAuthPage(getContext()), AuthPageServerResource.class);
 
 		return corsFilter;
+	}
+
+	private static void attachToRouter(Router router, String url, Class<? extends ServerResource> clazz)
+	{
+		router.attach(url, clazz);
+		router.attach(url + "/", clazz);
 	}
 
 	static TokenManager getSessions()

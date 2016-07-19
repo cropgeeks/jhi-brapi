@@ -13,21 +13,27 @@ public class GermplasmDAO
 {
 	private static final SimpleDateFormat FORMAT_OUTPUT = new SimpleDateFormat("YYYYMMDD");
 
+	private final String tables = " germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id ";
+
 	// Simply selects all fields from germinatebase
-	private final String getLines = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id LIMIT ?, ?";
+	private final String getLines = "SELECT * FROM " + tables + " LIMIT ?, ?";
 
-	private final String getCountLines = "SELECT COUNT(*) AS total_count FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id";
+	private final String getLinesWhere = "SELECT * FROM " + tables + " WHERE %s LIMIT ?, ?";
 
-	private final String getLinesByNameExact = "select * from germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number = ? OR germinatebase.name = ? OR germinatebase.general_identifier = ? LIMIT ?, ?";
+	private final String getCountLines = "SELECT COUNT(*) AS total_count FROM " + tables;
 
-	private final String getCountLinesByNameExact = "SELECT COUNT(*) AS total_count FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number = ? OR germinatebase.name = ? OR germinatebase.general_identifier = ?";
+	private final String getCountLinesWhere = "SELECT COUNT(*) AS total_count FROM " + tables + " WHERE %s";
 
-	private final String getLinesByNameRegex = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ? LIMIT ?, ?";
+	private final String getLinesByNameExact = "select * from " + tables + " where germinatebase.number = ? OR germinatebase.name = ? OR germinatebase.general_identifier = ? LIMIT ?, ?";
 
-	private final String getCountLinesByNameRegex = "SELECT COUNT(*) AS total_count FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ?";
+	private final String getCountLinesByNameExact = "SELECT COUNT(*) AS total_count FROM " + tables + " where germinatebase.number = ? OR germinatebase.name = ? OR germinatebase.general_identifier = ?";
+
+	private final String getLinesByNameRegex = "SELECT * FROM " + tables + " where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ? LIMIT ?, ?";
+
+	private final String getCountLinesByNameRegex = "SELECT COUNT(*) AS total_count FROM " + tables + " where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ?";
 
 	// Simply selects all fields from germinatebase where the given id matches the id from the URI
-	private final String getSpecificLine = "SELECT * FROM germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id where germinatebase.id=?";
+	private final String getSpecificLine = "SELECT * FROM " + tables + " where germinatebase.id=?";
 
 	// Query to extract the markerprofiles which relate to the germplasm indicated by id
 	private final String markrerProfileIdQuery = "select DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=? LIMIT ?, ?";
@@ -345,5 +351,38 @@ public class GermplasmDAO
 		pedigree.setParent2Id(resultSet.getString("right_parent"));
 
 		return pedigree;
+	}
+
+	public BasicResource<DataResult<BrapiGermplasmMcpd>> getMcpdForSearch(LinkedHashMap<String, String> parameters, int currentPage, int pageSize)
+	{
+		// Create empty BasicResource of type BrapiGermplasmMcpd (if for whatever reason we can't get data from the database
+		// this is what's returned
+		BasicResource<DataResult<BrapiGermplasmMcpd>> result = new BasicResource<>();
+
+		long totalCount = DatabaseUtils.getParameterizedTotalCount(getCountLinesWhere, parameters);
+
+		if (totalCount != -1)
+		{
+			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+			// prepared statement (which includes a limit statement)
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+				 PreparedStatement statement = DatabaseUtils.createParameterizedLimitStatement(con, getLinesWhere, parameters, currentPage, pageSize);
+				 ResultSet resultSet = statement.executeQuery())
+			{
+				List<BrapiGermplasmMcpd> list = new ArrayList<>();
+
+				while (resultSet.next())
+					list.add(getBrapiGermplasmMcpd(resultSet));
+
+				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
+				result = new BasicResource<DataResult<BrapiGermplasmMcpd>>(new DataResult<BrapiGermplasmMcpd>(list), currentPage, pageSize, totalCount);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return result;
 	}
 }
