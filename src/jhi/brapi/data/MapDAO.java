@@ -42,7 +42,7 @@ public class MapDAO
 			"AS number_markers FROM mapdefinitions WHERE map_id=? GROUP BY chromosome";
 
 	private final String mapMarkersQuery = "SELECT map_id, chromosome, definition_start, marker_id, markers.marker_name" +
-			" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=? LIMIT ?, ?";
+			" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=? %s LIMIT ?, ?";
 
 	private final String mapMarkersCountQuery = "SELECT COUNT(1) AS total_count, map_id, chromosome, definition_start, marker_id, markers.marker_name" +
 		" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=?";
@@ -251,27 +251,33 @@ public class MapDAO
 	private PreparedStatement createByIdStatementMarkers(Connection con, String query, String id, String[] chromosomes, int currentPage, int pageSize)
 		throws SQLException
 	{
-		// Tweak the statement to include optional chromosome filters
+		// Tweak the statement to include optional chromosome filters#
+
+		String mapBits = "";
 		for (int i = 0; i < chromosomes.length; i++)
 		{
 			if (i == 0)
-				query += " AND mapdefinitions.chromosome=?";
+				mapBits += " AND (mapdefinitions.chromosome=?";
 			else
-				query += " OR mapdefinitions.chromosome=?";
+				mapBits += " OR mapdefinitions.chromosome=?";
+
+			if(i == chromosomes.length - 1)
+				mapBits += ")";
 		}
 
-		PreparedStatement statement = con.prepareStatement(query);
+		String formatted = String.format(query, mapBits);
+
+		PreparedStatement statement = con.prepareStatement(formatted);
 		// Get the basic information on the map
-		statement.setString(1, id);
-		int current = 2;
+		int position = 1;
+		statement.setString(position++, id);
 		for (int i = 0; i < chromosomes.length; i++)
 		{
-			statement.setString(i + 2, chromosomes[i]);
-			current = i+2;
+			statement.setString(position++, chromosomes[i]);
 		}
 
-		statement.setInt(current++, PaginationUtils.getLowLimit(currentPage, pageSize));
-		statement.setInt(current++, pageSize);
+		statement.setInt(position++, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(position++, pageSize);
 
 		return statement;
 	}
