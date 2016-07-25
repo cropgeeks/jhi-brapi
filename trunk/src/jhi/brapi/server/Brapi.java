@@ -31,7 +31,7 @@ public class Brapi extends Application
 		Filter encoder = new Encoder(getContext(), false, true, new EncoderService(true));
 		encoder.setNext(router);
 		CorsFilter corsFilter = new CorsFilter(getContext(), encoder);
-		corsFilter.setAllowedOrigins(new HashSet<>(Arrays.asList("*")));
+		corsFilter.setAllowedOrigins(new HashSet<>(Collections.singletonList("*")));
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(false);
 
