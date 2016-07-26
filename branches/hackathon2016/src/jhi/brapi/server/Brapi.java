@@ -58,6 +58,7 @@ public class Brapi extends Application
 		attachToRouter(router, "/studies", Studies.class);
 		attachToRouter(router, "/studies/{id}", StudyDetails.class);
 		attachToRouter(router, "/studies/{id}/table", StudiesAsTable.class);
+		attachToRouter(router, "/files/{filename}", Files.class);
 
 //		attachToRouter(router, "/authorize", AuthorizationServerResource.class);
 //		attachToRouter(router, HttpOAuthHelper.getAuthPage(getContext()), AuthPageServerResource.class);

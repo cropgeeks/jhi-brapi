@@ -2,6 +2,7 @@ package jhi.brapi.data;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.*;
 
 import jhi.brapi.resource.*;
 
@@ -59,6 +60,58 @@ public class DatabaseUtils
 		}
 
 		return -1;
+	}
+
+	public static PreparedStatement createInLimitStatement(Connection con, String query, int currentPage, int pageSize, List<?>... lists)
+			throws SQLException
+	{
+		String[] placeholders = Arrays.stream(lists)
+									  .map(l -> createPlaceholders(l.size()))
+									  .toArray(String[]::new);
+
+		PreparedStatement stmt = con.prepareStatement(String.format(query, (Object[]) placeholders));
+
+		int i = 1;
+		for(List<?> list : lists)
+		{
+			for(Object o : list)
+			{
+				stmt.setString(i++, o.toString());
+			}
+		}
+
+		stmt.setInt(i++, currentPage);
+		stmt.setInt(i++, pageSize);
+
+		return stmt;
+	}
+
+	public static PreparedStatement createInStatement(Connection con, String query, List<?>... lists)
+			throws SQLException
+	{
+		String[] placeholders = Arrays.stream(lists)
+			  .map(l -> createPlaceholders(l.size()))
+			  .toArray(String[]::new);
+
+		PreparedStatement stmt = con.prepareStatement(String.format(query, (Object[]) placeholders));
+
+		int i = 1;
+		for(List<?> list : lists)
+		{
+			for(Object o : list)
+			{
+				stmt.setString(i++, o.toString());
+			}
+		}
+
+		return stmt;
+	}
+
+	public static String createPlaceholders(int size)
+	{
+		return IntStream.range(0, size)
+						.mapToObj(i -> "?")
+						.collect(Collectors.joining(","));
 	}
 
 	public static PreparedStatement createByIdStatement(Connection con, String query, String id)

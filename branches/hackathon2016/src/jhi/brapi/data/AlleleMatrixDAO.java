@@ -1,5 +1,7 @@
 package jhi.brapi.data;
 
+import java.io.*;
+import java.nio.file.*;
 import java.sql.*;
 import java.util.*;
 
@@ -12,14 +14,20 @@ public class AlleleMatrixDAO
 {
 	private String allMarkers = "select genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
 			"genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
-			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where ";
+			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id IN (%s) AND datasets.id IN (%s) ORDER BY marker_name, dataset_id, germinatebase_id LIMIT ?, ?";
 
 	private String countAllMarkers = "select COUNT(1) AS total_count, genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
 	"genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
 	"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where ";
 
-	public BasicResource<BrapiAlleleMatrix> get(List<String> markerProfileDbIds, int currentPage, int pageSize)
+	public BasicResource<BrapiAlleleMatrix> get(List<String> markerProfileDbIds, String format, int currentPage, int pageSize)
 	{
+		if(format != null)
+		{
+			currentPage = 0;
+			pageSize = Integer.MAX_VALUE;
+		}
+
 		BasicResource<BrapiAlleleMatrix> result = new BasicResource<>();
 
 		List<Integer> datasetIds = new ArrayList<>();
@@ -36,7 +44,7 @@ public class AlleleMatrixDAO
 		buildInStatement(germinatebaseIds, countBuilder, "germinatebase_id IN (", ")");
 		buildInStatement(datasetIds, countBuilder, " AND datasets.id IN (", ") ");
 
-		countBuilder.append("ORDER BY marker_name, dataset_id, germinatebase_id");
+		countBuilder.append("");
 
 		String countQuery = countBuilder.toString();
 
@@ -53,77 +61,143 @@ public class AlleleMatrixDAO
 
 		if (totalCount != -1)
 		{
-			StringBuilder builder = new StringBuilder(allMarkers);
-			buildInStatement(germinatebaseIds, builder, "germinatebase_id IN (", ")");
-			buildInStatement(datasetIds, builder, " AND datasets.id IN (", ") ");
-
-			builder.append("ORDER BY marker_name, dataset_id, germinatebase_id");
-			builder.append(" LIMIT ?, ?");
-
-			String query = builder.toString();
-
 			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds, currentPage, pageSize);
+				 PreparedStatement statement = DatabaseUtils.createInLimitStatement(con, allMarkers, currentPage, pageSize, germinatebaseIds, datasetIds);
 				 ResultSet resultSet = statement.executeQuery())
 			{
-				BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
-
-				LinkedHashMap<String, List<String>> scores = new LinkedHashMap<>();
-				LinkedHashSet<String> lines = new LinkedHashSet<>();
-
-				while (resultSet.next())
+				if(format != null)
 				{
-					String markerName = resultSet.getString("marker_name");
-					String allele1 = resultSet.getString("allele1");
-					String allele2 = resultSet.getString("allele2");
-					String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
-
-					lines.add(lineName);
-
-					List<String> score = scores.get(markerName);
-					if (score == null)
-					{
-						score = new ArrayList<>();
-						score.add(allele1 + allele2);
-						scores.put(markerName, score);
-					}
-					else
-					{
-						score.add(allele1 + allele2);
-						scores.put(markerName, score);
-					}
+					result = getMatrixForFile(resultSet, markerProfileDbIds);
 				}
-
-				/*
-				 * The sorting is required because the first marker may have been split across two pages. In that case, the markerprofiles won't be
-				 * in the correct order, as the code will start with the rest of this marker and then jump to the next
-				 */
-				List<String> linesSorted = new ArrayList<>(lines);
-				Collections.sort(linesSorted);
-				matrix.setMarkerprofileDbIds(linesSorted);
-
-				List<LinkedHashMap<String, List<String>>> finalScores = new ArrayList<>();
-
-				for (Map.Entry<String, List<String>> entry : scores.entrySet())
+				else
 				{
-					LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
-					map.put(entry.getKey(), entry.getValue());
-					finalScores.add(map);
+					result = new BasicResource<BrapiAlleleMatrix>(getMatrixForJson(resultSet), currentPage, pageSize, totalCount);
 				}
-
-//				finalScores.add(scores);
-
-				matrix.setData(finalScores);
-
-				result = new BasicResource<BrapiAlleleMatrix>(matrix, currentPage, pageSize, totalCount);
 			}
-			catch (SQLException e)
+			catch (SQLException | IOException e)
 			{
 				e.printStackTrace();
 			}
 		}
 
 		return result;
+	}
+
+	private BasicResource<BrapiAlleleMatrix> getMatrixForFile(ResultSet resultSet, List<String> markerProfileDbIds)
+			throws SQLException, IOException
+	{
+		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
+
+		LinkedHashMap<String, List<String>> scores = new LinkedHashMap<>();
+		LinkedHashSet<String> lines = new LinkedHashSet<>();
+
+		File file = File.createTempFile("allelematrix", ".tsv");
+
+		try(BufferedWriter bw = new BufferedWriter(new FileWriter(file)))
+		{
+			bw.write("markerprofileDbIds");
+
+			for(String markerprofileDbId : markerProfileDbIds)
+				bw.write("\t" + markerprofileDbId);
+
+			String previousMarkerName = null;
+			while (resultSet.next())
+			{
+				String markerName = resultSet.getString("marker_name");
+				String allele1 = resultSet.getString("allele1");
+				String allele2 = resultSet.getString("allele2");
+
+				if(!Objects.equals(previousMarkerName, markerName))
+				{
+					previousMarkerName = markerName;
+					bw.newLine();
+					bw.write(markerName);
+				}
+
+				bw.write("\t" + allele1 + allele2);
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		/*
+		 * The sorting is required because the first marker may have been split across two pages. In that case, the markerprofiles won't be
+		 * in the correct order, as the code will start with the rest of this marker and then jump to the next
+		 */
+		List<String> linesSorted = new ArrayList<>(lines);
+		Collections.sort(linesSorted);
+		matrix.setMarkerprofileDbIds(linesSorted);
+		matrix.setData(new ArrayList<>());
+
+		for (Map.Entry<String, List<String>> entry : scores.entrySet())
+		{
+			LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
+			map.put(entry.getKey(), entry.getValue());
+		}
+
+//				finalScores.add(scores);
+
+		BasicResource<BrapiAlleleMatrix> result = new BasicResource<BrapiAlleleMatrix>(matrix, 0, 1, 1);
+		Datafile datafile = new Datafile(file.getName()); // TODO: get absolute URL
+		result.getMetadata().setDatafiles(Collections.singletonList(datafile));
+		return result;
+	}
+
+	private BrapiAlleleMatrix getMatrixForJson(ResultSet resultSet)
+			throws SQLException
+	{
+		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
+
+		LinkedHashMap<String, List<String>> scores = new LinkedHashMap<>();
+		LinkedHashSet<String> lines = new LinkedHashSet<>();
+
+		while (resultSet.next())
+		{
+			String markerName = resultSet.getString("marker_name");
+			String allele1 = resultSet.getString("allele1");
+			String allele2 = resultSet.getString("allele2");
+			String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
+
+			lines.add(lineName);
+
+			List<String> score = scores.get(markerName);
+			if (score == null)
+			{
+				score = new ArrayList<>();
+				score.add(allele1 + allele2);
+				scores.put(markerName, score);
+			}
+			else
+			{
+				score.add(allele1 + allele2);
+				scores.put(markerName, score);
+			}
+		}
+
+				/*
+				 * The sorting is required because the first marker may have been split across two pages. In that case, the markerprofiles won't be
+				 * in the correct order, as the code will start with the rest of this marker and then jump to the next
+				 */
+		List<String> linesSorted = new ArrayList<>(lines);
+		Collections.sort(linesSorted);
+		matrix.setMarkerprofileDbIds(linesSorted);
+
+		List<LinkedHashMap<String, List<String>>> finalScores = new ArrayList<>();
+
+		for (Map.Entry<String, List<String>> entry : scores.entrySet())
+		{
+			LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
+			map.put(entry.getKey(), entry.getValue());
+			finalScores.add(map);
+		}
+
+//				finalScores.add(scores);
+
+		matrix.setData(finalScores);
+
+		return matrix;
 	}
 
 	private void buildInStatement(List<Integer> germinatebaseIds, StringBuilder builder, String inClause, String closeInClause)
