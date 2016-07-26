@@ -7,6 +7,10 @@ public class Datafile
 {
 	private String url;
 
+	public Datafile()
+	{
+	}
+
 	public Datafile(String url)
 	{
 		this.url = url;

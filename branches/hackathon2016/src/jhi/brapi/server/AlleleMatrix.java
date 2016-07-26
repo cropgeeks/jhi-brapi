@@ -55,7 +55,7 @@ public class AlleleMatrix extends BaseBrapiServerResource
 //	}
 
 	@Post
-	public JacksonRepresentation post(Representation rep)
+	public JacksonRepresentation<BasicResource<BrapiAlleleMatrix>> post(Representation rep)
 	{
 		List<String> profileIds = new ArrayList<>();
 		List<String> markerIds = new ArrayList<>();
@@ -71,6 +71,6 @@ public class AlleleMatrix extends BaseBrapiServerResource
 				format = parameter.getValue();
 		}
 
-		return new JacksonRepresentation(alleleMatrixDAO.get(profileIds, format, currentPage, pageSize));
+		return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(profileIds, format, currentPage, pageSize));
 	}
 }

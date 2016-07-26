@@ -1,13 +1,10 @@
 package jhi.brapi.resource;
 
-import com.fasterxml.jackson.annotation.*;
-
 import java.util.*;
 
 /**
  * Created by gs40939 on 03/11/2015.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Metadata
 {
 	private Pagination pagination;
@@ -20,6 +17,7 @@ public class Metadata
 	{
 		this.pagination = new Pagination();
 		this.status = new ArrayList<Status>();
+		this.datafiles = new ArrayList<Datafile>();
 	}
 
 	public Pagination getPagination()

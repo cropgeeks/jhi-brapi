@@ -140,7 +140,7 @@ public class AlleleMatrixDAO
 //				finalScores.add(scores);
 
 		BasicResource<BrapiAlleleMatrix> result = new BasicResource<BrapiAlleleMatrix>(matrix, 0, 1, 1);
-		Datafile datafile = new Datafile(file.getName()); // TODO: get absolute URL
+		Datafile datafile = new Datafile("https://ics.hutton.ac.uk/brapi/cactuar/v1/files/" + file.getName()); // TODO: get absolute URL
 		result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 		return result;
 	}

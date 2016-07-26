@@ -11,7 +11,7 @@ public class BrapiLocation
 	private String countryName;
 	private double latitude;
 	private double longitude;
-	private int altitude;
+	private double altitude;
 	private Object attributes = null;
 
 	public int getLocationDbId()
@@ -74,12 +74,12 @@ public class BrapiLocation
 		this.longitude = longitude;
 	}
 
-	public int getAltitude()
+	public double getAltitude()
 	{
 		return altitude;
 	}
 
-	public void setAltitude(int altitude)
+	public void setAltitude(double altitude)
 	{
 		this.altitude = altitude;
 	}
