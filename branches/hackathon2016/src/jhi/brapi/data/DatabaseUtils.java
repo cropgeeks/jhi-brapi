@@ -80,7 +80,7 @@ public class DatabaseUtils
 			}
 		}
 
-		stmt.setInt(i++, currentPage);
+		stmt.setInt(i++, PaginationUtils.getLowLimit(currentPage, pageSize));
 		stmt.setInt(i++, pageSize);
 
 		return stmt;

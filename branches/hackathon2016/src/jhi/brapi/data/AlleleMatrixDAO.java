@@ -13,11 +13,11 @@ import jhi.brapi.resource.*;
 public class AlleleMatrixDAO
 {
 	private String allMarkers = "select genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
-			"genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
-			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id IN (%s) AND datasets.id IN (%s) ORDER BY marker_name, dataset_id, germinatebase_id LIMIT ?, ?";
+			"genotypes.germinatebase_id, genotypes.dataset_id, markers.id from genotypes INNER JOIN markers ON " +
+			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id IN (%s) AND datasets.id IN (%s) ORDER BY markers.marker_name, dataset_id, germinatebase_id LIMIT ?, ?";
 
 	private String countAllMarkers = "select COUNT(1) AS total_count, genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
-	"genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name from genotypes INNER JOIN markers ON " +
+	"genotypes.germinatebase_id, genotypes.dataset_id, markers.id from genotypes INNER JOIN markers ON " +
 	"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where ";
 
 	public BasicResource<BrapiAlleleMatrix> get(List<String> markerProfileDbIds, String format, int currentPage, int pageSize)
@@ -43,8 +43,6 @@ public class AlleleMatrixDAO
 		StringBuilder countBuilder = new StringBuilder(countAllMarkers);
 		buildInStatement(germinatebaseIds, countBuilder, "germinatebase_id IN (", ")");
 		buildInStatement(datasetIds, countBuilder, " AND datasets.id IN (", ") ");
-
-		countBuilder.append("");
 
 		String countQuery = countBuilder.toString();
 
@@ -103,7 +101,7 @@ public class AlleleMatrixDAO
 			String previousMarkerName = null;
 			while (resultSet.next())
 			{
-				String markerName = resultSet.getString("marker_name");
+				String markerName = resultSet.getString("markers.id");
 				String allele1 = resultSet.getString("allele1");
 				String allele2 = resultSet.getString("allele2");
 
@@ -155,7 +153,7 @@ public class AlleleMatrixDAO
 
 		while (resultSet.next())
 		{
-			String markerName = resultSet.getString("marker_name");
+			String markerName = resultSet.getString("markers.id");
 			String allele1 = resultSet.getString("allele1");
 			String allele2 = resultSet.getString("allele2");
 			String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
@@ -176,10 +174,10 @@ public class AlleleMatrixDAO
 			}
 		}
 
-				/*
-				 * The sorting is required because the first marker may have been split across two pages. In that case, the markerprofiles won't be
-				 * in the correct order, as the code will start with the rest of this marker and then jump to the next
-				 */
+		/*
+		 * The sorting is required because the first marker may have been split across two pages. In that case, the markerprofiles won't be
+		 * in the correct order, as the code will start with the rest of this marker and then jump to the next
+		 */
 		List<String> linesSorted = new ArrayList<>(lines);
 		Collections.sort(linesSorted);
 		matrix.setMarkerprofileDbIds(linesSorted);
