@@ -8,7 +8,7 @@ import java.sql.*;
 
 public class BrapiGenomeMap
 {
-	private int mapId;
+	private int mapDbId;
 	private String name;
 	private String species;
 	private String type;
