@@ -18,14 +18,14 @@ public class BrapiGenomeMap
 	private int linkageGroupCount;
 	private String comments;
 
-	public int getMapId()
+	public int getMapDbId()
 	{
-		return mapId;
+		return mapDbId;
 	}
 
-	public void setMapId(int mapId)
+	public void setMapDbId(int mapDbId)
 	{
-		this.mapId = mapId;
+		this.mapDbId = mapDbId;
 	}
 
 	public String getName()
@@ -112,7 +112,7 @@ public class BrapiGenomeMap
 	public String toString()
 	{
 		return "Map{" +
-			"mapId=" + mapId +
+			"mapDbId=" + mapDbId +
 			", name='" + name + '\'' +
 			", species='" + species + '\'' +
 			", type='" + type + '\'' +

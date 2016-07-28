@@ -37,7 +37,7 @@ public class StudiesDAO
 		return result;
 	}
 
-	public BasicResource<DataResult<BrapiStudies>> getAll(int currentPage, int pageSize, String programId, String locationId, String seasonId)
+	public BasicResource<DataResult<BrapiStudies>> getAll(int currentPage, int pageSize, String studyType, String programId, String locationId, String seasonId)
 	{
 		// Create empty BasicResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
 		// this is what's returned
@@ -45,12 +45,26 @@ public class StudiesDAO
 
 		// TODO: Can we do this kind of concept in a generic way somewhere?
 		StringBuilder builder = new StringBuilder();
+		if(studyType != null)
+		{
+			switch(studyType.toLowerCase())
+			{
+				case "genotype":
+					builder.append(" AND experimenttypes.description = 'genotype' ");
+					break;
+				case "trial":
+					builder.append(" AND experimenttypes.description = 'trials' ");
+					break;
+				default:
+					return result;
+			}
+		}
 		if (programId != null && !programId.isEmpty())
-			builder.append(" AND experiments.id = ").append(programId);
+			builder.append(" AND experiments.id = ").append(programId); // TODO: prevent sql injection
 		if (locationId != null && !locationId.isEmpty())
-			builder.append(" AND datasets.location_id = ").append(locationId);
+			builder.append(" AND datasets.location_id = ").append(locationId); // TODO: prevent sql injection
 		if (seasonId != null && !seasonId.isEmpty())
-			builder.append(" AND YEAR(phenotypedata.recording_date) = ").append(seasonId);
+			builder.append(" AND YEAR(phenotypedata.recording_date) = ").append(seasonId); // TODO: prevent sql injection
 
 		String finalCountStudies = String.format(getCountStudies, builder.toString());
 		String finalGetStudies = String.format(getStudies, builder.toString());
@@ -87,14 +101,14 @@ public class StudiesDAO
 	{
 		BrapiStudies studies = new BrapiStudies();
 		studies.setStudyDbId(resultSet.getString("datasets.id"));
-		studies.setStudyName(resultSet.getString("description"));
+		studies.setName(resultSet.getString("description"));
 		studies.setLocationDbId(resultSet.getString("location_id"));
 		studies.setOptionalInfo(new LinkedHashMap<String, Object>());
 
 		// Parse out the years
-		String yearString = resultSet.getString("years");
-		String[] yearArray = yearString.split(",");
-		studies.setYears(Arrays.asList(yearArray));
+		String seasonString = resultSet.getString("years");
+		String[] yearArray = seasonString.split(",");
+		studies.setSeasons(Arrays.asList(yearArray));
 
 		return studies;
 	}

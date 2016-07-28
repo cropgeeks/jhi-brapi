@@ -85,7 +85,7 @@ public class MapDAO
 		while (resultSet.next())
 		{
 			BrapiGenomeMap map = new BrapiGenomeMap();
-			map.setMapId(resultSet.getInt("id"));
+			map.setMapDbId(resultSet.getInt("id"));
 			map.setName(resultSet.getString("description"));
 			map.setPublishedDate(resultSet.getDate("created_on"));
 			map.setLinkageGroupCount(resultSet.getInt("chromosomeCount"));
@@ -172,7 +172,7 @@ public class MapDAO
 		{
 			LinkageGroup linkageGroup = new LinkageGroup();
 			linkageGroup.setLinkageGroupId(resultSet.getString("chromosome"));
-			linkageGroup.setMaxPosition(resultSet.getInt("max"));
+			linkageGroup.setMaxPosition(resultSet.getLong("max"));
 			linkageGroup.setNumberMarkers(resultSet.getInt("number_markers"));
 			linkageGroups.add(linkageGroup);
 		}
@@ -292,7 +292,7 @@ public class MapDAO
 		while (resultSet.next())
 		{
 			BrapiMarkerPosition mapMarker = new BrapiMarkerPosition();
-			mapMarker.setMarkerId(resultSet.getString("marker_id"));
+			mapMarker.setMarkerDbId(resultSet.getString("marker_id"));
 			mapMarker.setMarkerName(resultSet.getString("marker_name"));
 			mapMarker.setLocation(resultSet.getString("definition_start"));
 			mapMarker.setLinkageGroup(resultSet.getString("chromosome"));

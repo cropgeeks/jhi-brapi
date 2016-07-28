@@ -1,7 +1,6 @@
 package jhi.brapi.data;
 
 import java.io.*;
-import java.nio.file.*;
 import java.sql.*;
 import java.util.*;
 
@@ -17,12 +16,12 @@ public class AlleleMatrixDAO
 			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id IN (%s) AND datasets.id IN (%s) ORDER BY markers.marker_name, dataset_id, germinatebase_id LIMIT ?, ?";
 
 	private String countAllMarkers = "select COUNT(1) AS total_count, genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
-	"genotypes.germinatebase_id, genotypes.dataset_id, markers.id from genotypes INNER JOIN markers ON " +
-	"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where ";
+			"genotypes.germinatebase_id, genotypes.dataset_id, markers.id from genotypes INNER JOIN markers ON " +
+			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where ";
 
-	public BasicResource<BrapiAlleleMatrix> get(List<String> markerProfileDbIds, String format, int currentPage, int pageSize)
+	public BasicResource<BrapiAlleleMatrix> get(List<String> markerProfileDbIds, String format, String unknownString, String sepPhased, String sepUnphased, int currentPage, int pageSize)
 	{
-		if(format != null)
+		if (format != null)
 		{
 			currentPage = 0;
 			pageSize = Integer.MAX_VALUE;
@@ -63,13 +62,13 @@ public class AlleleMatrixDAO
 				 PreparedStatement statement = DatabaseUtils.createInLimitStatement(con, allMarkers, currentPage, pageSize, germinatebaseIds, datasetIds);
 				 ResultSet resultSet = statement.executeQuery())
 			{
-				if(format != null)
+				if (format != null)
 				{
-					result = getMatrixForFile(resultSet, markerProfileDbIds);
+					result = getMatrixForFile(resultSet, markerProfileDbIds, unknownString, sepPhased, sepUnphased);
 				}
 				else
 				{
-					result = new BasicResource<BrapiAlleleMatrix>(getMatrixForJson(resultSet), currentPage, pageSize, totalCount);
+					result = new BasicResource<BrapiAlleleMatrix>(getMatrixForJson(resultSet, unknownString, sepPhased, sepUnphased), currentPage, pageSize, totalCount);
 				}
 			}
 			catch (SQLException | IOException e)
@@ -81,7 +80,7 @@ public class AlleleMatrixDAO
 		return result;
 	}
 
-	private BasicResource<BrapiAlleleMatrix> getMatrixForFile(ResultSet resultSet, List<String> markerProfileDbIds)
+	private BasicResource<BrapiAlleleMatrix> getMatrixForFile(ResultSet resultSet, List<String> markerProfileDbIds, String unknownString, String sepPhased, String sepUnphased)
 			throws SQLException, IOException
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
@@ -91,11 +90,11 @@ public class AlleleMatrixDAO
 
 		File file = File.createTempFile("allelematrix", ".tsv");
 
-		try(BufferedWriter bw = new BufferedWriter(new FileWriter(file)))
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(file)))
 		{
 			bw.write("markerprofileDbIds");
 
-			for(String markerprofileDbId : markerProfileDbIds)
+			for (String markerprofileDbId : markerProfileDbIds)
 				bw.write("\t" + markerprofileDbId);
 
 			String previousMarkerName = null;
@@ -105,14 +104,14 @@ public class AlleleMatrixDAO
 				String allele1 = resultSet.getString("allele1");
 				String allele2 = resultSet.getString("allele2");
 
-				if(!Objects.equals(previousMarkerName, markerName))
+				if (!Objects.equals(previousMarkerName, markerName))
 				{
 					previousMarkerName = markerName;
 					bw.newLine();
 					bw.write(markerName);
 				}
 
-				bw.write("\t" + allele1 + allele2);
+				bw.write("\t" + getString(true, allele1, allele2, unknownString, sepPhased, sepUnphased));
 			}
 		}
 		catch (IOException e)
@@ -143,7 +142,7 @@ public class AlleleMatrixDAO
 		return result;
 	}
 
-	private BrapiAlleleMatrix getMatrixForJson(ResultSet resultSet)
+	private BrapiAlleleMatrix getMatrixForJson(ResultSet resultSet, String unknownString, String sepPhased, String sepUnphased)
 			throws SQLException
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
@@ -161,15 +160,18 @@ public class AlleleMatrixDAO
 			lines.add(lineName);
 
 			List<String> score = scores.get(markerName);
+			String call = getString(true, allele1, allele2, unknownString, sepPhased, sepUnphased);
 			if (score == null)
 			{
 				score = new ArrayList<>();
-				score.add(allele1 + allele2);
+				score.add(call);
+//				score.add(allele1 + allele2);
 				scores.put(markerName, score);
 			}
 			else
 			{
-				score.add(allele1 + allele2);
+				score.add(call);
+//				score.add(allele1 + allele2);
 				scores.put(markerName, score);
 			}
 		}
@@ -196,6 +198,37 @@ public class AlleleMatrixDAO
 		matrix.setData(finalScores);
 
 		return matrix;
+	}
+
+	// TODO: Get the parameter from the request
+	private String getString(boolean collapse, String allele1, String allele2, String unknownString, String sepPhased, String sepUnphased)
+	{
+		allele1 = fixAllele(allele1, unknownString); // Replace empty string and dash into the unknownString
+		allele2 = fixAllele(allele2, unknownString); // Replace empty string and dash into the unknownString
+
+		if (Objects.equals(allele1, unknownString) && Objects.equals(allele2, unknownString)) // If both are unknown return empty string
+			return "";
+		else if (Objects.equals(allele1, unknownString)) // If only the first is unknown, return the second
+			return allele2;
+		else if (Objects.equals(allele1, unknownString)) // If only the second is unknown, return the first
+			return allele1;
+		else if (Objects.equals(allele1, allele2)) // If both are the same, return the first
+		{
+			if(collapse)
+				return allele1;
+			else
+				return allele1 + sepUnphased + allele2;
+		}
+		else // Else combine them
+			return allele1 + sepUnphased + allele2;
+	}
+
+	private String fixAllele(String input, String unknownString)
+	{
+		if (Objects.equals(input, "") || Objects.equals(input, "-"))
+			return unknownString;
+		else
+			return input;
 	}
 
 	private void buildInStatement(List<Integer> germinatebaseIds, StringBuilder builder, String inClause, String closeInClause)
@@ -309,7 +342,7 @@ public class AlleleMatrixDAO
 //	}
 
 	private PreparedStatement createByIdStatement(Connection con, String query, List<Integer> germinatebaseIds, List<Integer> datasetIds)
-		throws SQLException
+			throws SQLException
 	{
 		// Get the basic information on the map
 		PreparedStatement statement = con.prepareStatement(query);
@@ -325,7 +358,7 @@ public class AlleleMatrixDAO
 	}
 
 	private PreparedStatement createByIdStatement(Connection con, String query, List<Integer> germinatebaseIds, List<Integer> datasetIds, int currentPage, int pageSize)
-		throws SQLException
+			throws SQLException
 	{
 		// Get the basic information on the map
 		PreparedStatement statement = con.prepareStatement(query);

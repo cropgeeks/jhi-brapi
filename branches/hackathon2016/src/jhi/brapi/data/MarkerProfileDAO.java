@@ -20,11 +20,7 @@ public class MarkerProfileDAO
 		"AS markerprofile_id, markers.marker_name from genotypes INNER JOIN markers ON genotypes.marker_id = markers.id " +
 		"INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id=? AND datasets.id=?";
 
-	private final String allMarkerProfiles = "SELECT DISTINCT markerprofile_id, germinatebase_id FROM (select " +
-		"genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, " +
-		"CONCAT(genotypes.dataset_id, '-', genotypes.germinatebase_id) AS markerprofile_id from genotypes INNER JOIN " +
-		"markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id) AS " +
-		"markerprofiles LIMIT ?, ?";
+	private final String allMarkerProfiles = "SELECT DISTINCT markerprofile_id, germinatebase_id, germinatebase_name FROM ( SELECT genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, CONCAT( genotypes.dataset_id, '-', genotypes.germinatebase_id ) AS markerprofile_id, germinatebase.id AS germinatebase_name FROM genotypes INNER JOIN markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id INNER JOIN germinatebase ON genotypes.germinatebase_id = germinatebase.id ) AS markerprofiles LIMIT ?, ?";
 
 	private final String allMarkerProfilesCount = "SELECT COUNT(DISTINCT markerprofile_id) AS total_count FROM (select " +
 		"genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, " +
@@ -110,6 +106,7 @@ public class MarkerProfileDAO
 			BrapiMarkerProfile profile = new BrapiMarkerProfile();
 			profile.setMarkerprofileDbId(resultSet.getString("markerprofile_id"));
 			profile.setGermplasmDbId(Integer.parseInt(resultSet.getString("germinatebase_id")));
+			profile.setGermplasmName(resultSet.getString("germinatebase_name"));
 
 			profiles.add(profile);
 		}

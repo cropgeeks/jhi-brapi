@@ -7,7 +7,7 @@ public class LinkageGroup
 {
 	private String linkageGroupId;
 	private int numberMarkers;
-	private int maxPosition;
+	private long maxPosition;
 
 	public String getLinkageGroupId()
 	{
@@ -29,12 +29,12 @@ public class LinkageGroup
 		this.numberMarkers = numberMarkers;
 	}
 
-	public int getMaxPosition()
+	public long getMaxPosition()
 	{
 		return maxPosition;
 	}
 
-	public void setMaxPosition(int maxPosition)
+	public void setMaxPosition(long maxPosition)
 	{
 		this.maxPosition = maxPosition;
 	}
