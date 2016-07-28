@@ -7,7 +7,7 @@ public class BrapiMarkerProfile
 {
 	private String markerprofileDbId;
 	private int germplasmDbId;
-	private String germplasmName;
+	private String uniqueDisplayName;
 	private int extractDbId;
 	private String analysisMethod;
 	private int resultCount;
@@ -32,14 +32,14 @@ public class BrapiMarkerProfile
 		this.germplasmDbId = germplasmDbId;
 	}
 
-	public String getGermplasmName()
+	public String getUniqueDisplayName()
 	{
-		return germplasmName;
+		return uniqueDisplayName;
 	}
 
-	public void setGermplasmName(String germplasmName)
+	public void setUniqueDisplayName(String uniqueDisplayName)
 	{
-		this.germplasmName = germplasmName;
+		this.uniqueDisplayName = uniqueDisplayName;
 	}
 
 	public int getExtractDbId()
