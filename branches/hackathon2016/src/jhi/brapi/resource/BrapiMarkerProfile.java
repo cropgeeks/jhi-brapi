@@ -5,7 +5,7 @@ package jhi.brapi.resource;
  */
 public class BrapiMarkerProfile
 {
-	private String markerprofileDbId;
+	private String markerProfileDbId;
 	private String germplasmDbId;
 	private String uniqueDisplayName;
 	private String extractDbId;
@@ -13,14 +13,14 @@ public class BrapiMarkerProfile
 	private int resultCount;
 	private String sampleDbId;
 
-	public String getMarkerprofileDbId()
+	public String getMarkerProfileDbId()
 	{
-		return markerprofileDbId;
+		return markerProfileDbId;
 	}
 
-	public void setMarkerprofileDbId(String markerprofileDbId)
+	public void setMarkerProfileDbId(String markerProfileDbId)
 	{
-		this.markerprofileDbId = markerprofileDbId;
+		this.markerProfileDbId = markerProfileDbId;
 	}
 
 	public String getGermplasmDbId()
@@ -87,7 +87,7 @@ public class BrapiMarkerProfile
 	public String toString()
 	{
 		return "MarkerProfile{" +
-			"markerprofileDbId=" + markerprofileDbId +
+			"markerprofileDbId=" + markerProfileDbId +
 			", germplasmDbId=" + germplasmDbId +
 			", extractDbId=" + extractDbId +
 			", analysisMethod='" + analysisMethod + '\'' +
