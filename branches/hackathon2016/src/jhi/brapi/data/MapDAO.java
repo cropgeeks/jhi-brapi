@@ -85,7 +85,7 @@ public class MapDAO
 		while (resultSet.next())
 		{
 			BrapiGenomeMap map = new BrapiGenomeMap();
-			map.setMapDbId(resultSet.getInt("id"));
+			map.setMapDbId(resultSet.getString("id"));
 			map.setName(resultSet.getString("description"));
 			map.setPublishedDate(resultSet.getDate("created_on"));
 			map.setLinkageGroupCount(resultSet.getInt("chromosomeCount"));
