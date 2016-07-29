@@ -125,7 +125,6 @@ public class AlleleMatrixDAO
 		 */
 		List<String> linesSorted = new ArrayList<>(lines);
 		Collections.sort(linesSorted);
-		matrix.setMarkerprofileDbIds(linesSorted);
 		matrix.setData(new ArrayList<>());
 
 		for (Map.Entry<String, List<String>> entry : scores.entrySet())
@@ -147,8 +146,7 @@ public class AlleleMatrixDAO
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
-		LinkedHashMap<String, List<String>> scores = new LinkedHashMap<>();
-		LinkedHashSet<String> lines = new LinkedHashSet<>();
+		List<List<String>> data = new ArrayList<>();
 
 		while (resultSet.next())
 		{
@@ -157,47 +155,23 @@ public class AlleleMatrixDAO
 			String allele2 = resultSet.getString("allele2");
 			String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
 
-			lines.add(lineName);
-
-			List<String> score = scores.get(markerName);
-			String call = getString(true, allele1, allele2, unknownString, sepPhased, sepUnphased);
-			if (score == null)
-			{
-				score = new ArrayList<>();
-				score.add(call);
-//				score.add(allele1 + allele2);
-				scores.put(markerName, score);
-			}
-			else
-			{
-				score.add(call);
-//				score.add(allele1 + allele2);
-				scores.put(markerName, score);
-			}
+			List<String> callData = createArray(markerName, lineName, getString(true, allele1, allele2, unknownString, sepPhased, sepUnphased));
+			data.add(callData);
 		}
 
-		/*
-		 * The sorting is required because the first marker may have been split across two pages. In that case, the markerprofiles won't be
-		 * in the correct order, as the code will start with the rest of this marker and then jump to the next
-		 */
-		List<String> linesSorted = new ArrayList<>(lines);
-		Collections.sort(linesSorted);
-		matrix.setMarkerprofileDbIds(linesSorted);
-
-		List<LinkedHashMap<String, List<String>>> finalScores = new ArrayList<>();
-
-		for (Map.Entry<String, List<String>> entry : scores.entrySet())
-		{
-			LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
-			map.put(entry.getKey(), entry.getValue());
-			finalScores.add(map);
-		}
-
-//				finalScores.add(scores);
-
-		matrix.setData(finalScores);
+		matrix.setData(data);
 
 		return matrix;
+	}
+
+	private List<String> createArray(String markerDbId, String markerprofileDbIds, String allele)
+	{
+		List<String> callData = new ArrayList<>();
+		callData.add(markerDbId);
+		callData.add(markerprofileDbIds);
+		callData.add(allele);
+
+		return callData;
 	}
 
 	// TODO: Get the parameter from the request
