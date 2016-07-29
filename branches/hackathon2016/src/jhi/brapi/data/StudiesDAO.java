@@ -13,9 +13,9 @@ public class StudiesDAO
 	// Simply selects all fields from germinatebase
 	private final String getStudyDetails = "SELECT datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE datasets.id = ?";
 
-	private final String getStudies = "SELECT datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.description = 'trials' %s GROUP BY datasets.id LIMIT ?, ?";
+	private final String getStudies = "SELECT datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE 1=1 %s GROUP BY datasets.id LIMIT ?, ?";
 
-	private final String getCountStudies = "SELECT COUNT(DISTINCT datasets.id) AS total_count FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.description = \"trials\" GROUP BY datasets.id %s";
+	private final String getCountStudies = "SELECT COUNT(DISTINCT datasets.id) AS total_count FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id GROUP BY datasets.id %s";
 
 	private final String studyDetailsTable = "call phenotype_data_complete (?)";
 
@@ -69,6 +69,8 @@ public class StudiesDAO
 		String finalCountStudies = String.format(getCountStudies, builder.toString());
 		String finalGetStudies = String.format(getStudies, builder.toString());
 
+		System.out.println(finalGetStudies);
+
 		long totalCount = DatabaseUtils.getTotalCount(finalCountStudies);
 
 		if (totalCount != -1)
@@ -107,8 +109,11 @@ public class StudiesDAO
 
 		// Parse out the years
 		String seasonString = resultSet.getString("years");
-		String[] yearArray = seasonString.split(",");
-		studies.setSeasons(Arrays.asList(yearArray));
+		if(seasonString != null)
+		{
+			String[] yearArray = seasonString.split(",");
+			studies.setSeasons(Arrays.asList(yearArray));
+		}
 
 		return studies;
 	}

@@ -35,31 +35,31 @@ public class Brapi extends Application
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(false);
 
-		attachToRouter(router, "/germplasm", Germplasm.class); // FJ / GM
+		attachToRouter(router, "/germplasm", Germplasm.class); // GM
 		attachToRouter(router, "/germplasm/{id}", GermplasmServerResource.class);
 		attachToRouter(router, "/germplasm/{id}/mcpd", GermplasmMcpd.class); // GM
 		attachToRouter(router, "/germplasm/{id}/markerprofiles", GermplasmMarkerProfiles.class);
 		attachToRouter(router, "/germplasm/{id}/pedigree", GermplasmPedigreeServerResource.class);
 		attachToRouter(router, "/germplasm/mcpd", GermplasmMcpdSearch.class); // TODO: Find out why this won't work!!! /germplasm/{id}/mcpd2 works fine
 		attachToRouter(router, "/maps", GenomeMaps.class); // FJ
-		attachToRouter(router, "/maps/{id}", GenomeMapMetaData.class);
+		attachToRouter(router, "/maps/{id}", GenomeMapMetaData.class); // FJ
 		attachToRouter(router, "/maps/{id}/positions", GenomeMapMarkerData.class); // FJ
 		attachToRouter(router, "/markerprofiles", MarkerProfiles.class); // FJ
-		attachToRouter(router, "/markerprofiles/methods", MarkerProfileMethods.class); // FJ
+//		attachToRouter(router, "/markerprofiles/methods", MarkerProfileMethods.class); // FJ
 //		attachToRouter(router, "/markerprofiles/count", MarkerProfileCountServerResource.class);
 		attachToRouter(router, "/markerprofiles/{id}", MarkerProfileServerResource.class);
 //		attachToRouter(router, "/markerprofiles/{id}/count", MarkerProfileCountServerResource.class);
 		attachToRouter(router, "/markers", Markers.class);
 		attachToRouter(router, "/traits", TraitListServerResource.class);
 		attachToRouter(router, "/traits/{id}", TraitServerResource.class);
-		attachToRouter(router, "/allelematrix", AlleleMatrix.class); // FJ
+		attachToRouter(router, "/allelematrix-search", AlleleMatrix.class); // FJ
 		attachToRouter(router, "/token", TokenAuthenticator.class);
 		attachToRouter(router, "/locations", Locations.class);
-		attachToRouter(router, "/studies", Studies.class);
+		attachToRouter(router, "/studies-search", Studies.class);  // FJ
 		attachToRouter(router, "/studies/{id}", StudyDetails.class);
 		attachToRouter(router, "/studies/{id}/table", StudiesAsTable.class);
-		attachToRouter(router, "/files/{filename}", Files.class);
-		attachToRouter(router, "/calls", Calls.class);
+		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
+		attachToRouter(router, "/calls", Calls.class);  // FJ
 
 //		attachToRouter(router, "/authorize", AuthorizationServerResource.class);
 //		attachToRouter(router, HttpOAuthHelper.getAuthPage(getContext()), AuthPageServerResource.class);
