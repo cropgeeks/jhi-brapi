@@ -105,7 +105,7 @@ public class MarkerProfileDAO
 		{
 			BrapiMarkerProfile profile = new BrapiMarkerProfile();
 			profile.setMarkerprofileDbId(resultSet.getString("markerprofile_id"));
-			profile.setGermplasmDbId(Integer.parseInt(resultSet.getString("germinatebase_id")));
+			profile.setGermplasmDbId(resultSet.getString("germinatebase_id"));
 			profile.setUniqueDisplayName(resultSet.getString("germinatebase_name"));
 
 			profiles.add(profile);

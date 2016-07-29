@@ -6,11 +6,12 @@ package jhi.brapi.resource;
 public class BrapiMarkerProfile
 {
 	private String markerprofileDbId;
-	private int germplasmDbId;
+	private String germplasmDbId;
 	private String uniqueDisplayName;
-	private int extractDbId;
+	private String extractDbId;
 	private String analysisMethod;
 	private int resultCount;
+	private String sampleDbId;
 
 	public String getMarkerprofileDbId()
 	{
@@ -22,12 +23,12 @@ public class BrapiMarkerProfile
 		this.markerprofileDbId = markerprofileDbId;
 	}
 
-	public int getGermplasmDbId()
+	public String getGermplasmDbId()
 	{
 		return germplasmDbId;
 	}
 
-	public void setGermplasmDbId(int germplasmDbId)
+	public void setGermplasmDbId(String germplasmDbId)
 	{
 		this.germplasmDbId = germplasmDbId;
 	}
@@ -42,12 +43,12 @@ public class BrapiMarkerProfile
 		this.uniqueDisplayName = uniqueDisplayName;
 	}
 
-	public int getExtractDbId()
+	public String getExtractDbId()
 	{
 		return extractDbId;
 	}
 
-	public void setExtractDbId(int extractDbId)
+	public void setExtractDbId(String extractDbId)
 	{
 		this.extractDbId = extractDbId;
 	}
@@ -70,6 +71,16 @@ public class BrapiMarkerProfile
 	public void setResultCount(int resultCount)
 	{
 		this.resultCount = resultCount;
+	}
+
+	public String getSampleDbId()
+	{
+		return sampleDbId;
+	}
+
+	public void setSampleDbId(String sampleDbId)
+	{
+		this.sampleDbId = sampleDbId;
 	}
 
 	@Override
