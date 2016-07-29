@@ -8,7 +8,7 @@ import java.sql.*;
 
 public class BrapiGenomeMap
 {
-	private int mapDbId;
+	private String mapDbId;
 	private String name;
 	private String species;
 	private String type;
@@ -18,12 +18,12 @@ public class BrapiGenomeMap
 	private int linkageGroupCount;
 	private String comments;
 
-	public int getMapDbId()
+	public String getMapDbId()
 	{
 		return mapDbId;
 	}
 
-	public void setMapDbId(int mapDbId)
+	public void setMapDbId(String mapDbId)
 	{
 		this.mapDbId = mapDbId;
 	}
