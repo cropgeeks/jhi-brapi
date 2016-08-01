@@ -5,38 +5,50 @@ package jhi.brapi.resource;
  */
 public class BrapiMarkerProfile
 {
-	private String markerprofileDbId;
-	private int germplasmDbId;
-	private int extractDbId;
+	private String markerProfileDbId;
+	private String germplasmDbId;
+	private String uniqueDisplayName;
+	private String extractDbId;
 	private String analysisMethod;
 	private int resultCount;
+	private String sampleDbId;
 
-	public String getMarkerprofileDbId()
+	public String getMarkerProfileDbId()
 	{
-		return markerprofileDbId;
+		return markerProfileDbId;
 	}
 
-	public void setMarkerprofileDbId(String markerprofileDbId)
+	public void setMarkerProfileDbId(String markerProfileDbId)
 	{
-		this.markerprofileDbId = markerprofileDbId;
+		this.markerProfileDbId = markerProfileDbId;
 	}
 
-	public int getGermplasmDbId()
+	public String getGermplasmDbId()
 	{
 		return germplasmDbId;
 	}
 
-	public void setGermplasmDbId(int germplasmDbId)
+	public void setGermplasmDbId(String germplasmDbId)
 	{
 		this.germplasmDbId = germplasmDbId;
 	}
 
-	public int getExtractDbId()
+	public String getUniqueDisplayName()
+	{
+		return uniqueDisplayName;
+	}
+
+	public void setUniqueDisplayName(String uniqueDisplayName)
+	{
+		this.uniqueDisplayName = uniqueDisplayName;
+	}
+
+	public String getExtractDbId()
 	{
 		return extractDbId;
 	}
 
-	public void setExtractDbId(int extractDbId)
+	public void setExtractDbId(String extractDbId)
 	{
 		this.extractDbId = extractDbId;
 	}
@@ -61,11 +73,21 @@ public class BrapiMarkerProfile
 		this.resultCount = resultCount;
 	}
 
+	public String getSampleDbId()
+	{
+		return sampleDbId;
+	}
+
+	public void setSampleDbId(String sampleDbId)
+	{
+		this.sampleDbId = sampleDbId;
+	}
+
 	@Override
 	public String toString()
 	{
 		return "MarkerProfile{" +
-			"markerprofileDbId=" + markerprofileDbId +
+			"markerprofileDbId=" + markerProfileDbId +
 			", germplasmDbId=" + germplasmDbId +
 			", extractDbId=" + extractDbId +
 			", analysisMethod='" + analysisMethod + '\'' +

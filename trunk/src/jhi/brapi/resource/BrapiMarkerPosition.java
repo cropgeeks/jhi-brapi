@@ -5,19 +5,19 @@ package jhi.brapi.resource;
  */
 public class BrapiMarkerPosition
 {
-	private String markerId;
+	private String markerDbId;
 	private String markerName;
 	private String location;
 	private String linkageGroup;
 
-	public String getMarkerId()
+	public String getMarkerDbId()
 	{
-		return markerId;
+		return markerDbId;
 	}
 
-	public void setMarkerId(String markerId)
+	public void setMarkerDbId(String markerDbId)
 	{
-		this.markerId = markerId;
+		this.markerDbId = markerDbId;
 	}
 
 	public String getMarkerName()

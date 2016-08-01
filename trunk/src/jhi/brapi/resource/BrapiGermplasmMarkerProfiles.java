@@ -7,17 +7,17 @@ import java.util.*;
  */
 public class BrapiGermplasmMarkerProfiles
 {
-	private int germplasmId;
+	private int          germplasmDbId;
 	private List<String> markerProfiles;
 
-	public int getGermplasmId()
+	public int getGermplasmDbId()
 	{
-		return germplasmId;
+		return germplasmDbId;
 	}
 
-	public void setGermplasmId(int germplasmId)
+	public void setGermplasmDbId(int germplasmDbId)
 	{
-		this.germplasmId = germplasmId;
+		this.germplasmDbId = germplasmDbId;
 	}
 
 	public List<String> getMarkerProfiles()
@@ -34,7 +34,7 @@ public class BrapiGermplasmMarkerProfiles
 	public String toString()
 	{
 		return "GermplasmMarkerProfileList{" +
-			"germplasmId=" + germplasmId +
+			"germplasmDbId=" + germplasmDbId +
 			", markerProfileIds=" + markerProfiles +
 			'}';
 	}

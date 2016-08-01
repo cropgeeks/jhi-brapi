@@ -1,8 +1,8 @@
 package jhi.brapi.resource;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Sebastian Raubach
@@ -13,11 +13,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiStudies
 {
-	private String studyDbId;
-	private String studyName;
-	private List<String> years;
-	private String locationDbId;
-	private Object optionalInfo;
+	private String       studyDbId;
+	private String       name;
+	private List<String> seasons;
+	private String       locationDbId;
+	private Object       optionalInfo;
 
 	public String getStudyDbId()
 	{
@@ -29,24 +29,24 @@ public class BrapiStudies
 		this.studyDbId = studyDbId;
 	}
 
-	public String getStudyName()
+	public String getName()
 	{
-		return studyName;
+		return name;
 	}
 
-	public void setStudyName(String studyName)
+	public void setName(String name)
 	{
-		this.studyName = studyName;
+		this.name = name;
 	}
 
-	public List<String> getYears()
+	public List<String> getSeasons()
 	{
-		return years;
+		return seasons;
 	}
 
-	public void setYears(List<String> years)
+	public void setSeasons(List<String> seasons)
 	{
-		this.years = years;
+		this.seasons = seasons;
 	}
 
 	public String getLocationDbId()
@@ -74,8 +74,8 @@ public class BrapiStudies
 	{
 		return "BrapiStudies{" +
 			"studyDbId='" + studyDbId + '\'' +
-			", studyName='" + studyName + '\'' +
-			", years=" + years +
+			", name='" + name + '\'' +
+			", seasons=" + seasons +
 			", locationDbId='" + locationDbId + '\'' +
 			", optionalInfo=" + optionalInfo +
 			'}';

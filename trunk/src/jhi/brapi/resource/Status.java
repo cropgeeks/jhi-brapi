@@ -9,6 +9,10 @@ public class Status
 
 	private String message;
 
+	public Status()
+	{
+	}
+
 	public String getMessage()
 	{
 		return message;

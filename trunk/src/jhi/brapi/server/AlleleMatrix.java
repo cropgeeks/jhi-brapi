@@ -1,20 +1,17 @@
 package jhi.brapi.server;
 
-import java.util.*;
-
-import jhi.brapi.data.*;
-import jhi.brapi.resource.*;
-
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import org.restlet.data.*;
 import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
 import org.restlet.resource.*;
 
+import java.util.*;
+
+import jhi.brapi.data.*;
+import jhi.brapi.resource.*;
+
 /**
- * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the
- * Germplasm for API clients to consume.
+ * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the Germplasm for API clients to consume.
  */
 public class AlleleMatrix extends BaseBrapiServerResource
 {
@@ -22,6 +19,10 @@ public class AlleleMatrix extends BaseBrapiServerResource
 
 	// Temporarily included markerProfileDAO for dummy HTML get of BrapiAlleleMatrix
 	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
+	private String format;
+	private String unknownString = "N";
+	private String sepPhased = "|";
+	private String sepUnphased = "/";
 
 	// Temporary, TODO remove this after testing with large DB to find limits of call
 //	@Get("json")
@@ -57,7 +58,7 @@ public class AlleleMatrix extends BaseBrapiServerResource
 //	}
 
 	@Post
-	public JacksonRepresentation post(Representation rep)
+	public JacksonRepresentation<BasicResource<BrapiAlleleMatrix>> post(Representation rep)
 	{
 		List<String> profileIds = new ArrayList<>();
 		List<String> markerIds = new ArrayList<>();
@@ -67,11 +68,18 @@ public class AlleleMatrix extends BaseBrapiServerResource
 		{
 			if (parameter.getName().equals("markerprofileDbId"))
 				profileIds.add(parameter.getValue());
-//
-//			if (parameter.getName().equals("markerId"))
-//				markerIds.add(parameter.getValue());
+			else if (parameter.getName().equals("markerDbId"))
+				markerIds.add(parameter.getValue());
+			else if (parameter.getName().equals("format"))
+				format = parameter.getValue();
+			else if (parameter.getName().equals("unknownString"))
+				unknownString = parameter.getValue();
+			else if (parameter.getName().equals("sepPhased"))
+				sepPhased = parameter.getValue();
+			else if (parameter.getName().equals("sepUnphased"))
+				sepUnphased = parameter.getValue();
 		}
 
-		return new JacksonRepresentation(alleleMatrixDAO.get(profileIds, currentPage, pageSize));
+		return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(profileIds, format, unknownString, sepPhased, sepUnphased, currentPage, pageSize));
 	}
 }
