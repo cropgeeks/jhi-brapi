@@ -11,10 +11,13 @@ public class Metadata
 
 	private List<Status> status;
 
+	private List<Datafile> datafiles;
+
 	public Metadata()
 	{
 		this.pagination = new Pagination();
 		this.status = new ArrayList<Status>();
+		this.datafiles = new ArrayList<Datafile>();
 	}
 
 	public Pagination getPagination()
@@ -35,5 +38,15 @@ public class Metadata
 	public void setStatus(List<Status> status)
 	{
 		this.status = status;
+	}
+
+	public List<Datafile> getDatafiles()
+	{
+		return datafiles;
+	}
+
+	public void setDatafiles(List<Datafile> datafiles)
+	{
+		this.datafiles = datafiles;
 	}
 }

@@ -7,20 +7,20 @@ import java.util.*;
  */
 public class BrapiMapMetaData
 {
-	private String mapId;
-	private String name;
-	private String type;
-	private String unit;
+	private String             mapDbId;
+	private String             name;
+	private String             type;
+	private String             unit;
 	private List<LinkageGroup> linkageGroups;
 
-	public String getMapId()
+	public String getMapDbId()
 	{
-		return mapId;
+		return mapDbId;
 	}
 
-	public void setMapId(String mapId)
+	public void setMapDbId(String mapDbId)
 	{
-		this.mapId = mapId;
+		this.mapDbId = mapDbId;
 	}
 
 	public String getName()

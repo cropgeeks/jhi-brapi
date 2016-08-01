@@ -190,7 +190,7 @@ public class GermplasmDAO
 			List<String> markerProfileIdList = new ArrayList<>();
 			while (resultSet.next())
 			{
-				profiles.setGermplasmId(resultSet.getInt("germinatebase_id"));
+				profiles.setGermplasmDbId(resultSet.getInt("germinatebase_id"));
 				markerProfileIdList.add(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
 			}
 			profiles.setMarkerProfiles(markerProfileIdList);
