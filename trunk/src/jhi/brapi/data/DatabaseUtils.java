@@ -26,6 +26,24 @@ public class DatabaseUtils
 		return -1;
 	}
 
+	public static long getValueTotalCount(String sql, Collection<String> values)
+	{
+		// Query for count the total number of items defined by the resource
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = createValueStatement(con, sql, values);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			if (resultSet.first())
+				return resultSet.getLong("total_count");
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return -1;
+	}
+
 	public static long getParameterizedTotalCount(String sql, LinkedHashMap<String, String> parameters)
 	{
 		// Query for count the total number of items defined by the resource
@@ -131,6 +149,35 @@ public class DatabaseUtils
 		PreparedStatement statement = con.prepareStatement(query);
 		statement.setInt(1, PaginationUtils.getLowLimit(currentPage, pageSize));
 		statement.setInt(2, pageSize);
+
+		return statement;
+	}
+
+	public static PreparedStatement createValueStatement(Connection con, String query, Collection<String> values)
+			throws SQLException
+	{
+		// Prepare statement with low and high params for a limit query
+		PreparedStatement statement = con.prepareStatement(query);
+
+		int i = 1;
+		for(String value : values)
+			statement.setString(i++, value);
+
+		return statement;
+	}
+
+	public static PreparedStatement createValueLimitStatement(Connection con, String query, Collection<String> values, int currentPage, int pageSize)
+			throws SQLException
+	{
+		// Prepare statement with low and high params for a limit query
+		PreparedStatement statement = con.prepareStatement(query);
+
+		int i = 1;
+		for(String value : values)
+			statement.setString(i++, value);
+
+		statement.setInt(i++, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(i++, pageSize);
 
 		return statement;
 	}

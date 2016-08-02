@@ -125,6 +125,7 @@ public class MarkerProfileDAO
 		{
 			profile.setGermplasmId(resultSet.getString("germinatebase_id"));
 			profile.setMarkerprofileId(resultSet.getString("markerprofile_id"));
+			// TODO: Make this conform with the new Allele encoding
 			alleles.put(resultSet.getString("marker_name"), resultSet.getString("allele1") + resultSet.getString("allele2"));
 		}
 		profile.setData(alleles);

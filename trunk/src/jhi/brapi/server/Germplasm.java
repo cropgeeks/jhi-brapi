@@ -40,4 +40,20 @@ public class Germplasm extends BaseBrapiServerResource
 
 		return result;
 	}
+
+	@Post("json")
+	public BasicResource<DataResult<BrapiGermplasm>> postJson(BrapiGermplasmPost params)
+	{
+		setParams(params);
+
+		return getJson();
+	}
+
+	private void setParams(BrapiGermplasmPost params)
+	{
+		setPaginationParameters(params);
+
+		this.name = params.getGermplasmName();
+		// TODO: mathingMethod not in the docs yet, wait for this to happen
+	}
 }
