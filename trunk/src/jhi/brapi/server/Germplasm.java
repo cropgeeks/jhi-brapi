@@ -12,9 +12,6 @@ import jhi.brapi.resource.BrapiGermplasm.*;
  */
 public class Germplasm extends BaseBrapiServerResource
 {
-	private static final String PARAM_NAME = "name";
-	private static final String PARAM_MATCHING_METHOD = "matchMethod";
-
 	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
 	private String name;
@@ -25,8 +22,8 @@ public class Germplasm extends BaseBrapiServerResource
 	{
 		super.doInit();
 
-		this.name = getQueryValue(PARAM_NAME);
-		this.matchingMethod = BrapiGermplasm.MatchingMethod.getValue(getQueryValue(PARAM_MATCHING_METHOD));
+		this.name = getQueryValue("germplasmName");
+		this.matchingMethod = BrapiGermplasm.MatchingMethod.getValue(getQueryValue("matchMethod"));
 	}
 
 	@Get("json")

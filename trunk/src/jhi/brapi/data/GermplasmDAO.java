@@ -13,27 +13,29 @@ public class GermplasmDAO
 {
 	private static final SimpleDateFormat FORMAT_OUTPUT = new SimpleDateFormat("YYYYMMDD");
 
+	private final String queryPartSynonyms = " ( SELECT GROUP_CONCAT( DISTINCT synonym ORDER BY synonym ) FROM synonyms LEFT JOIN synonymtypes ON synonyms.synonymtype_id = synonymtypes.id WHERE synonymtypes.target_table = 'germinatebase' AND synonyms.foreign_id = germinatebase.id ) AS synonyms ";
+
 	private final String tables = " germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id ";
 
 	// Simply selects all fields from germinatebase
-	private final String getLines = "SELECT * FROM " + tables + " LIMIT ?, ?";
+	private final String getLines = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " LIMIT ?, ?";
 
-	private final String getLinesWhere = "SELECT * FROM " + tables + " WHERE %s LIMIT ?, ?";
+	private final String getLinesWhere = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " WHERE %s LIMIT ?, ?";
 
 	private final String getCountLines = "SELECT COUNT(*) AS total_count FROM " + tables;
 
 	private final String getCountLinesWhere = "SELECT COUNT(*) AS total_count FROM " + tables + " WHERE %s";
 
-	private final String getLinesByNameExact = "select * from " + tables + " where germinatebase.number = ? OR germinatebase.name = ? OR germinatebase.general_identifier = ? LIMIT ?, ?";
+	private final String getLinesByNameExact = "select *, " + queryPartSynonyms + " from " + tables + " where germinatebase.name = ? LIMIT ?, ?";
 
-	private final String getCountLinesByNameExact = "SELECT COUNT(*) AS total_count FROM " + tables + " where germinatebase.number = ? OR germinatebase.name = ? OR germinatebase.general_identifier = ?";
+	private final String getCountLinesByNameExact = "SELECT COUNT(*) AS total_count FROM " + tables + " where germinatebase.name = ?";
 
-	private final String getLinesByNameRegex = "SELECT * FROM " + tables + " where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ? LIMIT ?, ?";
+	private final String getLinesByNameRegex = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " where germinatebase.name LIKE ? LIMIT ?, ?";
 
-	private final String getCountLinesByNameRegex = "SELECT COUNT(*) AS total_count FROM " + tables + " where germinatebase.number LIKE ? OR germinatebase.name LIKE ? OR germinatebase.general_identifier LIKE ?";
+	private final String getCountLinesByNameRegex = "SELECT COUNT(*) AS total_count FROM " + tables + " where germinatebase.name LIKE ?";
 
 	// Simply selects all fields from germinatebase where the given id matches the id from the URI
-	private final String getSpecificLine = "SELECT * FROM " + tables + " where germinatebase.id=?";
+	private final String getSpecificLine = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " where germinatebase.id=?";
 
 	// Query to extract the markerprofiles which relate to the germplasm indicated by id
 	private final String markrerProfileIdQuery = "select DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=? LIMIT ?, ?";
@@ -105,7 +107,7 @@ public class GermplasmDAO
 		germplasm.setGermplasmPUI(resultSet.getString("germinatebase.general_identifier"));
 		germplasm.setGermplasmName(resultSet.getString("germinatebase.name"));
 		germplasm.setAccessionNumber(resultSet.getString("germinatebase.number"));
-		germplasm.setSynonyms(getSynonyms(resultSet)); // TODO: get synonyms from synonyms table
+		germplasm.setSynonyms(getSynonyms(resultSet));
 		germplasm.setPedigree(resultSet.getString("pedigreedefinitions.definition"));
 		germplasm.setDefaultDisplayName(resultSet.getString("germinatebase.name"));
 		germplasm.setSeedSource(null); // TODO
@@ -210,17 +212,12 @@ public class GermplasmDAO
 	public static List<String> getSynonyms(ResultSet resultSet)
 			throws SQLException
 	{
-		List<String> synonyms = new ArrayList<>();
-
-		String name = resultSet.getString("germinatebase.name");
-		String number = resultSet.getString("germinatebase.number");
-
-		if (name != null)
-			synonyms.add(name);
-		if (number != null)
-			synonyms.add(number);
-
-		return synonyms;
+		// Parse out the synonyms
+		String synonymsString = resultSet.getString("synonyms");
+		if(synonymsString != null)
+			return Arrays.asList(synonymsString.split(","));
+		else
+			return null;
 	}
 
 	public BasicResource<DataResult<BrapiGermplasm>> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
@@ -236,20 +233,22 @@ public class GermplasmDAO
 			case WILDCARD:
 				countQuery = getCountLinesByNameRegex;
 				getQuery = getLinesByNameRegex;
+				name = name.replace("*", "%");
+				name = name.replace("?", "_");
 				break;
 			default:
 				countQuery = getCountLinesByNameExact;
 				getQuery = getLinesByNameExact;
 		}
 
-		long totalCount = getByNameTotalCount(name, countQuery);
+		long totalCount = DatabaseUtils.getTotalCountById(countQuery, name);
 
 		if (totalCount != -1)
 		{
 			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 			// prepared statement (which includes a limit statement)
 			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = createByNameLimitStatement(con, name, getQuery, currentPage, pageSize);
+				 PreparedStatement statement = DatabaseUtils.createByIdLimitStatement(con, getQuery, name, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
 				while (resultSet.next())
@@ -271,51 +270,6 @@ public class GermplasmDAO
 		}
 
 		return wrappedList;
-	}
-
-	private long getByNameTotalCount(String name, String countQuery)
-	{
-		long totalCount = -1;
-
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = createByNameStatement(con, name, countQuery);
-			 ResultSet resultSet = statement.executeQuery())
-		{
-			if (resultSet.first())
-				totalCount = resultSet.getLong("total_count");
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		return totalCount;
-	}
-
-	private PreparedStatement createByNameStatement(Connection con, String name, String query)
-		throws SQLException
-	{
-		// Replace the non-sql wildcards with sql wildcards
-		name = name.replace("*", "%");
-		name = name.replace("?", "_");
-
-		// Prepare statement with NAME
-		PreparedStatement statement = con.prepareStatement(query);
-		statement.setString(1, name);
-		statement.setString(2, name);
-		statement.setString(3, name);
-
-		return statement;
-	}
-
-	private PreparedStatement createByNameLimitStatement(Connection con, String name, String query, int currentPage, int pageSize)
-		throws SQLException
-	{
-		PreparedStatement statement = createByNameStatement(con, name, query);
-
-		statement.setInt(4, PaginationUtils.getLowLimit(currentPage, pageSize));
-		statement.setInt(5, pageSize);
-
-		return statement;
 	}
 
 	public BasicResource<BrapiGermplasmPedigree> getPedigreeById(String id)
