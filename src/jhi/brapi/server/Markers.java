@@ -12,12 +12,10 @@ import jhi.brapi.resource.BrapiGermplasm.*;
  */
 public class Markers extends BaseBrapiServerResource
 {
-	private static final String PARAM_NAME = "name";
-	private static final String PARAM_MATCHING_METHOD = "matchMethod";
-
 	private MarkerDAO markerDAO = new MarkerDAO();
 
 	private String name;
+	private String type;
 	private MatchingMethod matchingMethod;
 
 	@Override
@@ -25,18 +23,21 @@ public class Markers extends BaseBrapiServerResource
 	{
 		super.doInit();
 
-		this.name = getQueryValue(PARAM_NAME);
-		this.matchingMethod = MatchingMethod.getValue(getQueryValue(PARAM_MATCHING_METHOD));
+		this.name = getQueryValue("name");
+		this.type = getQueryValue("type");
+		this.matchingMethod = MatchingMethod.getValue(getQueryValue("matchMethod"));
 	}
 
 	@Get("json")
 	public BasicResource<DataResult<BrapiMarker>> getJson()
 	{
 		BasicResource<DataResult<BrapiMarker>> result;
-		if (name == null || name.equals(""))
-			result = markerDAO.getAll(currentPage, pageSize);
-		else
+		if (name != null && !name.equals(""))
 			result = markerDAO.getByName(name, matchingMethod, currentPage, pageSize);
+		else if(type != null && !type.equals(""))
+			result = markerDAO.getByType(type, currentPage, pageSize);
+		else
+			result = markerDAO.getAll(currentPage, pageSize);
 
 		return result;
 	}

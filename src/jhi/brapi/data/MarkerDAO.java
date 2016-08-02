@@ -12,10 +12,13 @@ import jhi.brapi.resource.*;
  */
 public class MarkerDAO
 {
-	private final String queryPartSynonyms = " ( SELECT GROUP_CONCAT( DISTINCT synonym ORDER BY synonym ) FROM synonyms LEFT JOIN synonymtypes ON synonyms.synonymtype_id = synonymtypes.id WHERE synonyms.foreign_id = markers.id ) AS synonyms ";
+	private final String queryPartSynonyms = " ( SELECT GROUP_CONCAT( DISTINCT synonym ORDER BY synonym ) FROM synonyms LEFT JOIN synonymtypes ON synonyms.synonymtype_id = synonymtypes.id WHERE synonymtypes.target_table = 'markers' AND synonyms.foreign_id = markers.id ) AS synonyms ";
 
 	private final String getLines = "SELECT markers.*, " + queryPartSynonyms + " FROM markers LIMIT ?, ?";
 	private final String getCountLines = "SELECT COUNT(1) AS total_count FROM markers";
+
+	private final String getLinesByType = "SELECT markers.*, " + queryPartSynonyms + " FROM markers LEFT JOIN markertypes ON markertypes.id = markers.markertype_id WHERE markertypes.description = ? LIMIT ?, ?";
+	private final String getCountLinesByType = "SELECT COUNT(1) AS total_count FROM markers LEFT JOIN markertypes ON markertypes.id = markers.markertype_id WHERE markertypes.description = ?";
 
 	private final String getLinesByNameExact = "SELECT markers.*, " + queryPartSynonyms + " FROM markers WHERE markers.marker_name = ? LIMIT ?, ?";
 	private final String getCountLinesByNameExact = "SELECT COUNT(1) AS total_count FROM markers WHERE markers.marker_name = ?";
@@ -56,32 +59,23 @@ public class MarkerDAO
 		return result;
 	}
 
-	public BasicResource<DataResult<BrapiMarker>> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
+	public BasicResource<DataResult<BrapiMarker>> getByType(String type, int currentPage, int pageSize)
+	{
+		return getData(getCountLinesByType, getLinesByType, type, currentPage, pageSize);
+	}
+
+	private BasicResource<DataResult<BrapiMarker>> getData(String countSql, String dataSql, String parameter, int currentPage, int pageSize)
 	{
 		BasicResource<DataResult<BrapiMarker>> result = new BasicResource<>();
 
-		String countQuery;
-		String getQuery;
-
-		switch (matchingMethod)
-		{
-			case WILDCARD:
-				countQuery = getCountLinesByNameRegex;
-				getQuery = getLinesByNameRegex;
-				break;
-			default:
-				countQuery = getCountLinesByNameExact;
-				getQuery = getLinesByNameExact;
-		}
-
-		long totalCount = DatabaseUtils.getTotalCountById(countQuery, name);
+		long totalCount = DatabaseUtils.getTotalCountById(countSql, parameter);
 
 		if (totalCount != -1)
 		{
 			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 			// prepared statement (which includes a limit statement)
 			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createByIdLimitStatement(con, getQuery, name, currentPage, pageSize);
+				 PreparedStatement statement = DatabaseUtils.createByIdLimitStatement(con, dataSql, parameter, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
 				List<BrapiMarker> markers = new ArrayList<>();
@@ -101,6 +95,27 @@ public class MarkerDAO
 		}
 
 		return result;
+	}
+
+	public BasicResource<DataResult<BrapiMarker>> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
+	{
+		String countQuery;
+		String getQuery;
+
+		switch (matchingMethod)
+		{
+			case WILDCARD:
+				countQuery = getCountLinesByNameRegex;
+				getQuery = getLinesByNameRegex;
+				name = name.replace("*", "%");
+				name = name.replace("?", "_");
+				break;
+			default:
+				countQuery = getCountLinesByNameExact;
+				getQuery = getLinesByNameExact;
+		}
+
+		return getData(countQuery, getQuery, name, currentPage, pageSize);
 	}
 
 	private BrapiMarker getBrapiMarker(ResultSet resultSet)
