@@ -59,26 +59,37 @@ public class StudiesDAO
 					return result;
 			}
 		}
+
+		List<String> values = new ArrayList<>();
 		if (programId != null && !programId.isEmpty())
-			builder.append(" AND experiments.id = ").append(programId); // TODO: prevent sql injection
+		{
+			builder.append(" AND experiments.id = ?");
+			values.add(programId);
+		}
 		if (locationId != null && !locationId.isEmpty())
-			builder.append(" AND datasets.location_id = ").append(locationId); // TODO: prevent sql injection
+		{
+			builder.append(" AND datasets.location_id = ?");
+			values.add(locationId);
+		}
 		if (seasonId != null && !seasonId.isEmpty())
-			builder.append(" AND YEAR(phenotypedata.recording_date) = ").append(seasonId); // TODO: prevent sql injection
+		{
+			builder.append(" AND YEAR(phenotypedata.recording_date) = ?");
+			values.add(seasonId);
+		}
 
 		String finalCountStudies = String.format(getCountStudies, builder.toString());
 		String finalGetStudies = String.format(getStudies, builder.toString());
 
 		System.out.println(finalGetStudies);
 
-		long totalCount = DatabaseUtils.getTotalCount(finalCountStudies);
+		long totalCount = DatabaseUtils.getValueTotalCount(finalCountStudies, values);
 
 		if (totalCount != -1)
 		{
 			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 			// prepared statement (which includes a limit statement)
 			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, finalGetStudies, currentPage, pageSize);
+				 PreparedStatement statement = DatabaseUtils.createValueLimitStatement(con, finalGetStudies, values, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
 				List<BrapiStudies> list = new ArrayList<>();
