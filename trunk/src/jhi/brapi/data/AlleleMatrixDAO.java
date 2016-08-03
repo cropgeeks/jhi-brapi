@@ -172,82 +172,83 @@ public class AlleleMatrixDAO
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
-		Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File("/home/tomcat/germinate-demo-brapi/germinate-demo-brapi.hdf5")); // TODO: get hdf5 location from the database
-
-		// The dataset. Remember the mapping from germplasmDbId to datasetDbId. We're extracting data from hdf5, not the database. So we need to remember the mapping.
-		Map<String, String> germplasmDbIdToDataset = new HashMap<>();
-		// The lines we want to extract
-		List<Integer> germinatebaseIds = new ArrayList<>();
-
-		for (String profileId : profileIds)
+		try(Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File("/home/tomcat/germinate-demo-brapi/germinate-demo-brapi.hdf5"))) // TODO: get hdf5 location from the database
 		{
-			String[] tokens = profileId.split("-");
-			germplasmDbIdToDataset.put(tokens[1], tokens[0]);
-			germinatebaseIds.add(Integer.parseInt(tokens[1]));
-		}
+			// The dataset. Remember the mapping from germplasmDbId to datasetDbId. We're extracting data from hdf5, not the database. So we need to remember the mapping.
+			Map<String, String> germplasmDbIdToDataset = new HashMap<>();
+			// The lines we want to extract
+			List<Integer> germinatebaseIds = new ArrayList<>();
 
-		// Get the bidirectional mapping between germplasm/marker id and name
-		LinkedHashMap<String, String> germplasmIdToName = getGermplasmMapping(germinatebaseIds);
-		LinkedHashMap<String, String> markerIdToName;
-
-		if(markerDbIds == null || markerDbIds.isEmpty())
-		{
-			// If the user didn't request specific markers, get all of the ones from the file
-			markerIdToName = getMarkerMappingForNames(extractor.getMarkers());
-		}
-		else
-		{
-			// If the user requested specific markers, get them from the database
-			markerIdToName = getMarkerMappingForIds(markerDbIds);
-		}
-
-		List<String> internalGermplasmIds = new ArrayList<>(germplasmIdToName.keySet());
-		List<String> internalMarkerIds = new ArrayList<>(markerIdToName.keySet());
-
-		int nrOfMarkers = internalMarkerIds.size();
-		int nrOfLines = internalGermplasmIds.size();
-
-		// Get the total number of data points
-		int maxData = Math.min(nrOfLines * nrOfMarkers, extractor.getLines().size() * extractor.getMarkers().size());
-
-		List<List<String>> data = new ArrayList<>();
-		int lower = PaginationUtils.getLowLimit(currentPage, pageSize);
-
-		if(nrOfLines > 0 && nrOfMarkers > 0)
-		{
-			// Loop over the chunk of data that is required
-			for (int i = lower; i < lower + pageSize; i++)
+			for (String profileId : profileIds)
 			{
-				// Get the x and y coordinates
-				int lineIndex = i / nrOfMarkers;
-				int markerIndex = i - ((i / nrOfMarkers) * nrOfMarkers);
-
-				if (lineIndex >= internalGermplasmIds.size())
-					break;
-
-				// Get the names from the database, this is required to pass it to the HDF5 converter
-				String lineName = germplasmIdToName.get(internalGermplasmIds.get(lineIndex));
-				String markerName = markerIdToName.get(internalMarkerIds.get(markerIndex));
-
-				// Skip a combination if the requested data doesn't exist
-				if (lineName == null || markerName == null)
-					continue;
-
-				// Get the allele value from the HDF5
-				String alleles = extractor.get(lineName, markerName, params);
-
-				String germplasmDbId = internalGermplasmIds.get(lineIndex);
-				// Convert the data back into ids
-				List<String> callData = createArray(internalMarkerIds.get(markerIndex), germplasmDbIdToDataset.get(germplasmDbId) + "-" + germplasmDbId, alleles);
-
-				// Add the data to the array
-				data.add(callData);
+				String[] tokens = profileId.split("-");
+				germplasmDbIdToDataset.put(tokens[1], tokens[0]);
+				germinatebaseIds.add(Integer.parseInt(tokens[1]));
 			}
+
+			// Get the bidirectional mapping between germplasm/marker id and name
+			LinkedHashMap<String, String> germplasmIdToName = getGermplasmMapping(germinatebaseIds);
+			LinkedHashMap<String, String> markerIdToName;
+
+			if(markerDbIds == null || markerDbIds.isEmpty())
+			{
+				// If the user didn't request specific markers, get all of the ones from the file
+				markerIdToName = getMarkerMappingForNames(extractor.getMarkers());
+			}
+			else
+			{
+				// If the user requested specific markers, get them from the database
+				markerIdToName = getMarkerMappingForIds(markerDbIds);
+			}
+
+			List<String> internalGermplasmIds = new ArrayList<>(germplasmIdToName.keySet());
+			List<String> internalMarkerIds = new ArrayList<>(markerIdToName.keySet());
+
+			int nrOfMarkers = internalMarkerIds.size();
+			int nrOfLines = internalGermplasmIds.size();
+
+			// Get the total number of data points
+			int maxData = Math.min(nrOfLines * nrOfMarkers, extractor.getLines().size() * extractor.getMarkers().size());
+
+			List<List<String>> data = new ArrayList<>();
+			int lower = PaginationUtils.getLowLimit(currentPage, pageSize);
+
+			if(nrOfLines > 0 && nrOfMarkers > 0)
+			{
+				// Loop over the chunk of data that is required
+				for (int i = lower; i < lower + pageSize; i++)
+				{
+					// Get the x and y coordinates
+					int lineIndex = i / nrOfMarkers;
+					int markerIndex = i - ((i / nrOfMarkers) * nrOfMarkers);
+
+					if (lineIndex >= internalGermplasmIds.size())
+						break;
+
+					// Get the names from the database, this is required to pass it to the HDF5 converter
+					String lineName = germplasmIdToName.get(internalGermplasmIds.get(lineIndex));
+					String markerName = markerIdToName.get(internalMarkerIds.get(markerIndex));
+
+					// Skip a combination if the requested data doesn't exist
+					if (lineName == null || markerName == null)
+						continue;
+
+					// Get the allele value from the HDF5
+					String alleles = extractor.get(lineName, markerName, params);
+
+					String germplasmDbId = internalGermplasmIds.get(lineIndex);
+					// Convert the data back into ids
+					List<String> callData = createArray(internalMarkerIds.get(markerIndex), germplasmDbIdToDataset.get(germplasmDbId) + "-" + germplasmDbId, alleles);
+
+					// Add the data to the array
+					data.add(callData);
+				}
+			}
+
+			matrix.setData(data);
+
+			return new BasicResource<>(matrix, currentPage, pageSize, maxData);
 		}
-
-		matrix.setData(data);
-
-		return new BasicResource<>(matrix, currentPage, pageSize, maxData);
 	}
 
 	/**
