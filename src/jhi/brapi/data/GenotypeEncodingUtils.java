@@ -18,11 +18,11 @@ public class GenotypeEncodingUtils
 			return allele2;
 		else if (Objects.equals(allele2, params.getUnknownString())) // If only the second is unknown, return the first
 			return allele1;
-		else if (Objects.equals(allele1, allele2)) // If both are the same, return the first
+		else if (Objects.equals(allele1, allele2)) // If both are the same
 		{
-			if(params.isCollapse())
+			if(params.isCollapse()) // Return the first if we collapse
 				return allele1;
-			else
+			else // Else return the combination
 				return allele1 + params.getSepUnphased() + allele2;
 		}
 		else // Else combine them
