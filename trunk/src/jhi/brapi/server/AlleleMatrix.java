@@ -20,9 +20,7 @@ public class AlleleMatrix extends BaseBrapiServerResource
 	// Temporarily included markerProfileDAO for dummy HTML get of BrapiAlleleMatrix
 	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 	private String format;
-	private String unknownString = "N";
-	private String sepPhased = "|";
-	private String sepUnphased = "/";
+	private GenotypeEncodingParams params = new GenotypeEncodingParams();
 
 	// Temporary, TODO remove this after testing with large DB to find limits of call
 //	@Get("json")
@@ -73,13 +71,18 @@ public class AlleleMatrix extends BaseBrapiServerResource
 			else if (parameter.getName().equals("format"))
 				format = parameter.getValue();
 			else if (parameter.getName().equals("unknownString"))
-				unknownString = parameter.getValue();
+				params.setUnknownString(parameter.getValue());
 			else if (parameter.getName().equals("sepPhased"))
-				sepPhased = parameter.getValue();
+				params.setSepPhased(parameter.getValue());
 			else if (parameter.getName().equals("sepUnphased"))
-				sepUnphased = parameter.getValue();
+				params.setSepUnphased(parameter.getValue());
 		}
 
-		return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(profileIds, format, unknownString, sepPhased, sepUnphased, currentPage, pageSize));
+		// TODO: Get page and pageSize parameters and potentially all of these parameters from json post?
+
+//		if(format != null)
+			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(profileIds, markerIds, format, params, currentPage, pageSize));
+//		else
+//			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(profileIds, markerIds, params, currentPage, pageSize));
 	}
 }
