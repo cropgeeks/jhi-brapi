@@ -17,9 +17,9 @@ public class AlleleMatrixDAO
 
 	private String countAllMarkers = "select COUNT(1) AS total_count, genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
 			"genotypes.germinatebase_id, genotypes.dataset_id, markers.id from genotypes INNER JOIN markers ON " +
-			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where ";
+			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id IN (%s) AND datasets.id IN (%s)";
 
-	public BasicResource<BrapiAlleleMatrix> get(List<String> markerProfileDbIds, String format, String unknownString, String sepPhased, String sepUnphased, int currentPage, int pageSize)
+	public BasicResource<BrapiAlleleMatrix> get(List<String> markerProfileDbIds, List<String> markerDbIds, String format, GenotypeEncodingParams params, int currentPage, int pageSize)
 	{
 		if (format != null)
 		{
@@ -39,11 +39,7 @@ public class AlleleMatrixDAO
 			germinatebaseIds.add(Integer.parseInt(tokens[1]));
 		}
 
-		StringBuilder countBuilder = new StringBuilder(countAllMarkers);
-		buildInStatement(germinatebaseIds, countBuilder, "germinatebase_id IN (", ")");
-		buildInStatement(datasetIds, countBuilder, " AND datasets.id IN (", ") ");
-
-		String countQuery = countBuilder.toString();
+		String countQuery = String.format(countAllMarkers, DatabaseUtils.createPlaceholders(germinatebaseIds.size()), DatabaseUtils.createPlaceholders(datasetIds.size()));
 
 		long totalCount = -1;
 
@@ -64,11 +60,11 @@ public class AlleleMatrixDAO
 			{
 				if (format != null)
 				{
-					result = getMatrixForFile(resultSet, markerProfileDbIds, unknownString, sepPhased, sepUnphased);
+					result = getMatrixForFile(resultSet, markerProfileDbIds, params);
 				}
 				else
 				{
-					result = new BasicResource<BrapiAlleleMatrix>(getMatrixForJson(resultSet, unknownString, sepPhased, sepUnphased), currentPage, pageSize, totalCount);
+					result = new BasicResource<BrapiAlleleMatrix>(getMatrixForJson(resultSet, params), currentPage, pageSize, totalCount);
 				}
 			}
 			catch (SQLException | IOException e)
@@ -80,13 +76,10 @@ public class AlleleMatrixDAO
 		return result;
 	}
 
-	private BasicResource<BrapiAlleleMatrix> getMatrixForFile(ResultSet resultSet, List<String> markerProfileDbIds, String unknownString, String sepPhased, String sepUnphased)
+	private BasicResource<BrapiAlleleMatrix> getMatrixForFile(ResultSet resultSet, List<String> markerProfileDbIds, GenotypeEncodingParams params)
 			throws SQLException, IOException
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
-
-		LinkedHashMap<String, List<String>> scores = new LinkedHashMap<>();
-		LinkedHashSet<String> lines = new LinkedHashSet<>();
 
 		File file = File.createTempFile("allelematrix", ".tsv");
 
@@ -111,7 +104,7 @@ public class AlleleMatrixDAO
 					bw.write(markerName);
 				}
 
-				bw.write("\t" + getString(true, allele1, allele2, unknownString, sepPhased, sepUnphased));
+				bw.write("\t" + GenotypeEncodingUtils.getString(allele1, allele2, params));
 			}
 		}
 		catch (IOException e)
@@ -119,29 +112,13 @@ public class AlleleMatrixDAO
 			e.printStackTrace();
 		}
 
-		/*
-		 * The sorting is required because the first marker may have been split across two pages. In that case, the markerprofiles won't be
-		 * in the correct order, as the code will start with the rest of this marker and then jump to the next
-		 */
-		List<String> linesSorted = new ArrayList<>(lines);
-		Collections.sort(linesSorted);
-		matrix.setData(new ArrayList<>());
-
-		for (Map.Entry<String, List<String>> entry : scores.entrySet())
-		{
-			LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
-			map.put(entry.getKey(), entry.getValue());
-		}
-
-//				finalScores.add(scores);
-
 		BasicResource<BrapiAlleleMatrix> result = new BasicResource<BrapiAlleleMatrix>(matrix, 0, 1, 1);
 		Datafile datafile = new Datafile("https://ics.hutton.ac.uk/brapi/cactuar/v1/files/" + file.getName()); // TODO: get absolute URL
 		result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 		return result;
 	}
 
-	private BrapiAlleleMatrix getMatrixForJson(ResultSet resultSet, String unknownString, String sepPhased, String sepUnphased)
+	private BrapiAlleleMatrix getMatrixForJson(ResultSet resultSet, GenotypeEncodingParams params)
 			throws SQLException
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
@@ -155,7 +132,7 @@ public class AlleleMatrixDAO
 			String allele2 = resultSet.getString("allele2");
 			String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
 
-			List<String> callData = createArray(markerName, lineName, getString(true, allele1, allele2, unknownString, sepPhased, sepUnphased));
+			List<String> callData = createArray(markerName, lineName, GenotypeEncodingUtils.getString(allele1, allele2, params));
 			data.add(callData);
 		}
 
@@ -174,147 +151,6 @@ public class AlleleMatrixDAO
 		return callData;
 	}
 
-	// TODO: Get the parameter from the request
-	private String getString(boolean collapse, String allele1, String allele2, String unknownString, String sepPhased, String sepUnphased)
-	{
-		allele1 = fixAllele(allele1, unknownString); // Replace empty string and dash into the unknownString
-		allele2 = fixAllele(allele2, unknownString); // Replace empty string and dash into the unknownString
-
-		if (Objects.equals(allele1, unknownString) && Objects.equals(allele2, unknownString)) // If both are unknown return empty string
-			return "";
-		else if (Objects.equals(allele1, unknownString)) // If only the first is unknown, return the second
-			return allele2;
-		else if (Objects.equals(allele1, unknownString)) // If only the second is unknown, return the first
-			return allele1;
-		else if (Objects.equals(allele1, allele2)) // If both are the same, return the first
-		{
-			if(collapse)
-				return allele1;
-			else
-				return allele1 + sepUnphased + allele2;
-		}
-		else // Else combine them
-			return allele1 + sepUnphased + allele2;
-	}
-
-	private String fixAllele(String input, String unknownString)
-	{
-		if (Objects.equals(input, "") || Objects.equals(input, "-"))
-			return unknownString;
-		else
-			return input;
-	}
-
-	private void buildInStatement(List<Integer> germinatebaseIds, StringBuilder builder, String inClause, String closeInClause)
-	{
-		builder.append(inClause);
-		boolean baseIdFirst = true;
-		for (Integer id : germinatebaseIds)
-		{
-			if (baseIdFirst)
-			{
-				builder.append("?");
-				baseIdFirst = false;
-			}
-			else
-			{
-				builder.append(",");
-				builder.append("?");
-			}
-		}
-		builder.append(closeInClause);
-	}
-
-	//	public BrapiAlleleMatrix get(List<String> markerProfileIds, List<String> markerIds, int currentPage, int pageSize)
-//	{
-//		List<Integer> datasetIds = new ArrayList<>();
-//		List<Integer> germinatebaseIds = new ArrayList<>();
-//
-//		for (String profileId : markerProfileIds)
-//		{
-//			String[] tokens = profileId.split("-");
-//			datasetIds.add(Integer.parseInt(tokens[0]));
-//			germinatebaseIds.add(Integer.parseInt(tokens[1]));
-//		}
-//
-//		StringBuilder builder = new StringBuilder(allMarkers);
-//		builder.append("germinatebase_id IN (");
-//		boolean baseIdFirst = true;
-//		for (Integer id : germinatebaseIds)
-//		{
-//			if (baseIdFirst)
-//			{
-//				builder.append("?");
-//				baseIdFirst = false;
-//			}
-//			else
-//			{
-//				builder.append(",");
-//				builder.append("?");
-//			}
-//		}
-//		builder.append(")");
-//
-//		builder.append(" AND datasets.id IN (");
-//		boolean datasetIdFirst = true;
-//		for (Integer id : datasetIds)
-//		{
-//			if (datasetIdFirst)
-//			{
-//				builder.append("?");
-//				datasetIdFirst = false;
-//			}
-//			else
-//			{
-//				builder.append(",");
-//				builder.append("?");
-//			}
-//		}
-//		builder.append(") ");
-//		builder.append("ORDER BY marker_name, dataset_id, germinatebase_id");
-//		builder.append(" LIMIT ?, ?");
-//
-//		String query = builder.toString();
-//
-//		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
-//
-//		try (Connection con = Database.INSTANCE.getDataSource().getConnection();
-//			 PreparedStatement statement = createByIdStatement(con, query, germinatebaseIds, datasetIds, currentPage, pageSize);
-//			 ResultSet resultSet = statement.executeQuery())
-//		{
-//			HashMap<String, List<String>> scores = new HashMap<>();
-//			HashSet<String> lines = new HashSet<>();
-//
-//			while(resultSet.next())
-//			{
-//				String markerName = resultSet.getString("marker_name");
-//				String allele1 = resultSet.getString("allele1");
-//				String allele2 = resultSet.getString("allele2");
-//				String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
-//
-//				lines.add(lineName);
-//
-//				List<String> score = scores.get(markerName);
-//				if (score == null)
-//				{
-//					score = new ArrayList<>();
-//					score.add(allele1+allele2);
-//					scores.put(markerName, score);
-//				}
-//				else
-//				{
-//					score.add(allele1+allele2);
-//					scores.put(markerName, score);
-//				}
-//			}
-//			matrix.setMarkerprofileDbIds(new ArrayList<>(lines));
-//			matrix.setScores(scores);
-//		}
-//		catch (SQLException e) { e.printStackTrace(); }
-//
-//		return matrix;
-//	}
-
 	private PreparedStatement createByIdStatement(Connection con, String query, List<Integer> germinatebaseIds, List<Integer> datasetIds)
 			throws SQLException
 	{
@@ -331,22 +167,183 @@ public class AlleleMatrixDAO
 		return statement;
 	}
 
-	private PreparedStatement createByIdStatement(Connection con, String query, List<Integer> germinatebaseIds, List<Integer> datasetIds, int currentPage, int pageSize)
-			throws SQLException
+	// TODO: Check what happens if the user requests data that isn't in the hdf5 file (is the data chunk as big as requested? is the totalCount correct? etc)
+	public BasicResource<BrapiAlleleMatrix> getFromHdf5(List<String> profileIds, List<String> markerDbIds, GenotypeEncodingParams params, int currentPage, int pageSize)
 	{
-		// Get the basic information on the map
-		PreparedStatement statement = con.prepareStatement(query);
+		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
-		int counter = 1;
-		for (Integer id : germinatebaseIds)
-			statement.setInt(counter++, id);
+		Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File("/home/tomcat/germinate-demo-brapi/germinate-demo-brapi.hdf5")); // TODO: get hdf5 location from the database
 
-		for (Integer id : datasetIds)
-			statement.setInt(counter++, id);
+		// The dataset. Remember the mapping from germplasmDbId to datasetDbId. We're extracting data from hdf5, not the database. So we need to remember the mapping.
+		Map<String, String> germplasmDbIdToDataset = new HashMap<>();
+		// The lines we want to extract
+		List<Integer> germinatebaseIds = new ArrayList<>();
 
-		statement.setInt(counter++, PaginationUtils.getLowLimit(currentPage, pageSize));
-		statement.setInt(counter++, pageSize);
+		for (String profileId : profileIds)
+		{
+			String[] tokens = profileId.split("-");
+			germplasmDbIdToDataset.put(tokens[1], tokens[0]);
+			germinatebaseIds.add(Integer.parseInt(tokens[1]));
+		}
 
-		return statement;
+		// Get the bidirectional mapping between germplasm/marker id and name
+		LinkedHashMap<String, String> germplasmIdToName = getGermplasmMapping(germinatebaseIds);
+		LinkedHashMap<String, String> markerIdToName;
+
+		if(markerDbIds == null || markerDbIds.isEmpty())
+		{
+			// If the user didn't request specific markers, get all of the ones from the file
+			markerIdToName = getMarkerMappingForNames(extractor.getMarkers());
+		}
+		else
+		{
+			// If the user requested specific markers, get them from the database
+			markerIdToName = getMarkerMappingForIds(markerDbIds);
+		}
+
+		List<String> internalGermplasmIds = new ArrayList<>(germplasmIdToName.keySet());
+		List<String> internalMarkerIds = new ArrayList<>(markerIdToName.keySet());
+
+		int nrOfMarkers = internalMarkerIds.size();
+		int nrOfLines = internalGermplasmIds.size();
+
+		// Get the total number of data points
+		int maxData = Math.min(nrOfLines * nrOfMarkers, extractor.getLines().size() * extractor.getMarkers().size());
+
+		List<List<String>> data = new ArrayList<>();
+		int lower = PaginationUtils.getLowLimit(currentPage, pageSize);
+
+		if(nrOfLines > 0 && nrOfMarkers > 0)
+		{
+			// Loop over the chunk of data that is required
+			for (int i = lower; i < lower + pageSize; i++)
+			{
+				// Get the x and y coordinates
+				int lineIndex = i / nrOfMarkers;
+				int markerIndex = i - ((i / nrOfMarkers) * nrOfMarkers);
+
+				if (lineIndex >= internalGermplasmIds.size())
+					break;
+
+				// Get the names from the database, this is required to pass it to the HDF5 converter
+				String lineName = germplasmIdToName.get(internalGermplasmIds.get(lineIndex));
+				String markerName = markerIdToName.get(internalMarkerIds.get(markerIndex));
+
+				// Skip a combination if the requested data doesn't exist
+				if (lineName == null || markerName == null)
+					continue;
+
+				// Get the allele value from the HDF5
+				String alleles = extractor.get(lineName, markerName, params);
+
+				String germplasmDbId = internalGermplasmIds.get(lineIndex);
+				// Convert the data back into ids
+				List<String> callData = createArray(internalMarkerIds.get(markerIndex), germplasmDbIdToDataset.get(germplasmDbId) + "-" + germplasmDbId, alleles);
+
+				// Add the data to the array
+				data.add(callData);
+			}
+		}
+
+		matrix.setData(data);
+
+		return new BasicResource<>(matrix, currentPage, pageSize, maxData);
+	}
+
+	/**
+	 * Returns the bidirectional mapping between germplasm ids and names based on the ids
+	 *
+	 * @param germinatebaseIds The ids of the germplasm (not the markerprofile ids)
+	 * @return The bidirectional mapping between germplasm ids and names based on the ids
+	 */
+	private LinkedHashMap<String, String> getGermplasmMapping(List<Integer> germinatebaseIds)
+	{
+		String query = "SELECT id, name FROM germinatebase WHERE id IN (%s) ORDER BY FIELD (id, %s)";
+
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = createOrderedInStatement(con, query, germinatebaseIds);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			while(resultSet.next())
+				map.put(resultSet.getString("id"), resultSet.getString("name"));
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+		return map;
+	}
+
+	/**
+	 * Returns the bidirectional mappint between marker ids and names based on the ids
+	 *
+	 * @param markerDbIds The ids of the markers
+	 * @return The bidirectional mappint between marker ids and names based on the ids
+	 */
+	private LinkedHashMap<String, String> getMarkerMappingForIds(List<String> markerDbIds)
+	{
+		String query = "SELECT id, marker_name FROM markers WHERE id IN (%s) ORDER BY FIELD (id, %s)";
+
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = createOrderedInStatement(con, query, markerDbIds);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			while(resultSet.next())
+				map.put(resultSet.getString("id"), resultSet.getString("marker_name"));
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+		return map;
+	}
+
+	/**
+	 * Returns the bidirectional mappint between marker ids and names based on the names
+	 *
+	 * @param markerNames The names of the markers
+	 * @return The bidirectional mappint between marker ids and names based on the ids
+	 */
+	private LinkedHashMap<String, String> getMarkerMappingForNames(List<String> markerNames)
+	{
+		String query = "SELECT id, marker_name FROM markers WHERE marker_name IN (%s) ORDER BY FIELD (marker_name, %s)";
+
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = createOrderedInStatement(con, query, markerNames);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			while(resultSet.next())
+				map.put(resultSet.getString("id"), resultSet.getString("marker_name"));
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+		return map;
+	}
+
+	/**
+	 * Create a statement that will search for items with the given "IN" call. This will also order the items based on these values
+	 *
+	 * @param con   The database {@link Connection}
+	 * @param sql   The SQL query containing two "%s" placeholders, one in the "IN" block and one for the order of the items
+	 * @param items The items to put into the two placeholders
+	 * @return The {@link PreparedStatement} representing the query
+	 * @throws SQLException Thrown if the query fails on the database
+	 */
+	private PreparedStatement createOrderedInStatement(Connection con, String sql, List<?> items) throws SQLException
+	{
+		String formatted = String.format(sql, DatabaseUtils.createPlaceholders(items.size()), DatabaseUtils.createPlaceholders(items.size()));
+
+		PreparedStatement stmt = con.prepareStatement(formatted);
+
+		int i = 1;
+		for(Object item : items)
+			stmt.setString(i++, item.toString());
+
+		for(Object item : items)
+			stmt.setString(i++, item.toString());
+
+		return stmt;
 	}
 }
