@@ -1,8 +1,14 @@
 package jhi.brapi.data;
 
+import org.restlet.*;
+
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+
+import javax.naming.*;
+import javax.naming.Context;
+import javax.sql.*;
 
 import jhi.brapi.resource.*;
 
@@ -19,7 +25,7 @@ public class AlleleMatrixDAO
 			"genotypes.germinatebase_id, genotypes.dataset_id, markers.id from genotypes INNER JOIN markers ON " +
 			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id IN (%s) AND datasets.id IN (%s)";
 
-	public BasicResource<BrapiAlleleMatrix> get(List<String> markerProfileDbIds, List<String> markerDbIds, String format, GenotypeEncodingParams params, int currentPage, int pageSize)
+	public BasicResource<BrapiAlleleMatrix> get(Request request, List<String> markerProfileDbIds, List<String> markerDbIds, String format, GenotypeEncodingParams params, int currentPage, int pageSize)
 	{
 		if (format != null)
 		{
@@ -60,7 +66,7 @@ public class AlleleMatrixDAO
 			{
 				if (format != null)
 				{
-					result = getMatrixForFile(resultSet, markerProfileDbIds, params);
+					result = getMatrixForFile(request, resultSet, markerProfileDbIds, params);
 				}
 				else
 				{
@@ -76,7 +82,7 @@ public class AlleleMatrixDAO
 		return result;
 	}
 
-	private BasicResource<BrapiAlleleMatrix> getMatrixForFile(ResultSet resultSet, List<String> markerProfileDbIds, GenotypeEncodingParams params)
+	private BasicResource<BrapiAlleleMatrix> getMatrixForFile(Request request, ResultSet resultSet, List<String> markerProfileDbIds, GenotypeEncodingParams params)
 			throws SQLException, IOException
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
@@ -113,7 +119,10 @@ public class AlleleMatrixDAO
 		}
 
 		BasicResource<BrapiAlleleMatrix> result = new BasicResource<BrapiAlleleMatrix>(matrix, 0, 1, 1);
-		Datafile datafile = new Datafile("https://ics.hutton.ac.uk/brapi/cactuar/v1/files/" + file.getName()); // TODO: get absolute URL
+
+		// Get the original URL from the request
+		String url = request.getRootRef().toString();
+		Datafile datafile = new Datafile(url + "/files/" + file.getName());
 		result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 		return result;
 	}
@@ -167,25 +176,46 @@ public class AlleleMatrixDAO
 		return statement;
 	}
 
-	// TODO: Check what happens if the user requests data that isn't in the hdf5 file (is the data chunk as big as requested? is the totalCount correct? etc)
-	public BasicResource<BrapiAlleleMatrix> getFromHdf5(List<String> profileIds, List<String> markerDbIds, GenotypeEncodingParams params, int currentPage, int pageSize)
+	private String getHdf5File(String datasetId)
+	{
+		String file = null;
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, "SELECT * FROM datasets WHERE id = ?", datasetId);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			if(resultSet.next())
+				file = resultSet.getString("source_file");
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+		return file;
+	}
+
+	public BasicResource<BrapiAlleleMatrix> getFromHdf5(org.restlet.Context context, List<String> profileIds, List<String> markerDbIds, GenotypeEncodingParams params, int currentPage, int pageSize)
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
-		try(Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File("/home/tomcat/germinate-demo-brapi/germinate-demo-brapi.hdf5"))) // TODO: get hdf5 location from the database
+		// The dataset. Remember the mapping from germplasmDbId to datasetDbId. We're extracting data from hdf5, not the database. So we need to remember the mapping.
+		Map<String, String> germplasmDbIdToDataset = new HashMap<>();
+		// The lines we want to extract
+		List<Integer> germinatebaseIds = new ArrayList<>();
+
+		String datasetId = null;
+		for (String profileId : profileIds)
 		{
-			// The dataset. Remember the mapping from germplasmDbId to datasetDbId. We're extracting data from hdf5, not the database. So we need to remember the mapping.
-			Map<String, String> germplasmDbIdToDataset = new HashMap<>();
-			// The lines we want to extract
-			List<Integer> germinatebaseIds = new ArrayList<>();
+			String[] tokens = profileId.split("-");
+			germplasmDbIdToDataset.put(tokens[1], tokens[0]);
+			germinatebaseIds.add(Integer.parseInt(tokens[1]));
+			datasetId = tokens[0];
+		}
 
-			for (String profileId : profileIds)
-			{
-				String[] tokens = profileId.split("-");
-				germplasmDbIdToDataset.put(tokens[1], tokens[0]);
-				germinatebaseIds.add(Integer.parseInt(tokens[1]));
-			}
+		String hdf5File = getHdf5File(datasetId);
 
+		String folder = context.getParameters().getFirstValue("hdf5-folder");
+
+		try(Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File)))
+		{
 			// Get the bidirectional mapping between germplasm/marker id and name
 			LinkedHashMap<String, String> germplasmIdToName = getGermplasmMapping(germinatebaseIds);
 			LinkedHashMap<String, String> markerIdToName;

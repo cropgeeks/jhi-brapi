@@ -1,11 +1,15 @@
 package jhi.brapi.server;
 
 import org.restlet.data.*;
+import org.restlet.engine.util.*;
 import org.restlet.ext.jackson.*;
+import org.restlet.ext.servlet.*;
 import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 import java.util.*;
+
+import javax.servlet.*;
 
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
@@ -80,9 +84,9 @@ public class AlleleMatrix extends BaseBrapiServerResource
 
 		// TODO: Get page and pageSize parameters and potentially all of these parameters from json post?
 
-//		if(format != null)
-			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(profileIds, markerIds, format, params, currentPage, pageSize));
-//		else
-//			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(profileIds, markerIds, params, currentPage, pageSize));
+		if(format != null)
+			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(getRequest(), profileIds, markerIds, format, params, currentPage, pageSize));
+		else
+			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(getContext(), profileIds, markerIds, params, currentPage, pageSize));
 	}
 }
