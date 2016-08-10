@@ -79,6 +79,8 @@
 				tofile="web/context.xml"
 				overwrite="true">
 			<filterset>
+				<filter token="hdf5.folder" value="${hdf5.folder}"/>
+
 				<filter token="datasource.germinate" value="${datasource.germinate}"/>
 				<filter token="database.germinate.username" value="${database.germinate.username}"/>
 				<filter token="database.germinate.password" value="${database.germinate.password}"/>
