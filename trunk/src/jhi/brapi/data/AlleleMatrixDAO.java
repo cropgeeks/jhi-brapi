@@ -95,7 +95,7 @@ public class AlleleMatrixDAO
 				{
 					File file = File.createTempFile("allelematrix", ".tsv");
 
-					Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName);
+					Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName, params);
 					converter.readInput();
 					converter.extractData(file.getAbsolutePath(), "");
 
