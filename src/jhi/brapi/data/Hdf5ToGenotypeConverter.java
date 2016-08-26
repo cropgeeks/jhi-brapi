@@ -30,32 +30,17 @@ public class Hdf5ToGenotypeConverter
 	private HashMap<String, Integer> lineInds;
 	private HashMap<String, Integer> markerInds;
 
+	private GenotypeEncodingParams params;
+
 	private IHDF5Reader reader;
 
-	public static void main(String[] args)
-	{
-		Map<String, String> lines = new LinkedHashMap<>();
-		lines.put("1", "Prickly Pete");
-		lines.put("3", "3");
-		lines.put("2", "2");
-
-		Map<String, String> markers = new LinkedHashMap<>();
-		markers.put("1", "m477958");
-		markers.put("42", "m817786");
-		markers.put("66", "m527819");
-		markers.put("12", "m439043");
-
-		Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File("d:/genotype-test/germinate-demo-brapi.hdf5"), lines, markers);
-		converter.readInput();
-		converter.extractData("d:/genotype-test/germinate-demo-brapi-exported.txt", "");
-	}
-
-	public Hdf5ToGenotypeConverter(File hdf5File, Map<String, String> germplasmIdToName, Map<String, String> markerIdToName)
+	public Hdf5ToGenotypeConverter(File hdf5File, Map<String, String> germplasmIdToName, Map<String, String> markerIdToName, GenotypeEncodingParams params)
 	{
 		// Setup input and output files
 		this.hdf5File = hdf5File;
 		this.germplasmIdToName = germplasmIdToName;
 		this.markerIdToName = markerIdToName;
+		this.params = params;
 	}
 
 	public void readInput()
@@ -141,7 +126,21 @@ public class Hdf5ToGenotypeConverter
 		// Collect the alleles which match the line and markers we're looking for
 		return lineIndices.parallelStream()
 			.map(index -> genotypes[index][0])
-			.map(allele -> stateTable[allele])
+			.map(allele -> {
+				String decoded = stateTable[allele];
+
+				if(decoded.length() == 2)
+				{
+					String[] split = decoded.split("(?!^)");
+					decoded = GenotypeEncodingUtils.getString(split[0], split[1], params);
+				}
+				else if(decoded.length() == 1)
+				{
+					decoded = GenotypeEncodingUtils.getString(decoded, decoded, params);
+				}
+
+				return decoded;
+			})
 			.collect(Collectors.joining("\t", markerId + "\t", ""));
 	}
 }
