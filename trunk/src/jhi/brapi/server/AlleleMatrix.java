@@ -84,9 +84,9 @@ public class AlleleMatrix extends BaseBrapiServerResource
 
 		// TODO: Get page and pageSize parameters and potentially all of these parameters from json post?
 
-		if(format != null) // TODO: Why is this using the DB and not HDF5?
-			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(getRequest(), profileIds, markerIds, format, params, currentPage, pageSize));
-		else
-			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(getContext(), profileIds, markerIds, params, currentPage, pageSize));
+//		if(format != null) // TODO: Why is this using the DB and not HDF5?
+//			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(getRequest(), profileIds, markerIds, format, params, currentPage, pageSize));
+//		else
+			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), profileIds, markerIds, format, params, currentPage, pageSize));
 	}
 }
