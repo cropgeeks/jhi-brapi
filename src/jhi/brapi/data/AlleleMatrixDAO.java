@@ -1,6 +1,7 @@
 package jhi.brapi.data;
 
 import org.restlet.*;
+import org.restlet.resource.*;
 
 import java.io.*;
 import java.sql.*;
@@ -17,139 +18,6 @@ import jhi.brapi.resource.*;
  */
 public class AlleleMatrixDAO
 {
-	private String allMarkers = "select genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
-			"genotypes.germinatebase_id, genotypes.dataset_id, markers.id from genotypes INNER JOIN markers ON " +
-			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id IN (%s) AND datasets.id IN (%s) ORDER BY markers.marker_name, dataset_id, germinatebase_id LIMIT ?, ?";
-
-	private String countAllMarkers = "select COUNT(1) AS total_count, genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
-			"genotypes.germinatebase_id, genotypes.dataset_id, markers.id from genotypes INNER JOIN markers ON " +
-			"genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id IN (%s) AND datasets.id IN (%s)";
-
-	public BasicResource<BrapiAlleleMatrix> get(Request request, List<String> markerProfileDbIds, List<String> markerDbIds, String format, GenotypeEncodingParams params, int currentPage, int pageSize)
-	{
-		if (format != null)
-		{
-			currentPage = 0;
-			pageSize = Integer.MAX_VALUE;
-		}
-
-		BasicResource<BrapiAlleleMatrix> result = new BasicResource<>();
-
-		List<Integer> datasetIds = new ArrayList<>();
-		List<Integer> germinatebaseIds = new ArrayList<>();
-
-		for (String profileId : markerProfileDbIds)
-		{
-			String[] tokens = profileId.split("-");
-			datasetIds.add(Integer.parseInt(tokens[0]));
-			germinatebaseIds.add(Integer.parseInt(tokens[1]));
-		}
-
-		String countQuery = String.format(countAllMarkers, DatabaseUtils.createPlaceholders(germinatebaseIds.size()), DatabaseUtils.createPlaceholders(datasetIds.size()));
-
-		long totalCount = -1;
-
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = createByIdStatement(con, countQuery, germinatebaseIds, datasetIds);
-			 ResultSet resultSet = statement.executeQuery())
-		{
-			if (resultSet.first())
-				totalCount = resultSet.getInt("total_count");
-		}
-		catch (SQLException e) { e.printStackTrace(); }
-
-		if (totalCount != -1)
-		{
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createInLimitStatement(con, allMarkers, currentPage, pageSize, germinatebaseIds, datasetIds);
-				 ResultSet resultSet = statement.executeQuery())
-			{
-				if (format != null)
-				{
-					result = getMatrixForFile(request, resultSet, markerProfileDbIds, params);
-				}
-				else
-				{
-					result = new BasicResource<BrapiAlleleMatrix>(getMatrixForJson(resultSet, params), currentPage, pageSize, totalCount);
-				}
-			}
-			catch (SQLException | IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-
-		return result;
-	}
-
-	private BasicResource<BrapiAlleleMatrix> getMatrixForFile(Request request, ResultSet resultSet, List<String> markerProfileDbIds, GenotypeEncodingParams params)
-			throws SQLException, IOException
-	{
-		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
-
-		File file = File.createTempFile("allelematrix", ".tsv");
-
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(file)))
-		{
-			bw.write("markerprofileDbIds");
-
-			for (String markerprofileDbId : markerProfileDbIds)
-				bw.write("\t" + markerprofileDbId);
-
-			String previousMarkerName = null;
-			while (resultSet.next())
-			{
-				String markerName = resultSet.getString("markers.id");
-				String allele1 = resultSet.getString("allele1");
-				String allele2 = resultSet.getString("allele2");
-
-				if (!Objects.equals(previousMarkerName, markerName))
-				{
-					previousMarkerName = markerName;
-					bw.newLine();
-					bw.write(markerName);
-				}
-
-				bw.write("\t" + GenotypeEncodingUtils.getString(allele1, allele2, params));
-			}
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		BasicResource<BrapiAlleleMatrix> result = new BasicResource<BrapiAlleleMatrix>(matrix, 0, 1, 1);
-
-		// Get the original URL from the request
-		String url = request.getRootRef().toString();
-		Datafile datafile = new Datafile(url + "/files/" + file.getName());
-		result.getMetadata().setDatafiles(Collections.singletonList(datafile));
-		return result;
-	}
-
-	private BrapiAlleleMatrix getMatrixForJson(ResultSet resultSet, GenotypeEncodingParams params)
-			throws SQLException
-	{
-		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
-
-		List<List<String>> data = new ArrayList<>();
-
-		while (resultSet.next())
-		{
-			String markerName = resultSet.getString("markers.id");
-			String allele1 = resultSet.getString("allele1");
-			String allele2 = resultSet.getString("allele2");
-			String lineName = resultSet.getString("dataset_id") + "-" + resultSet.getString("germinatebase_id");
-
-			List<String> callData = createArray(markerName, lineName, GenotypeEncodingUtils.getString(allele1, allele2, params));
-			data.add(callData);
-		}
-
-		matrix.setData(data);
-
-		return matrix;
-	}
-
 	private List<String> createArray(String markerDbId, String markerprofileDbIds, String allele)
 	{
 		List<String> callData = new ArrayList<>();
@@ -158,22 +26,6 @@ public class AlleleMatrixDAO
 		callData.add(allele);
 
 		return callData;
-	}
-
-	private PreparedStatement createByIdStatement(Connection con, String query, List<Integer> germinatebaseIds, List<Integer> datasetIds)
-			throws SQLException
-	{
-		// Get the basic information on the map
-		PreparedStatement statement = con.prepareStatement(query);
-
-		int counter = 1;
-		for (Integer id : germinatebaseIds)
-			statement.setInt(counter++, id);
-
-		for (Integer id : datasetIds)
-			statement.setInt(counter++, id);
-
-		return statement;
 	}
 
 	private String getHdf5File(String datasetId)
@@ -192,7 +44,7 @@ public class AlleleMatrixDAO
 		return file;
 	}
 
-	public BasicResource<BrapiAlleleMatrix> getFromHdf5(org.restlet.Context context, List<String> profileIds, List<String> markerDbIds, GenotypeEncodingParams params, int currentPage, int pageSize)
+	public BasicResource<BrapiAlleleMatrix> getFromHdf5(Request request, org.restlet.Context context, List<String> profileIds, List<String> markerDbIds, String format, GenotypeEncodingParams params, int currentPage, int pageSize)
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
@@ -214,12 +66,12 @@ public class AlleleMatrixDAO
 
 		String folder = context.getParameters().getFirstValue("hdf5-folder");
 
+		// Get the bidirectional mapping between germplasm/marker id and name
+		LinkedHashMap<String, String> germplasmIdToName = getGermplasmMapping(germinatebaseIds);
+		LinkedHashMap<String, String> markerIdToName;
+
 		try(Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File)))
 		{
-			// Get the bidirectional mapping between germplasm/marker id and name
-			LinkedHashMap<String, String> germplasmIdToName = getGermplasmMapping(germinatebaseIds);
-			LinkedHashMap<String, String> markerIdToName;
-
 			if(markerDbIds == null || markerDbIds.isEmpty())
 			{
 				// If the user didn't request specific markers, get all of the ones from the file
@@ -237,47 +89,78 @@ public class AlleleMatrixDAO
 			int nrOfMarkers = internalMarkerIds.size();
 			int nrOfLines = internalGermplasmIds.size();
 
-			// Get the total number of data points
-			int maxData = Math.min(nrOfLines * nrOfMarkers, extractor.getLines().size() * extractor.getMarkers().size());
-
-			List<List<String>> data = new ArrayList<>();
-			int lower = PaginationUtils.getLowLimit(currentPage, pageSize);
-
-			if(nrOfLines > 0 && nrOfMarkers > 0)
+			if(format != null)
 			{
-				// Loop over the chunk of data that is required
-				for (int i = lower; i < lower + pageSize; i++)
+				if(format.equals("tsv"))
 				{
-					// Get the x and y coordinates
-					int lineIndex = i / nrOfMarkers;
-					int markerIndex = i - ((i / nrOfMarkers) * nrOfMarkers);
+					File file = File.createTempFile("allelematrix", ".tsv");
 
-					if (lineIndex >= internalGermplasmIds.size())
-						break;
+					Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName);
+					converter.readInput();
+					converter.extractData(file.getAbsolutePath(), "");
 
-					// Get the names from the database, this is required to pass it to the HDF5 converter
-					String lineName = germplasmIdToName.get(internalGermplasmIds.get(lineIndex));
-					String markerName = markerIdToName.get(internalMarkerIds.get(markerIndex));
+					BasicResource<BrapiAlleleMatrix> result = new BasicResource<BrapiAlleleMatrix>(matrix, 0, 1, 1);
 
-					// Skip a combination if the requested data doesn't exist
-					if (lineName == null || markerName == null)
-						continue;
-
-					// Get the allele value from the HDF5
-					String alleles = extractor.get(lineName, markerName, params);
-
-					String germplasmDbId = internalGermplasmIds.get(lineIndex);
-					// Convert the data back into ids
-					List<String> callData = createArray(internalMarkerIds.get(markerIndex), germplasmDbIdToDataset.get(germplasmDbId) + "-" + germplasmDbId, alleles);
-
-					// Add the data to the array
-					data.add(callData);
+					// Get the original URL from the request
+					String url = request.getRootRef().toString();
+					Datafile datafile = new Datafile(url + "/files/" + file.getName());
+					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
+					return result;
+				}
+				else
+				{
+					throw new ResourceException(400); // TODO: check if correct code
 				}
 			}
+			else
+			{
+				// Get the total number of data points
+				int maxData = Math.min(nrOfLines * nrOfMarkers, extractor.getLines().size() * extractor.getMarkers().size());
 
-			matrix.setData(data);
+				List<List<String>> data = new ArrayList<>();
+				int lower = PaginationUtils.getLowLimit(currentPage, pageSize);
 
-			return new BasicResource<>(matrix, currentPage, pageSize, maxData);
+				if(nrOfLines > 0 && nrOfMarkers > 0)
+				{
+					// Loop over the chunk of data that is required
+					for (int i = lower; i < lower + pageSize; i++)
+					{
+						// Get the x and y coordinates
+						int lineIndex = i / nrOfMarkers;
+						int markerIndex = i - ((i / nrOfMarkers) * nrOfMarkers);
+
+						if (lineIndex >= internalGermplasmIds.size())
+							break;
+
+						// Get the names from the database, this is required to pass it to the HDF5 converter
+						String lineName = germplasmIdToName.get(internalGermplasmIds.get(lineIndex));
+						String markerName = markerIdToName.get(internalMarkerIds.get(markerIndex));
+
+						// Skip a combination if the requested data doesn't exist
+						if (lineName == null || markerName == null)
+							continue;
+
+						// Get the allele value from the HDF5
+						String alleles = extractor.get(lineName, markerName, params);
+
+						String germplasmDbId = internalGermplasmIds.get(lineIndex);
+						// Convert the data back into ids
+						List<String> callData = createArray(internalMarkerIds.get(markerIndex), germplasmDbIdToDataset.get(germplasmDbId) + "-" + germplasmDbId, alleles);
+
+						// Add the data to the array
+						data.add(callData);
+					}
+				}
+
+				matrix.setData(data);
+
+				return new BasicResource<>(matrix, currentPage, pageSize, maxData);
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return new BasicResource<>(matrix, currentPage, pageSize, 0);
 		}
 	}
 
