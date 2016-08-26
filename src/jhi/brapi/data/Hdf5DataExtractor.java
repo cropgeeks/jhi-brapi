@@ -14,7 +14,6 @@ public class Hdf5DataExtractor implements AutoCloseable
 	private IHDF5Reader reader;
 
 	private List<String> hdf5Lines;
-	private List<String> originalNames;
 	private List<String> hdf5Markers;
 	private final String[] stateTable;
 
@@ -24,10 +23,8 @@ public class Hdf5DataExtractor implements AutoCloseable
 		this.reader = HDF5Factory.openForReading(hdf5File);
 
 		// Get the line names
-		this.hdf5Lines = reader.getGroupMembers("Lines");
-		originalNames = hdf5Lines.stream()
-								 .map(line -> line.replaceAll("/", "_"))
-								 .collect(Collectors.toList());
+		String[] hdf5LinesArray = reader.readStringArray("Lines");
+		hdf5Lines = Arrays.asList(hdf5LinesArray);
 
 		// Get the marker names
 		String[] hdf5MarkersArray = reader.readStringArray("Markers");
@@ -39,7 +36,7 @@ public class Hdf5DataExtractor implements AutoCloseable
 
 	public List<String> getLines()
 	{
-		return originalNames;
+		return hdf5Lines;
 	}
 
 	public List<String> getMarkers()
@@ -54,24 +51,28 @@ public class Hdf5DataExtractor implements AutoCloseable
 
 	public String get(String line, String marker, GenotypeEncodingParams params)
 	{
-		line = line.replace("/", "_");
-
 		int markerIndex = hdf5Markers.indexOf(marker);
+		int lineIndex = hdf5Lines.indexOf(line);
 
-		byte[] genotypes = reader.int8().readArray("Lines/" + line);
+		String alleleValue = params.getUnknownString();
 
-		String alleleValue = stateTable[genotypes[markerIndex]];
-
-		String[] values;
-
-		if(alleleValue.contains("/"))
+		if(markerIndex != -1 && lineIndex != -1)
 		{
-			values = alleleValue.split("/");
-			alleleValue = GenotypeEncodingUtils.getString(values[0], values[1], params);
-		}
-		else if (alleleValue.length() == 2)
-		{
-			alleleValue = GenotypeEncodingUtils.getString(Character.toString(alleleValue.charAt(0)), Character.toString(alleleValue.charAt(1)), params);
+			byte[] genotypes = reader.int8().readMatrixBlock("DataMatrix", 1, hdf5Markers.size(), hdf5Lines.indexOf(line), 0)[0];
+
+			alleleValue = stateTable[genotypes[markerIndex]];
+
+			String[] values;
+
+			if (alleleValue.contains("/"))
+			{
+				values = alleleValue.split("/");
+				alleleValue = GenotypeEncodingUtils.getString(values[0], values[1], params);
+			}
+			else if (alleleValue.length() == 2)
+			{
+				alleleValue = GenotypeEncodingUtils.getString(Character.toString(alleleValue.charAt(0)), Character.toString(alleleValue.charAt(1)), params);
+			}
 		}
 
 		return alleleValue;
