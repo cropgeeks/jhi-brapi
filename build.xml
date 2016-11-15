@@ -47,7 +47,7 @@
 				<exclude name="**/*Test.class"/>
 			</fileset>
 			<manifest>
-				<attribute name="Main-Class" value="jhi.brapi.server.Brapi"/>
+				<attribute name="Main-Class" value="jhi.brapi.Brapi"/>
 				<attribute name="Class-Path" value="${jar.classpath}"/>
 			</manifest>
 		</jar>
@@ -56,9 +56,10 @@
 	<target name="jar-client" depends="clean, compile">
 		<jar jarfile="brapi-client.jar">
 			<fileset dir="${cls}">
+				<include name="**/api/**"/>
 				<exclude name="**/*Test.class"/>
-				<exclude name="**/server/**"/>
-				<exclude name="**/data/**"/>
+				<exclude name="**/Server*.class"/>
+				<exclude name="**/*DAO*.class"/>
 			</fileset>
 		</jar>
 	</target>
