@@ -79,7 +79,7 @@ public class CallDAO
 				.addMethod("GET"));
 	}
 
-	public static BasicResource<DataResult<BrapiCall>> getAll(String dataType, int currentPage, int pageSize)
+	public static BrapiListResource<BrapiCall> getAll(String dataType, int currentPage, int pageSize)
 	{
 		List<BrapiCall> calls = CALLS;
 
@@ -95,6 +95,6 @@ public class CallDAO
 
 		calls = calls.subList(start, end);
 
-		return new BasicResource<DataResult<BrapiCall>>(new DataResult<BrapiCall>(calls), currentPage, pageSize, calls.size());
+		return new BrapiListResource<BrapiCall>(calls, currentPage, pageSize, calls.size());
 	}
 }

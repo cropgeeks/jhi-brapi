@@ -23,7 +23,7 @@ public class StudyDetails extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<BrapiStudies> getJson()
+	public BrapiBaseResource<BrapiStudies> getJson()
 	{
 		return studiesDAO.getById(id);
 	}

@@ -1,6 +1,5 @@
 package jhi.brapi.server;
 
-import java.util.List;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -15,7 +14,7 @@ public class MarkerProfiles extends BaseBrapiServerResource
 	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 
 	@Get("json")
-	public BasicResource<DataResult<BrapiMarkerProfile>> getJson()
+	public BrapiListResource<BrapiMarkerProfile> getJson()
 	{
 		return markerProfileDAO.getAll(currentPage, pageSize);
 	}

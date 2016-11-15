@@ -2,8 +2,6 @@ package jhi.brapi.server;
 
 import org.restlet.resource.*;
 
-import java.util.*;
-
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -24,7 +22,7 @@ public class GermplasmMcpd extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<BrapiGermplasmMcpd> getJson()
+	public BrapiBaseResource<BrapiGermplasmMcpd> getJson()
 	{
 		return germplasmDAO.getMcpdFor(id);
 	}

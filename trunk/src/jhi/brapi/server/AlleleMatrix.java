@@ -1,18 +1,14 @@
 package jhi.brapi.server;
 
-import org.restlet.data.*;
-import org.restlet.engine.util.*;
-import org.restlet.ext.jackson.*;
-import org.restlet.ext.servlet.*;
-import org.restlet.representation.*;
-import org.restlet.resource.*;
-
 import java.util.*;
-
-import javax.servlet.*;
 
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
+
+import org.restlet.data.*;
+import org.restlet.ext.jackson.*;
+import org.restlet.representation.*;
+import org.restlet.resource.*;
 
 /**
  * Queries the database for the Germplasm with the given ID then returns a JSON (Jackson) representation of the Germplasm for API clients to consume.
@@ -28,7 +24,7 @@ public class AlleleMatrix extends BaseBrapiServerResource
 
 	// Temporary, TODO remove this after testing with large DB to find limits of call
 //	@Get("json")
-	public BasicResource<BrapiAlleleMatrix> getJson()
+	public BrapiBaseResource<BrapiAlleleMatrix> getJson()
 	{
 ////		List<String> profileIds = new ArrayList<>();
 ////
@@ -38,7 +34,7 @@ public class AlleleMatrix extends BaseBrapiServerResource
 ////
 ////		List<BrapiAlleleMatrix> list = alleleMatrixDAO.get(profileIds);
 ////
-////		return new BasicResource<BrapiAlleleMatrix>(list);
+////		return new BrapiBaseResource<BrapiAlleleMatrix>(list);
 //
 //		// Not implemented because we're not parsing the markerprofileDbId params yet
 //
@@ -54,13 +50,13 @@ public class AlleleMatrix extends BaseBrapiServerResource
 ////		else
 ////			matrix = alleleMatrixDAO.get(profileIds, markerIds);
 //
-//		BasicResource<BrapiAlleleMatrix> br = new BasicResource<BrapiAlleleMatrix>(list);
+//		BrapiBaseResource<BrapiAlleleMatrix> br = new BrapiBaseResource<BrapiAlleleMatrix>(list);
 //
 //		return new JacksonRepresentation<>(br);
 //	}
 
 	@Post
-	public JacksonRepresentation<BasicResource<BrapiAlleleMatrix>> post(Representation rep)
+	public JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>> post(Representation rep)
 	{
 		List<String> profileIds = new ArrayList<>();
 		List<String> markerIds = new ArrayList<>();
@@ -85,8 +81,8 @@ public class AlleleMatrix extends BaseBrapiServerResource
 		// TODO: Get page and pageSize parameters and potentially all of these parameters from json post?
 
 //		if(format != null) // TODO: Why is this using the DB and not HDF5?
-//			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(getRequest(), profileIds, markerIds, format, params, currentPage, pageSize));
+//			return new JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>>(alleleMatrixDAO.get(getRequest(), profileIds, markerIds, format, params, currentPage, pageSize));
 //		else
-			return new JacksonRepresentation<BasicResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), profileIds, markerIds, format, params, currentPage, pageSize));
+			return new JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), profileIds, markerIds, format, params, currentPage, pageSize));
 	}
 }

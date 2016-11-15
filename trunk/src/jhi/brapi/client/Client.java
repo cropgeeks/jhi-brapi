@@ -10,8 +10,6 @@ import org.restlet.data.Protocol;
 import org.restlet.engine.application.*;
 import org.restlet.resource.*;
 
-import java.util.List;
-
 /**
  * Created by gs40939 on 01/05/2015.
  */
@@ -55,8 +53,8 @@ public class Client
 		ClientResource mapResource = new ClientResource("http://localhost:8080//brapi/maps/");
 
 		LinkedHashMap hashMap = mapResource.get(LinkedHashMap.class);
-		BasicResource<BrapiGenomeMap> br = new ObjectMapper().convertValue(hashMap,
-			new TypeReference<BasicResource<BrapiGenomeMap>>() {});
+		BrapiBaseResource<BrapiGenomeMap> br = new ObjectMapper().convertValue(hashMap,
+			new TypeReference<BrapiBaseResource<BrapiGenomeMap>>() {});
 		
 //		List<BrapiGenomeMap> maps = br.getResult();
 //

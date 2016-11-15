@@ -7,10 +7,6 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-import javax.naming.*;
-import javax.naming.Context;
-import javax.sql.*;
-
 import jhi.brapi.resource.*;
 
 /**
@@ -44,7 +40,7 @@ public class AlleleMatrixDAO
 		return file;
 	}
 
-	public BasicResource<BrapiAlleleMatrix> getFromHdf5(Request request, org.restlet.Context context, List<String> profileIds, List<String> markerDbIds, String format, GenotypeEncodingParams params, int currentPage, int pageSize)
+	public BrapiBaseResource<BrapiAlleleMatrix> getFromHdf5(Request request, org.restlet.Context context, List<String> profileIds, List<String> markerDbIds, String format, GenotypeEncodingParams params, int currentPage, int pageSize)
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
@@ -99,7 +95,7 @@ public class AlleleMatrixDAO
 					converter.readInput();
 					converter.extractData(file.getAbsolutePath(), "");
 
-					BasicResource<BrapiAlleleMatrix> result = new BasicResource<BrapiAlleleMatrix>(matrix, 0, 1, 1);
+					BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<BrapiAlleleMatrix>(matrix, 0, 1, 1);
 
 					// Get the original URL from the request
 					String url = request.getRootRef().toString();
@@ -154,13 +150,13 @@ public class AlleleMatrixDAO
 
 				matrix.setData(data);
 
-				return new BasicResource<>(matrix, currentPage, pageSize, maxData);
+				return new BrapiBaseResource<>(matrix, currentPage, pageSize, maxData);
 			}
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			return new BasicResource<>(matrix, currentPage, pageSize, 0);
+			return new BrapiBaseResource<>(matrix, currentPage, pageSize, 0);
 		}
 	}
 

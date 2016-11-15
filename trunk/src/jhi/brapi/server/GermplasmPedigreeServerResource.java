@@ -3,7 +3,6 @@ package jhi.brapi.server;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
-import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**
@@ -28,7 +27,7 @@ public class GermplasmPedigreeServerResource extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<BrapiGermplasmPedigree> getJson()
+	public BrapiBaseResource<BrapiGermplasmPedigree> getJson()
 	{
 		return germplasmDAO.getPedigreeById(id);
 	}

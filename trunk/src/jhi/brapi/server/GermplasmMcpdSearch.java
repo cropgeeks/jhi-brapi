@@ -1,11 +1,11 @@
 package jhi.brapi.server;
 
-import org.restlet.resource.*;
-
 import java.util.*;
 
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
+
+import org.restlet.resource.*;
 
 /**
  * Given an id, returns the markerprofile ids which relate to the germplasm indicated by id.
@@ -38,7 +38,7 @@ public class GermplasmMcpdSearch extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<DataResult<BrapiGermplasmMcpd>> getJson()
+	public BrapiListResource<BrapiGermplasmMcpd> getJson()
 	{
 		LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
 		addParameter(parameters, "germinatebase.general_identifier", pui);
