@@ -273,7 +273,7 @@ public class MapDAO
 			statement.setString(position++, chromosomes[i]);
 		}
 
-		statement.setInt(position++, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(position++, DatabaseUtils.getLimitStart(currentPage, pageSize));
 		statement.setInt(position++, pageSize);
 
 		return statement;

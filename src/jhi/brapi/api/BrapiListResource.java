@@ -10,7 +10,7 @@ public class BrapiListResource<T>
 
 	public BrapiListResource()
 	{
-		metadata.setPagination(PaginationUtils.getEmptyPagination());
+		metadata.setPagination(Pagination.empty());
 	}
 
 	// Should be our default choice for Brapi calls which "paginate" over a single result

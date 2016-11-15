@@ -267,7 +267,7 @@ public class GermplasmDAO
 		}
 		else
 		{
-			wrappedList.getMetadata().setPagination(PaginationUtils.getEmptyPagination());
+			wrappedList.getMetadata().setPagination(Pagination.empty());
 		}
 
 		return wrappedList;

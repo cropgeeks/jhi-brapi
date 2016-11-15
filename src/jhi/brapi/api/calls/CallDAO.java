@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import jhi.brapi.api.*;
+import jhi.brapi.util.*;
 
 public class CallDAO
 {
@@ -90,7 +91,7 @@ public class CallDAO
 						 .collect(Collectors.toCollection(ArrayList::new));
 		}
 
-		int start = PaginationUtils.getLowLimit(currentPage, pageSize);
+		int start = DatabaseUtils.getLimitStart(currentPage, pageSize);
 		int end = Math.min(start + pageSize, calls.size());
 
 		calls = calls.subList(start, end);
