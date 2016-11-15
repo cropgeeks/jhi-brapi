@@ -19,6 +19,16 @@ public class Pagination
 		this.totalPages = (int)Math.ceil(totalCount/(float) desiredPageSize);
 	}
 
+	public static Pagination empty()
+	{
+		return new Pagination(0, 0, 0, 0);
+	}
+
+	public static Pagination forSingleResult()
+	{
+		return new Pagination(1, 0, 1, 1);
+	}
+
 	public int getPageSize()
 		{ return pageSize; }
 

@@ -4,8 +4,6 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.*;
 
-import jhi.brapi.api.*;
-
 public class DatabaseUtils
 {
 	public static long getTotalCount(String sql)
@@ -98,7 +96,7 @@ public class DatabaseUtils
 			}
 		}
 
-		stmt.setInt(i++, PaginationUtils.getLowLimit(currentPage, pageSize));
+		stmt.setInt(i++, getLimitStart(currentPage, pageSize));
 		stmt.setInt(i++, pageSize);
 
 		return stmt;
@@ -147,7 +145,7 @@ public class DatabaseUtils
 	{
 		// Prepare statement with low and high params for a limit query
 		PreparedStatement statement = con.prepareStatement(query);
-		statement.setInt(1, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(1, getLimitStart(currentPage, pageSize));
 		statement.setInt(2, pageSize);
 
 		return statement;
@@ -176,7 +174,7 @@ public class DatabaseUtils
 		for(String value : values)
 			statement.setString(i++, value);
 
-		statement.setInt(i++, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(i++, getLimitStart(currentPage, pageSize));
 		statement.setInt(i++, pageSize);
 
 		return statement;
@@ -237,7 +235,7 @@ public class DatabaseUtils
 			statement.setString(i++, entry.getValue());
 		}
 
-		statement.setInt(i++, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(i++, getLimitStart(currentPage, pageSize));
 		statement.setInt(i++, pageSize);
 
 		return statement;
@@ -249,9 +247,14 @@ public class DatabaseUtils
 		// Prepare statement with ID
 		PreparedStatement statement = con.prepareStatement(query);
 		statement.setString(1, id);
-		statement.setInt(2, PaginationUtils.getLowLimit(currentPage, pageSize));
+		statement.setInt(2, getLimitStart(currentPage, pageSize));
 		statement.setInt(3, pageSize);
 
 		return statement;
+	}
+
+	public static int getLimitStart(int currentPage, int pageSize)
+	{
+		return currentPage * pageSize;
 	}
 }

@@ -93,7 +93,7 @@ public class ServerTokenAuthenticator extends BaseBrapiServerResource
 		// BrapiSessionToken is a special case and doesn't get metadata by
 		// default, so we need to include it here (even though it isn't used)
 		Metadata md = new Metadata();
-		md.setPagination(PaginationUtils.getEmptyPagination());
+		md.setPagination(Pagination.empty());
 		sessionToken.setMetadata(md);
 
 		return sessionToken;

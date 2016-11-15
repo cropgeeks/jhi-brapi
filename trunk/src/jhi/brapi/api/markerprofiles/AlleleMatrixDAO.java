@@ -112,7 +112,7 @@ public class AlleleMatrixDAO
 				int maxData = Math.min(nrOfLines * nrOfMarkers, extractor.getLines().size() * extractor.getMarkers().size());
 
 				List<List<String>> data = new ArrayList<>();
-				int lower = PaginationUtils.getLowLimit(currentPage, pageSize);
+				int lower = DatabaseUtils.getLimitStart(currentPage, pageSize);
 
 				if(nrOfLines > 0 && nrOfMarkers > 0)
 				{
