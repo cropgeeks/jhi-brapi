@@ -1,6 +1,5 @@
 package jhi.brapi.server;
 
-import java.util.List;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -23,7 +22,7 @@ public class GermplasmMarkerProfiles extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<BrapiGermplasmMarkerProfiles> getJson()
+	public BrapiBaseResource<BrapiGermplasmMarkerProfiles> getJson()
 	{
 		return germplasmDAO.getMarkerProfilesFor(id, currentPage, pageSize);
 	}

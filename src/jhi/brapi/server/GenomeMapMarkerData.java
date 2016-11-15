@@ -5,9 +5,6 @@ import jhi.brapi.resource.*;
 
 import org.restlet.resource.*;
 
-/**
- * Created by gs40939 on 17/06/2015.
- */
 public class GenomeMapMarkerData extends BaseBrapiServerResource
 {
 	private MapDAO mapDAO = new MapDAO();
@@ -25,7 +22,7 @@ public class GenomeMapMarkerData extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<DataResult<BrapiMarkerPosition>> getJson()
+	public BrapiListResource<BrapiMarkerPosition> getJson()
 	{
 		return mapDAO.getByIdMarkers(id, linkageGroups, currentPage, pageSize);
 	}

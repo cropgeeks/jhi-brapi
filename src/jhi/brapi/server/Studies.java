@@ -1,10 +1,8 @@
 package jhi.brapi.server;
 
-import jhi.brapi.data.StudiesDAO;
-import jhi.brapi.resource.BasicResource;
-import jhi.brapi.resource.BrapiGermplasm;
-import jhi.brapi.resource.BrapiStudies;
-import jhi.brapi.resource.DataResult;
+import jhi.brapi.data.*;
+import jhi.brapi.resource.*;
+
 import org.restlet.resource.Get;
 
 /**
@@ -37,9 +35,9 @@ public class Studies extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<DataResult<BrapiStudies>> getJson()
+	public BrapiListResource<BrapiStudies> getJson()
 	{
-		BasicResource<DataResult<BrapiStudies>> result;
+		BrapiListResource<BrapiStudies> result;
 
 		result = studiesDAO.getAll(currentPage, pageSize, studyType, programId, locationId, seasonId);
 

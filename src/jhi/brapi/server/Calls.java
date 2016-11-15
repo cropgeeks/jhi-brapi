@@ -3,9 +3,6 @@ package jhi.brapi.server;
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
-/**
- * @author Sebastian Raubach
- */
 public class Calls extends BaseBrapiServerResource
 {
 	private String dataType;
@@ -19,7 +16,7 @@ public class Calls extends BaseBrapiServerResource
 	}
 
 	@Override
-	public BasicResource<DataResult<BrapiCall>> getJson()
+	public BrapiListResource<BrapiCall> getJson()
 	{
 		return CallDAO.getAll(dataType, currentPage, pageSize);
 	}

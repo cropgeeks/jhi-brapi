@@ -14,7 +14,7 @@ public class Locations extends BaseBrapiServerResource
 	private LocationDAO locationDAO = new LocationDAO();
 
 	@Get("json")
-	public BasicResource<DataResult<BrapiLocation>> getJson()
+	public BrapiListResource<BrapiLocation> getJson()
 	{
 		return locationDAO.getAll(currentPage, pageSize);
 	}

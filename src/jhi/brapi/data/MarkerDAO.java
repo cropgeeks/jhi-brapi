@@ -7,8 +7,6 @@ import jhi.brapi.resource.*;
 
 /**
  * Specifies the public interface which any Marker data accessing classes must implement.
- *
- * @author Sebastian Raubach
  */
 public class MarkerDAO
 {
@@ -26,11 +24,11 @@ public class MarkerDAO
 	private final String getLinesByNameRegex = "SELECT markers.*, " + queryPartSynonyms + " FROM markers WHERE markers.marker_name LIKE ? LIMIT ?, ?";
 	private final String getCountLinesByNameRegex = "SELECT COUNT(1) AS total_count FROM markers WHERE markers.marker_name LIKE ?";
 
-	public BasicResource<DataResult<BrapiMarker>> getAll(int currentPage, int pageSize)
+	public BrapiListResource<BrapiMarker> getAll(int currentPage, int pageSize)
 	{
-		// Create empty BasicResource of type BrapiMarker (if for whatever reason we can't get data from the database
+		// Create empty BrapiBaseResource of type BrapiMarker (if for whatever reason we can't get data from the database
 		// this is what's returned
-		BasicResource<DataResult<BrapiMarker>> result = new BasicResource<>();
+		BrapiListResource<BrapiMarker> result = new BrapiListResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCount(getCountLines);
 
@@ -47,8 +45,8 @@ public class MarkerDAO
 				while (resultSet.next())
 					list.add(getBrapiMarker(resultSet));
 
-				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-				result = new BasicResource<DataResult<BrapiMarker>>(new DataResult<BrapiMarker>(list), currentPage, pageSize, totalCount);
+				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+				result = new BrapiListResource<BrapiMarker>(list, currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -59,14 +57,14 @@ public class MarkerDAO
 		return result;
 	}
 
-	public BasicResource<DataResult<BrapiMarker>> getByType(String type, int currentPage, int pageSize)
+	public BrapiListResource<BrapiMarker> getByType(String type, int currentPage, int pageSize)
 	{
 		return getData(getCountLinesByType, getLinesByType, type, currentPage, pageSize);
 	}
 
-	private BasicResource<DataResult<BrapiMarker>> getData(String countSql, String dataSql, String parameter, int currentPage, int pageSize)
+	private BrapiListResource<BrapiMarker> getData(String countSql, String dataSql, String parameter, int currentPage, int pageSize)
 	{
-		BasicResource<DataResult<BrapiMarker>> result = new BasicResource<>();
+		BrapiListResource<BrapiMarker> result = new BrapiListResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCountById(countSql, parameter);
 
@@ -85,8 +83,8 @@ public class MarkerDAO
 					markers.add(getBrapiMarker(resultSet));
 				}
 
-				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-				result = new BasicResource<DataResult<BrapiMarker>>(new DataResult<BrapiMarker>(markers), currentPage, pageSize, totalCount);
+				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+				result = new BrapiListResource<BrapiMarker>(markers, currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -97,7 +95,7 @@ public class MarkerDAO
 		return result;
 	}
 
-	public BasicResource<DataResult<BrapiMarker>> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
+	public BrapiListResource<BrapiMarker> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
 	{
 		String countQuery;
 		String getQuery;

@@ -15,7 +15,7 @@ public class GenomeMaps extends BaseBrapiServerResource
 	private MapDAO mapDAO = new MapDAO();
 
 	@Get("json")
-	public BasicResource<DataResult<BrapiGenomeMap>> getJson()
+	public BrapiListResource<BrapiGenomeMap> getJson()
 	{
 		return mapDAO.getAll(currentPage, pageSize);
 	}

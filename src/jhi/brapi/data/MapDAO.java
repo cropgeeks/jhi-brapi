@@ -1,13 +1,9 @@
 package jhi.brapi.data;
 
-import jhi.brapi.resource.*;
+import java.sql.*;
+import java.util.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import jhi.brapi.resource.*;
 
 /**
  * Specifies the public interface which any BrapiGenomeMap data accessing classes must implement.
@@ -52,9 +48,9 @@ public class MapDAO
 	 *
 	 * @return A MapList object which is a wrapper around a List of BrapiGenomeMap objects.
 	 */
-	public BasicResource<DataResult<BrapiGenomeMap>> getAll(int currentPage, int pageSize)
+	public BrapiListResource<BrapiGenomeMap> getAll(int currentPage, int pageSize)
 	{
-		BasicResource<DataResult<BrapiGenomeMap>> result = new BasicResource<>();
+		BrapiListResource<BrapiGenomeMap> result = new BrapiListResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCount(mapsCountQuery);
 
@@ -64,7 +60,7 @@ public class MapDAO
 				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, mapsQuery, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
-				result = new BasicResource<DataResult<BrapiGenomeMap>>(new DataResult<>(getMapsFromResultSet(resultSet)), currentPage, pageSize, totalCount);
+				result = new BrapiListResource<BrapiGenomeMap>(getMapsFromResultSet(resultSet), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -104,9 +100,9 @@ public class MapDAO
 	 * @return 		A BrapiMapMetaData object which itself holds a List of MapEntry objects. Or null if no
 	 * 				BrapiMapMetaData exists for the supplied id.
 	 */
-	public BasicResource<BrapiMapMetaData> getById(String id)
+	public BrapiBaseResource<BrapiMapMetaData> getById(String id)
 	{
-		BasicResource<BrapiMapMetaData> result = new BasicResource<>();
+		BrapiBaseResource<BrapiMapMetaData> result = new BrapiBaseResource<>();
 		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
@@ -128,7 +124,7 @@ public class MapDAO
 				List<LinkageGroup> linkageGroups = getLinkageGroupsFromResultSet(resultSet);
 				mapDetail.setLinkageGroups(linkageGroups);
 
-				result = new BasicResource<BrapiMapMetaData>(mapDetail);
+				result = new BrapiBaseResource<BrapiMapMetaData>(mapDetail);
 			}
 			catch (SQLException e)
 			{
@@ -225,9 +221,9 @@ public class MapDAO
 		return createByChromStatement(con, entriesByChromQuery, id, chromosome);
 	}
 
-	public BasicResource<DataResult<BrapiMarkerPosition>> getByIdMarkers(String id, String[] chromosomes, int currentPage, int pageSize)
+	public BrapiListResource<BrapiMarkerPosition> getByIdMarkers(String id, String[] chromosomes, int currentPage, int pageSize)
 	{
-		BasicResource<DataResult<BrapiMarkerPosition>> result = new BasicResource<>();
+		BrapiListResource<BrapiMarkerPosition> result = new BrapiListResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCountById(mapMarkersCountQuery, id);
 
@@ -237,7 +233,7 @@ public class MapDAO
 				 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
 				 ResultSet resultSet = mapStatement.executeQuery())
 			{
-				result = new BasicResource<DataResult<BrapiMarkerPosition>>(new DataResult(getMapMarkersListFromResultSet(resultSet)), currentPage, pageSize, totalCount);
+				result = new BrapiListResource<BrapiMarkerPosition>(getMapMarkersListFromResultSet(resultSet), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{

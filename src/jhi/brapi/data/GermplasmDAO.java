@@ -44,11 +44,11 @@ public class GermplasmDAO
 
 	private final String pedigreeByIdQuery = "SELECT p1.germinatebase_id, p1.parent_id as 'left_parent', p2.parent_id as 'right_parent', definition , name FROM pedigrees p1 INNER JOIN pedigrees p2 ON p1.germinatebase_id = p2.germinatebase_id and p1.pedigreedescription_id = 1 and p2.pedigreedescription_id = 2 JOIN germinatebase ON p1.germinatebase_id = germinatebase.id JOIN pedigreedefinitions ON p1.germinatebase_id WHERE p1.germinatebase_id = ?";
 
-	public BasicResource<DataResult<BrapiGermplasm>> getAll(int currentPage, int pageSize)
+	public BrapiListResource<BrapiGermplasm> getAll(int currentPage, int pageSize)
 	{
-		// Create empty BasicResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
+		// Create empty BrapiBaseResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
 		// this is what's returned
-		BasicResource<DataResult<BrapiGermplasm>> result = new BasicResource<>();
+		BrapiListResource<BrapiGermplasm> result = new BrapiListResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCount(getCountLines);
 
@@ -65,8 +65,8 @@ public class GermplasmDAO
 				while (resultSet.next())
 					list.add(getBrapiGermplasm(resultSet));
 
-				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-				result = new BasicResource<DataResult<BrapiGermplasm>>(new DataResult(list), currentPage, pageSize, totalCount);
+				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+				result = new BrapiListResource<BrapiGermplasm>(list, currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -77,9 +77,9 @@ public class GermplasmDAO
 		return result;
 	}
 
-	public BasicResource<BrapiGermplasm> getById(String id)
+	public BrapiBaseResource<BrapiGermplasm> getById(String id)
 	{
-		BasicResource<BrapiGermplasm> wrappedResult = new BasicResource<>();
+		BrapiBaseResource<BrapiGermplasm> wrappedResult = new BrapiBaseResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, getSpecificLine, id);
@@ -88,7 +88,7 @@ public class GermplasmDAO
 			if (resultSet.first())
 			{
 				// Set the Germplasm bean using the data returned from the database
-				wrappedResult = new BasicResource<>(getBrapiGermplasm(resultSet));
+				wrappedResult = new BrapiBaseResource<>(getBrapiGermplasm(resultSet));
 			}
 		}
 		catch (SQLException e)
@@ -115,16 +115,16 @@ public class GermplasmDAO
 		return germplasm;
 	}
 
-	public BasicResource<BrapiGermplasmMcpd> getMcpdFor(String id)
+	public BrapiBaseResource<BrapiGermplasmMcpd> getMcpdFor(String id)
 	{
-		BasicResource<BrapiGermplasmMcpd> result = new BasicResource<>();
+		BrapiBaseResource<BrapiGermplasmMcpd> result = new BrapiBaseResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, getSpecificLine, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{
 			if (resultSet.first())
-				result = new BasicResource<BrapiGermplasmMcpd>(getBrapiGermplasmMcpd(resultSet));
+				result = new BrapiBaseResource<BrapiGermplasmMcpd>(getBrapiGermplasmMcpd(resultSet));
 		}
 		catch (SQLException e)
 		{
@@ -176,9 +176,9 @@ public class GermplasmDAO
 		return mcpd;
 	}
 
-	public BasicResource<BrapiGermplasmMarkerProfiles> getMarkerProfilesFor(String id, int currentPage, int pageSize)
+	public BrapiBaseResource<BrapiGermplasmMarkerProfiles> getMarkerProfilesFor(String id, int currentPage, int pageSize)
 	{
-		BasicResource<BrapiGermplasmMarkerProfiles> result = new BasicResource<>();
+		BrapiBaseResource<BrapiGermplasmMarkerProfiles> result = new BrapiBaseResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCountById(markerProfileCountIdQuery, id);
 
@@ -199,7 +199,7 @@ public class GermplasmDAO
 
 			list.add(profiles);
 
-			result = new BasicResource<BrapiGermplasmMarkerProfiles>(profiles, currentPage, list.size(), totalCount);
+			result = new BrapiBaseResource<BrapiGermplasmMarkerProfiles>(profiles, currentPage, list.size(), totalCount);
 		}
 		catch (SQLException e)
 		{
@@ -220,10 +220,10 @@ public class GermplasmDAO
 			return null;
 	}
 
-	public BasicResource<DataResult<BrapiGermplasm>> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
+	public BrapiListResource<BrapiGermplasm> getByName(String name, BrapiGermplasm.MatchingMethod matchingMethod, int currentPage, int pageSize)
 	{
 		List<BrapiGermplasm> resultGermplasm = new ArrayList<>();
-		BasicResource<DataResult<BrapiGermplasm>> wrappedList = new BasicResource<>();
+		BrapiListResource<BrapiGermplasm> wrappedList = new BrapiListResource<>();
 
 		String countQuery;
 		String getQuery;
@@ -255,8 +255,8 @@ public class GermplasmDAO
 				{
 					resultGermplasm.add(getBrapiGermplasm(resultSet));
 
-					// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-					wrappedList = new BasicResource<DataResult<BrapiGermplasm>>(new DataResult(resultGermplasm), currentPage, pageSize, totalCount);
+					// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+					wrappedList = new BrapiListResource<BrapiGermplasm>(resultGermplasm, currentPage, pageSize, totalCount);
 				}
 			}
 			catch (SQLException e)
@@ -272,9 +272,9 @@ public class GermplasmDAO
 		return wrappedList;
 	}
 
-	public BasicResource<BrapiGermplasmPedigree> getPedigreeById(String id)
+	public BrapiBaseResource<BrapiGermplasmPedigree> getPedigreeById(String id)
 	{
-		BasicResource<BrapiGermplasmPedigree> wrappedResult = new BasicResource<>();
+		BrapiBaseResource<BrapiGermplasmPedigree> wrappedResult = new BrapiBaseResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, pedigreeByIdQuery, id);
@@ -283,7 +283,7 @@ public class GermplasmDAO
 			if (resultSet.first())
 			{
 				// Set the Germplasm bean using the data returned from the database
-				wrappedResult = new BasicResource<>(getBrapiGermplasmPedigree(resultSet));
+				wrappedResult = new BrapiBaseResource<>(getBrapiGermplasmPedigree(resultSet));
 			}
 		}
 		catch (SQLException e)
@@ -307,11 +307,11 @@ public class GermplasmDAO
 		return pedigree;
 	}
 
-	public BasicResource<DataResult<BrapiGermplasmMcpd>> getMcpdForSearch(LinkedHashMap<String, String> parameters, int currentPage, int pageSize)
+	public BrapiListResource<BrapiGermplasmMcpd> getMcpdForSearch(LinkedHashMap<String, String> parameters, int currentPage, int pageSize)
 	{
-		// Create empty BasicResource of type BrapiGermplasmMcpd (if for whatever reason we can't get data from the database
+		// Create empty BrapiBaseResource of type BrapiGermplasmMcpd (if for whatever reason we can't get data from the database
 		// this is what's returned
-		BasicResource<DataResult<BrapiGermplasmMcpd>> result = new BasicResource<>();
+		BrapiListResource<BrapiGermplasmMcpd> result = new BrapiListResource<>();
 
 		long totalCount = DatabaseUtils.getParameterizedTotalCount(getCountLinesWhere, parameters);
 
@@ -328,8 +328,8 @@ public class GermplasmDAO
 				while (resultSet.next())
 					list.add(getBrapiGermplasmMcpd(resultSet));
 
-				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-				result = new BasicResource<DataResult<BrapiGermplasmMcpd>>(new DataResult<BrapiGermplasmMcpd>(list), currentPage, pageSize, totalCount);
+				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+				result = new BrapiListResource<BrapiGermplasmMcpd>(list, currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{

@@ -1,9 +1,9 @@
 package jhi.brapi.data;
 
-import jhi.brapi.resource.*;
-
 import java.sql.*;
 import java.util.*;
+
+import jhi.brapi.resource.*;
 
 /**
  * Specifies the public interface which any Germplasm data accessing classes must implement.
@@ -21,27 +21,27 @@ public class StudiesDAO
 
 	private final String studyDetailsTablePhenotypes = "select DISTINCT(phenotypes.id) from phenotypes LEFT JOIN phenotypedata ON phenotypes.id = phenotypedata.phenotype_id WHERE dataset_id = ?";
 
-	public BasicResource<BrapiStudies> getById(String id)
+	public BrapiBaseResource<BrapiStudies> getById(String id)
 	{
-		BasicResource<BrapiStudies> result = new BasicResource<>();
+		BrapiBaseResource<BrapiStudies> result = new BrapiBaseResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement mapStatement = DatabaseUtils.createByIdStatement(con, getStudyDetails, id);
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
 			if(resultSet.next())
-				result = new BasicResource<>(getBrapiStudies(resultSet));
+				result = new BrapiBaseResource<>(getBrapiStudies(resultSet));
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
 		return result;
 	}
 
-	public BasicResource<DataResult<BrapiStudies>> getAll(int currentPage, int pageSize, String studyType, String programId, String locationId, String seasonId)
+	public BrapiListResource<BrapiStudies> getAll(int currentPage, int pageSize, String studyType, String programId, String locationId, String seasonId)
 	{
-		// Create empty BasicResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
+		// Create empty BrapiBaseResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
 		// this is what's returned
-		BasicResource<DataResult<BrapiStudies>> result = new BasicResource<>();
+		BrapiListResource<BrapiStudies> result = new BrapiListResource<>();
 
 		// TODO: Can we do this kind of concept in a generic way somewhere?
 		StringBuilder builder = new StringBuilder();
@@ -97,8 +97,8 @@ public class StudiesDAO
 				while (resultSet.next())
 					list.add(getBrapiStudies(resultSet));
 
-				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-				result = new BasicResource<DataResult<BrapiStudies>>(new DataResult<BrapiStudies>(list), currentPage, pageSize, totalCount);
+				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+				result = new BrapiListResource<BrapiStudies>(list, currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -129,11 +129,11 @@ public class StudiesDAO
 		return studies;
 	}
 
-	public BasicResource<BrapiStudiesAsTable> getTableById(String id)
+	public BrapiBaseResource<BrapiStudiesAsTable> getTableById(String id)
 	{
-		// Create empty BasicResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
+		// Create empty BrapiBaseResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
 		// this is what's returned
-		BasicResource<BrapiStudiesAsTable> result = new BasicResource<>();
+		BrapiBaseResource<BrapiStudiesAsTable> result = new BrapiBaseResource<>();
 
 		List<String> phenotypeIds = new ArrayList<>();
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
@@ -179,8 +179,8 @@ public class StudiesDAO
 			}
 			studiesAsTable.setData(data);
 
-			// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-			result = new BasicResource<BrapiStudiesAsTable>(studiesAsTable);
+			// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+			result = new BrapiBaseResource<BrapiStudiesAsTable>(studiesAsTable);
 		}
 		catch (SQLException e)
 		{

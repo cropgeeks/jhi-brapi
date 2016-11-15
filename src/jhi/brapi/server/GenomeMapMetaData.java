@@ -1,7 +1,5 @@
 package jhi.brapi.server;
 
-import java.util.*;
-
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 
@@ -25,7 +23,7 @@ public class GenomeMapMetaData extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<BrapiMapMetaData> getJson()
+	public BrapiBaseResource<BrapiMapMetaData> getJson()
 	{
 		return mapDAO.getById(id);
 	}

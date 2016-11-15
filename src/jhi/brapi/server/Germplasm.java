@@ -1,10 +1,10 @@
 package jhi.brapi.server;
 
-import org.restlet.resource.*;
-
 import jhi.brapi.data.*;
 import jhi.brapi.resource.*;
 import jhi.brapi.resource.BrapiGermplasm.*;
+
+import org.restlet.resource.*;
 
 /**
  * Queries the database for the Germplasm (germinatebase?) with the given ID then returns a JSON (Jackson) representation of the Germplasm for API
@@ -27,9 +27,9 @@ public class Germplasm extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<DataResult<BrapiGermplasm>> getJson()
+	public BrapiListResource<BrapiGermplasm> getJson()
 	{
-		BasicResource<DataResult<BrapiGermplasm>> result;
+		BrapiListResource<BrapiGermplasm> result;
 		if (name == null || name.equals(""))
 			result = germplasmDAO.getAll(currentPage, pageSize);
 		else
@@ -39,7 +39,7 @@ public class Germplasm extends BaseBrapiServerResource
 	}
 
 	@Post("json")
-	public BasicResource<DataResult<BrapiGermplasm>> postJson(BrapiGermplasmPost params)
+	public BrapiListResource<BrapiGermplasm> postJson(BrapiGermplasmPost params)
 	{
 		setParams(params);
 

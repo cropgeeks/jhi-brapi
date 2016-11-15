@@ -1,25 +1,25 @@
 package jhi.brapi.resource;
 
-public class BasicResource<T>
+public class BrapiBaseResource<T>
 {
 	private Metadata metadata = new Metadata();
 
 	private T result;
 
-	public BasicResource()
+	public BrapiBaseResource()
 	{
 		metadata.setPagination(PaginationUtils.getEmptyPagination());
 	}
 
 	// Should be our default choice for Brapi calls which "paginate" over a single result
-	public BasicResource(T result)
+	public BrapiBaseResource(T result)
 	{
 		this.result = result;
 		metadata.setPagination(PaginationUtils.getPaginationForSingleResult());
 	}
 
 	// Should be our default choice for Brapi calls which paginate over a subset of a resource
-	public BasicResource(T result, int currentPage, int pageSize, long totalCount)
+	public BrapiBaseResource(T result, int currentPage, int pageSize, long totalCount)
 	{
 		this.result = result;
 		metadata.setPagination(new Pagination(pageSize, currentPage, totalCount, pageSize));

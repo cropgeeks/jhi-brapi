@@ -11,11 +11,11 @@ public class LocationDAO
 
 	private final String getLocations = "SELECT countries.country_code3, countries.country_name, locations.id, site_name, latitude, longitude, elevation FROM locations LEFT JOIN  countries ON country_id = countries.id WHERE locations.locationtype_id = 3 LIMIT ?, ?";
 
-	public BasicResource<DataResult<BrapiLocation>> getAll(int currentPage, int pageSize)
+	public BrapiListResource<BrapiLocation> getAll(int currentPage, int pageSize)
 	{
-		// Create empty BasicResource of type BrapiLocation (if for whatever reason we can't get data from the database
+		// Create empty BrapiBaseResource of type BrapiLocation (if for whatever reason we can't get data from the database
 		// this is what's returned
-		BasicResource<DataResult<BrapiLocation>> result = new BasicResource<>();
+		BrapiListResource<BrapiLocation> result = new BrapiListResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCount(getCountLocations);
 
@@ -32,8 +32,8 @@ public class LocationDAO
 				while (resultSet.next())
 					list.add(getBrapiLocation(resultSet));
 
-				// Pass the currentPage and totalCount to the BasicResource constructor so we generate correct metadata
-				result = new BasicResource<DataResult<BrapiLocation>>(new DataResult(list), currentPage, pageSize, totalCount);
+				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+				result = new BrapiListResource<BrapiLocation>(list, currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{

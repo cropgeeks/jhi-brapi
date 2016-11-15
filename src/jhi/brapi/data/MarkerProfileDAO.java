@@ -1,18 +1,10 @@
 package jhi.brapi.data;
 
+import java.sql.*;
+import java.util.*;
+
 import jhi.brapi.resource.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-/**
- * Created by gs40939 on 19/05/2015.
- */
 public class MarkerProfileDAO
 {
 	private final String allMarkers = "select genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
@@ -34,9 +26,9 @@ public class MarkerProfileDAO
 			"genotypes.germinatebase_id, genotypes.dataset_id from genotypes INNER JOIN markers ON genotypes.marker_id = " +
 			"markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id";
 
-	public BasicResource<DataResult<BrapiMarkerProfile>> getAll(int currentPage, int pageSize)
+	public BrapiListResource<BrapiMarkerProfile> getAll(int currentPage, int pageSize)
 	{
-		BasicResource<DataResult<BrapiMarkerProfile>> result = new BasicResource<>();
+		BrapiListResource<BrapiMarkerProfile> result = new BrapiListResource<>();
 
 		long totalCount = DatabaseUtils.getTotalCount(allMarkerProfilesCount);
 
@@ -46,7 +38,7 @@ public class MarkerProfileDAO
 				 PreparedStatement markerProfileStatement = DatabaseUtils.createLimitStatement(con, allMarkerProfiles, currentPage, pageSize);
 				 ResultSet resultSet = markerProfileStatement.executeQuery())
 			{
-				result = new BasicResource<DataResult<BrapiMarkerProfile>>(new DataResult(getProfiles(resultSet)), currentPage, pageSize, totalCount);
+				result = new BrapiListResource<BrapiMarkerProfile>(getProfiles(resultSet), currentPage, pageSize, totalCount);
 			}
 			catch (SQLException e)
 			{
@@ -64,9 +56,9 @@ public class MarkerProfileDAO
 	 * @param id	The id of the BrapiMarkerProfile to getJson
 	 * @return		A BrapiMarkerProfile object identified by id (or null if none exists).
 	 */
-	public BasicResource<MarkerProfileData> getById(String id)
+	public BrapiBaseResource<MarkerProfileData> getById(String id)
 	{
-		BasicResource<MarkerProfileData> result = new BasicResource<>();
+		BrapiBaseResource<MarkerProfileData> result = new BrapiBaseResource<>();
 
 		String[] tokens = id.split("-");
 		int datasetId = Integer.parseInt(tokens[0]);
@@ -76,7 +68,7 @@ public class MarkerProfileDAO
 			 PreparedStatement markerProfileStatement = createByIdStatement(con, allMarkers, germinatebaseId, datasetId);
 			 ResultSet resultSet = markerProfileStatement.executeQuery())
 		{
-			result = new BasicResource<>(getProfile(resultSet));
+			result = new BrapiBaseResource<>(getProfile(resultSet));
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 

@@ -22,7 +22,7 @@ public class MarkerProfileServerResource extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BasicResource<MarkerProfileData> getJson()
+	public BrapiBaseResource<MarkerProfileData> getJson()
 	{
 		return markerProfileDAO.getById(id);
 	}
