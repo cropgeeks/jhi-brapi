@@ -44,6 +44,10 @@ public class MapDAO
 	private final String mapMarkersCountQuery = "SELECT COUNT(1) AS total_count, map_id, chromosome, definition_start, marker_id, markers.marker_name" +
 		" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=?";
 
+	private final String mapMarkerChromosomeRangeQuery = "SELECT SQL_CALC_FOUND_ROWS map_id, definition_start, marker_id, " +
+		"markers.marker_name FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id " +
+		"= ? AND mapdefinitions.chromosome = ? %s LIMIT ?, ?";
+
 	/**
 	 * Queries the database (using mapQuery defined above) for the complete list of Maps which the database holds.
 	 *
@@ -57,7 +61,7 @@ public class MapDAO
 
 		if (totalCount != -1)
 		{
-			try (Connection con = jhi.brapi.util.Database.INSTANCE.getDataSourceGerminate().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, mapsQuery, currentPage, pageSize);
 				 ResultSet resultSet = statement.executeQuery())
 			{
@@ -106,7 +110,7 @@ public class MapDAO
 		BrapiBaseResource<BrapiMapMetaData> result = new BrapiBaseResource<>();
 		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
 
-		try (Connection con = jhi.brapi.util.Database.INSTANCE.getDataSourceGerminate().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement mapStatement = DatabaseUtils.createByIdStatement(con, detailQuery, id);
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
@@ -188,7 +192,7 @@ public class MapDAO
 	public BrapiMapMetaData getByIdAndChromosome(int id, String chromosome)
 	{
 		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
-		try (Connection con = jhi.brapi.util.Database.INSTANCE.getDataSourceGerminate().getConnection();
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement mapStatement = createDetailByChromStatement(con, id, chromosome);
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
@@ -216,12 +220,6 @@ public class MapDAO
 		return createByChromStatement(con, detailByChromQuery, id, chromosome);
 	}
 
-	private PreparedStatement createEntriesByChromStatement(Connection con, int id, String chromosome)
-		throws SQLException
-	{
-		return createByChromStatement(con, entriesByChromQuery, id, chromosome);
-	}
-
 	public BrapiListResource<BrapiMarkerPosition> getByIdMarkers(String id, String[] chromosomes, int currentPage, int pageSize)
 	{
 		BrapiListResource<BrapiMarkerPosition> result = new BrapiListResource<>();
@@ -230,7 +228,7 @@ public class MapDAO
 
 		if (totalCount != -1)
 		{
-			try (Connection con = jhi.brapi.util.Database.INSTANCE.getDataSourceGerminate().getConnection();
+			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 				 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
 				 ResultSet resultSet = mapStatement.executeQuery())
 			{
@@ -297,5 +295,74 @@ public class MapDAO
 		}
 
 		return mapMarkers;
+	}
+
+	public BrapiListResource<BrapiLinkageGroupMarker> getByIdLinkageGroupMarkersRange(String id, String chromosome, double min, double max, int currentPage, int pageSize)
+	{
+		BrapiListResource<BrapiLinkageGroupMarker> result = new BrapiListResource<>();
+
+		try (Connection con = jhi.brapi.util.Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement mapStatement = createByChromStatement(con, mapMarkerChromosomeRangeQuery, id, chromosome, min, max, currentPage, pageSize);
+			 ResultSet resultSet = mapStatement.executeQuery())
+		{
+			ArrayList<BrapiLinkageGroupMarker> markers = getLinkageGroupMarkersFromResultSet(resultSet);
+			long totalCount = DatabaseUtils.getTotalCount(mapStatement);
+
+			result = new BrapiListResource<BrapiLinkageGroupMarker>(markers, currentPage, pageSize, totalCount);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	private PreparedStatement createByChromStatement(Connection con, String query, String id, String chromosome, double min, double max, int currentPage, int pageSize)
+		throws SQLException
+	{
+		String minS = " AND mapdefinitions.definition_start >= ?";
+		String maxS = " AND mapdefinitions.definition_end <= ?";
+
+		StringBuilder builder = new StringBuilder();
+		if (min != Integer.MAX_VALUE)
+			builder.append(minS);
+		if (max != Integer.MIN_VALUE)
+			builder.append(maxS);
+
+		String formatted = String.format(query, builder.toString());
+
+		PreparedStatement statement = con.prepareStatement(formatted);
+		// Get the basic information on the map
+		statement.setString(1, id);
+		statement.setString(2, chromosome);
+		int position = 3;
+		if (min != Integer.MAX_VALUE)
+			statement.setDouble(position++, min);
+		if (max != Integer.MIN_VALUE)
+			statement.setDouble(position++, max);
+		statement.setInt(position++, DatabaseUtils.getLimitStart(currentPage, pageSize));
+		statement.setInt(position++, pageSize);
+
+		return statement;
+	}
+
+	// Takes a ResultSet which should represent the result of the linkageGroupsQuery defined above and returns a List of
+	// BrapiLinkageGroup objects, each of which has been initialized with the values from the ResultSet
+	private ArrayList<BrapiLinkageGroupMarker> getLinkageGroupMarkersFromResultSet(ResultSet resultSet)
+		throws SQLException
+	{
+		ArrayList<BrapiLinkageGroupMarker> markers = new ArrayList<>();
+
+		while (resultSet.next())
+		{
+			BrapiLinkageGroupMarker marker = new BrapiLinkageGroupMarker();
+			marker.setMarkerDbId(resultSet.getString("marker_id"));
+			marker.setMarkerName(resultSet.getString("marker_name"));
+			marker.setLocation(resultSet.getString("definition_start"));
+			markers.add(marker);
+		}
+
+		return markers;
 	}
 }

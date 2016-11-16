@@ -257,4 +257,16 @@ public class DatabaseUtils
 	{
 		return currentPage * pageSize;
 	}
+
+	public static long getTotalCount(Statement stmt)
+		throws SQLException
+	{
+		long totalCount = 0;
+
+		ResultSet rs = stmt.executeQuery("SELECT FOUND_ROWS()");
+		if (rs.next())
+			totalCount = rs.getLong(1);
+
+		return totalCount;
+	}
 }
