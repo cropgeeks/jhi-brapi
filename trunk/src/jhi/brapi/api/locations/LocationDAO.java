@@ -8,9 +8,7 @@ import jhi.brapi.util.*;
 
 public class LocationDAO
 {
-	private final String getCountLocations = "SELECT COUNT(*) AS total_count FROM locations WHERE locationtype_id = 3";
-
-	private final String getLocations = "SELECT countries.country_code3, countries.country_name, locations.id, site_name, latitude, longitude, elevation FROM locations LEFT JOIN  countries ON country_id = countries.id WHERE locations.locationtype_id = 3 LIMIT ?, ?";
+	private final String getLocations = "SELECT SQL_CALC_FOUND_ROWS countries.country_code3, countries.country_name, locations.id, site_name, latitude, longitude, elevation FROM locations LEFT JOIN  countries ON country_id = countries.id WHERE locations.locationtype_id = 3 LIMIT ?, ?";
 
 	public BrapiListResource<BrapiLocation> getAll(int currentPage, int pageSize)
 	{
@@ -18,28 +16,25 @@ public class LocationDAO
 		// this is what's returned
 		BrapiListResource<BrapiLocation> result = new BrapiListResource<>();
 
-		long totalCount = DatabaseUtils.getTotalCount(getCountLocations);
-
-		if (totalCount != -1)
+		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+		// prepared statement (which includes a limit statement)
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, getLocations, currentPage, pageSize);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
-			// prepared statement (which includes a limit statement)
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, getLocations, currentPage, pageSize);
-				 ResultSet resultSet = statement.executeQuery())
-			{
-				List<BrapiLocation> list = new ArrayList<>();
+			List<BrapiLocation> list = new ArrayList<>();
 
-				while (resultSet.next())
-					list.add(getBrapiLocation(resultSet));
+			while (resultSet.next())
+				list.add(getBrapiLocation(resultSet));
 
-				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
-				result = new BrapiListResource<BrapiLocation>(list, currentPage, pageSize, totalCount);
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
+			long totalCount = DatabaseUtils.getTotalCount(statement);
+
+			// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+			result = new BrapiListResource<BrapiLocation>(list, currentPage, pageSize, totalCount);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 
 		return result;

@@ -6,78 +6,6 @@ import java.util.stream.*;
 
 public class DatabaseUtils
 {
-	public static long getTotalCount(String sql)
-	{
-		// Query for count the total number of items defined by the resource
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = con.prepareStatement(sql);
-			 ResultSet resultSet = statement.executeQuery())
-		{
-			if (resultSet.first())
-				return resultSet.getLong("total_count");
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return -1;
-	}
-
-	public static long getValueTotalCount(String sql, Collection<String> values)
-	{
-		// Query for count the total number of items defined by the resource
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = createValueStatement(con, sql, values);
-			 ResultSet resultSet = statement.executeQuery())
-		{
-			if (resultSet.first())
-				return resultSet.getLong("total_count");
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return -1;
-	}
-
-	public static long getParameterizedTotalCount(String sql, LinkedHashMap<String, String> parameters)
-	{
-		// Query for count the total number of items defined by the resource
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = createParameterizedStatement(con, sql, parameters);
-			 ResultSet resultSet = statement.executeQuery())
-		{
-			if (resultSet.first())
-				return resultSet.getLong("total_count");
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return -1;
-	}
-
-	public static long getTotalCountById(String sql, String id)
-	{
-		// Query for count the total number of items defined by the resource
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = createByIdStatement(con, sql, id);
-			 ResultSet resultSet = statement.executeQuery())
-		{
-			if (resultSet.first())
-				return resultSet.getLong("total_count");
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return -1;
-	}
-
 	public static PreparedStatement createInLimitStatement(Connection con, String query, int currentPage, int pageSize, List<?>... lists)
 			throws SQLException
 	{
@@ -258,6 +186,8 @@ public class DatabaseUtils
 		return currentPage * pageSize;
 	}
 
+	// Should be used for SELECT statements which include the SQL_CALC_FOUND_ROWS
+	// function
 	public static long getTotalCount(Statement stmt)
 		throws SQLException
 	{

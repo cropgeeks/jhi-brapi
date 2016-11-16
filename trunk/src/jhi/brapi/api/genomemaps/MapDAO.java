@@ -13,36 +13,23 @@ public class MapDAO
 {
 	// Selects the id, description and created_date from the MapList table, and carries out an inner join with the
 	// mapdefinitions table so we can get a count of markers (by marker_id) and chromosomes.
-	private final String mapsQuery = "SELECT maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
+	private final String mapsQuery = "SELECT SQL_CALC_FOUND_ROWS maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
 			"mapdefinitions.marker_id) AS markercount, COUNT(DISTINCT mapdefinitions.chromosome) AS chromosomeCount " +
 			"from maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id LIMIT ?, ?";
-
-	private final String mapsCountQuery = "SELECT COUNT(1) AS total_count from maps";
 
 	private final String detailQuery = "SELECT maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
 			"mapdefinitions.marker_id) AS markercount, COUNT(DISTINCT mapdefinitions.chromosome) AS chromosomeCount from " +
 			"maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id WHERE maps.id=?";
 
-	private final String entriesQuery = "SELECT maps.id, mapdefinitions.marker_id, mapdefinitions.chromosome, " +
-			"mapdefinitions.definition_start, markers.marker_name from maps INNER JOIN mapdefinitions ON maps.id = " +
-			"mapdefinitions.map_id INNER JOIN markers ON mapdefinitions.marker_id = markers.id WHERE maps.id=?";
-
 	private final String detailByChromQuery = "SELECT maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
 			"mapdefinitions.marker_id) AS markercount, COUNT(DISTINCT mapdefinitions.chromosome) AS chromosomeCount from " +
 			"maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id WHERE maps.id=? AND mapdefinitions.chromosome=?";
 
-	private final String entriesByChromQuery = "SELECT maps.id, mapdefinitions.marker_id, mapdefinitions.chromosome, " +
-			"mapdefinitions.definition_start, markers.marker_name from maps INNER JOIN mapdefinitions ON maps.id = " +
-			"mapdefinitions.map_id INNER JOIN markers ON mapdefinitions.marker_id = markers.id WHERE maps.id=? AND mapdefinitions.chromosome=?";
-
 	private final String linkageGroupQuery = "SELECT map_id, chromosome, MAX(definition_end) AS max, COUNT(marker_id) " +
 			"AS number_markers FROM mapdefinitions WHERE map_id=? GROUP BY chromosome";
 
-	private final String mapMarkersQuery = "SELECT map_id, chromosome, definition_start, marker_id, markers.marker_name" +
+	private final String mapMarkersQuery = "SELECT SQL_CALC_FOUND_ROWS map_id, chromosome, definition_start, marker_id, markers.marker_name" +
 			" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=? %s LIMIT ?, ?";
-
-	private final String mapMarkersCountQuery = "SELECT COUNT(1) AS total_count, map_id, chromosome, definition_start, marker_id, markers.marker_name" +
-		" FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id=?";
 
 	private final String mapMarkerChromosomeRangeQuery = "SELECT SQL_CALC_FOUND_ROWS map_id, definition_start, marker_id, " +
 		"markers.marker_name FROM mapdefinitions JOIN markers ON markers.id = mapdefinitions.marker_id where map_id " +
@@ -57,20 +44,18 @@ public class MapDAO
 	{
 		BrapiListResource<BrapiGenomeMap> result = new BrapiListResource<>();
 
-		long totalCount = DatabaseUtils.getTotalCount(mapsCountQuery);
-
-		if (totalCount != -1)
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, mapsQuery, currentPage, pageSize);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, mapsQuery, currentPage, pageSize);
-				 ResultSet resultSet = statement.executeQuery())
-			{
-				result = new BrapiListResource<BrapiGenomeMap>(getMapsFromResultSet(resultSet), currentPage, pageSize, totalCount);
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
+			List<BrapiGenomeMap> genomeMaps = getMapsFromResultSet(resultSet);
+			long totalCount = DatabaseUtils.getTotalCount(statement);
+
+			result = new BrapiListResource<BrapiGenomeMap>(genomeMaps, currentPage, pageSize, totalCount);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 
 		return result;
@@ -224,20 +209,18 @@ public class MapDAO
 	{
 		BrapiListResource<BrapiMarkerPosition> result = new BrapiListResource<>();
 
-		long totalCount = DatabaseUtils.getTotalCountById(mapMarkersCountQuery, id);
-
-		if (totalCount != -1)
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
+			 ResultSet resultSet = mapStatement.executeQuery())
 		{
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
-				 ResultSet resultSet = mapStatement.executeQuery())
-			{
-				result = new BrapiListResource<BrapiMarkerPosition>(getMapMarkersListFromResultSet(resultSet), currentPage, pageSize, totalCount);
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
+			List<BrapiMarkerPosition> markerPositions = getMapMarkersListFromResultSet(resultSet);
+			long totalCount = DatabaseUtils.getTotalCount(mapStatement);
+
+			result = new BrapiListResource<BrapiMarkerPosition>(markerPositions, currentPage, pageSize, totalCount);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 
 		return result;

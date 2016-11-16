@@ -14,9 +14,7 @@ public class StudiesDAO
 	// Simply selects all fields from germinatebase
 	private final String getStudyDetails = "SELECT datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE datasets.id = ?";
 
-	private final String getStudies = "SELECT datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE 1=1 %s GROUP BY datasets.id LIMIT ?, ?";
-
-	private final String getCountStudies = "SELECT COUNT(DISTINCT datasets.id) AS total_count FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id GROUP BY datasets.id %s";
+	private final String getStudies = "SELECT SQL_CALC_FOUND_ROWS datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE 1=1 %s GROUP BY datasets.id LIMIT ?, ?";
 
 	private final String studyDetailsTable = "call phenotype_data_complete (?)";
 
@@ -78,33 +76,27 @@ public class StudiesDAO
 			values.add(seasonId);
 		}
 
-		String finalCountStudies = String.format(getCountStudies, builder.toString());
 		String finalGetStudies = String.format(getStudies, builder.toString());
 
-		System.out.println(finalGetStudies);
-
-		long totalCount = DatabaseUtils.getValueTotalCount(finalCountStudies, values);
-
-		if (totalCount != -1)
+		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+		// prepared statement (which includes a limit statement)
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createValueLimitStatement(con, finalGetStudies, values, currentPage, pageSize);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
-			// prepared statement (which includes a limit statement)
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createValueLimitStatement(con, finalGetStudies, values, currentPage, pageSize);
-				 ResultSet resultSet = statement.executeQuery())
-			{
-				List<BrapiStudies> list = new ArrayList<>();
+			List<BrapiStudies> list = new ArrayList<>();
 
-				while (resultSet.next())
-					list.add(getBrapiStudies(resultSet));
+			while (resultSet.next())
+				list.add(getBrapiStudies(resultSet));
 
-				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
-				result = new BrapiListResource<BrapiStudies>(list, currentPage, pageSize, totalCount);
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
+			long totalCount = DatabaseUtils.getTotalCount(statement);
+
+			// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+			result = new BrapiListResource<BrapiStudies>(list, currentPage, pageSize, totalCount);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 
 		return result;
