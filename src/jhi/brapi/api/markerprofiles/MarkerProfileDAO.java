@@ -13,38 +13,24 @@ public class MarkerProfileDAO
 		"AS markerprofile_id, markers.marker_name from genotypes INNER JOIN markers ON genotypes.marker_id = markers.id " +
 		"INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id=? AND datasets.id=?";
 
-	private final String allMarkerProfiles = "SELECT DISTINCT markerprofile_id, germinatebase_id, germinatebase_name FROM ( SELECT genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, CONCAT( genotypes.dataset_id, '-', genotypes.germinatebase_id ) AS markerprofile_id, germinatebase.id AS germinatebase_name FROM genotypes INNER JOIN markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id INNER JOIN germinatebase ON genotypes.germinatebase_id = germinatebase.id ) AS markerprofiles LIMIT ?, ?";
-
-	private final String allMarkerProfilesCount = "SELECT COUNT(DISTINCT markerprofile_id) AS total_count FROM (select " +
-		"genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, " +
-		"CONCAT(genotypes.dataset_id, '-', genotypes.germinatebase_id) AS markerprofile_id from genotypes INNER JOIN " +
-		"markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id) AS " +
-		"markerprofiles";
-
-
-	// No longer used / not in the API... can ressurrect if need be
-	private final String markerCount = "select COUNT(DISTINCT genotypes.marker_id) AS markerCount, " +
-			"genotypes.germinatebase_id, genotypes.dataset_id from genotypes INNER JOIN markers ON genotypes.marker_id = " +
-			"markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id";
+	private final String allMarkerProfiles = "SELECT SQL_CALC_FOUND_ROWS DISTINCT markerprofile_id, germinatebase_id, germinatebase_name FROM ( SELECT genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, CONCAT( genotypes.dataset_id, '-', genotypes.germinatebase_id ) AS markerprofile_id, germinatebase.id AS germinatebase_name FROM genotypes INNER JOIN markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id INNER JOIN germinatebase ON genotypes.germinatebase_id = germinatebase.id ) AS markerprofiles LIMIT ?, ?";
 
 	public BrapiListResource<BrapiMarkerProfile> getAll(int currentPage, int pageSize)
 	{
 		BrapiListResource<BrapiMarkerProfile> result = new BrapiListResource<>();
 
-		long totalCount = DatabaseUtils.getTotalCount(allMarkerProfilesCount);
-
-		if (totalCount != -1)
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement markerProfileStatement = DatabaseUtils.createLimitStatement(con, allMarkerProfiles, currentPage, pageSize);
+			 ResultSet resultSet = markerProfileStatement.executeQuery())
 		{
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement markerProfileStatement = DatabaseUtils.createLimitStatement(con, allMarkerProfiles, currentPage, pageSize);
-				 ResultSet resultSet = markerProfileStatement.executeQuery())
-			{
-				result = new BrapiListResource<BrapiMarkerProfile>(getProfiles(resultSet), currentPage, pageSize, totalCount);
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
+			List<BrapiMarkerProfile> markerProfiles = getProfiles(resultSet);
+			long totalCount = DatabaseUtils.getTotalCount(markerProfileStatement);
+
+			result = new BrapiListResource<BrapiMarkerProfile>(markerProfiles, currentPage, pageSize, totalCount);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 
 		return result;

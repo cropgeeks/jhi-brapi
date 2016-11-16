@@ -19,29 +19,19 @@ public class GermplasmDAO
 	private final String tables = " germinatebase LEFT JOIN locations ON germinatebase.location_id = locations.id LEFT JOIN countries ON locations.country_id = countries.id LEFT JOIN taxonomies ON germinatebase.taxonomy_id = taxonomies.id LEFT JOIN subtaxa ON subtaxa.id = germinatebase.subtaxa_id LEFT JOIN institutions ON germinatebase.institution_id = institutions.id LEFT JOIN pedigreedefinitions ON germinatebase.id = pedigreedefinitions.germinatebase_id ";
 
 	// Simply selects all fields from germinatebase
-	private final String getLines = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " LIMIT ?, ?";
+	private final String getLines = "SELECT SQL_CALC_FOUND_ROWS *, " + queryPartSynonyms + " FROM " + tables + " LIMIT ?, ?";
 
-	private final String getLinesWhere = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " WHERE %s LIMIT ?, ?";
+	private final String getLinesWhere = "SELECT SQL_CALC_FOUND_ROWS *, " + queryPartSynonyms + " FROM " + tables + " WHERE %s LIMIT ?, ?";
 
-	private final String getCountLines = "SELECT COUNT(*) AS total_count FROM " + tables;
+	private final String getLinesByNameExact = "select SQL_CALC_FOUND_ROWS *, " + queryPartSynonyms + " from " + tables + " where germinatebase.name = ? LIMIT ?, ?";
 
-	private final String getCountLinesWhere = "SELECT COUNT(*) AS total_count FROM " + tables + " WHERE %s";
-
-	private final String getLinesByNameExact = "select *, " + queryPartSynonyms + " from " + tables + " where germinatebase.name = ? LIMIT ?, ?";
-
-	private final String getCountLinesByNameExact = "SELECT COUNT(*) AS total_count FROM " + tables + " where germinatebase.name = ?";
-
-	private final String getLinesByNameRegex = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " where germinatebase.name LIKE ? LIMIT ?, ?";
-
-	private final String getCountLinesByNameRegex = "SELECT COUNT(*) AS total_count FROM " + tables + " where germinatebase.name LIKE ?";
+	private final String getLinesByNameRegex = "SELECT SQL_CALC_FOUND_ROWS *, " + queryPartSynonyms + " FROM " + tables + " where germinatebase.name LIKE ? LIMIT ?, ?";
 
 	// Simply selects all fields from germinatebase where the given id matches the id from the URI
 	private final String getSpecificLine = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " where germinatebase.id=?";
 
 	// Query to extract the markerprofiles which relate to the germplasm indicated by id
-	private final String markrerProfileIdQuery = "select DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=? LIMIT ?, ?";
-
-	private final String markerProfileCountIdQuery = "SELECT COUNT(DISTINCT(dataset_id)) AS total_count, germinatebase_id from genotypes where germinatebase_id = ?";
+	private final String markrerProfileIdQuery = "select SQL_CALC_FOUND_ROWS DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=? LIMIT ?, ?";
 
 	private final String pedigreeByIdQuery = "SELECT p1.germinatebase_id, p1.parent_id as 'left_parent', p2.parent_id as 'right_parent', definition , name FROM pedigrees p1 INNER JOIN pedigrees p2 ON p1.germinatebase_id = p2.germinatebase_id and p1.pedigreedescription_id = 1 and p2.pedigreedescription_id = 2 JOIN germinatebase ON p1.germinatebase_id = germinatebase.id JOIN pedigreedefinitions ON p1.germinatebase_id WHERE p1.germinatebase_id = ?";
 
@@ -51,28 +41,25 @@ public class GermplasmDAO
 		// this is what's returned
 		BrapiListResource<BrapiGermplasm> result = new BrapiListResource<>();
 
-		long totalCount = DatabaseUtils.getTotalCount(getCountLines);
-
-		if (totalCount != -1)
+		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+		// prepared statement (which includes a limit statement)
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, getLines, currentPage, pageSize);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
-			// prepared statement (which includes a limit statement)
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, getLines, currentPage, pageSize);
-				 ResultSet resultSet = statement.executeQuery())
-			{
-				List<BrapiGermplasm> list = new ArrayList<>();
+			List<BrapiGermplasm> list = new ArrayList<>();
 
-				while (resultSet.next())
-					list.add(getBrapiGermplasm(resultSet));
+			while (resultSet.next())
+				list.add(getBrapiGermplasm(resultSet));
 
-				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
-				result = new BrapiListResource<BrapiGermplasm>(list, currentPage, pageSize, totalCount);
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
+			long totalCount = DatabaseUtils.getTotalCount(statement);
+
+			// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+			result = new BrapiListResource<BrapiGermplasm>(list, currentPage, pageSize, totalCount);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 
 		return result;
@@ -181,8 +168,6 @@ public class GermplasmDAO
 	{
 		BrapiBaseResource<BrapiGermplasmMarkerProfiles> result = new BrapiBaseResource<>();
 
-		long totalCount = DatabaseUtils.getTotalCountById(markerProfileCountIdQuery, id);
-
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdLimitStatement(con, markrerProfileIdQuery, id, currentPage, pageSize);
 			 ResultSet resultSet = statement.executeQuery())
@@ -199,6 +184,8 @@ public class GermplasmDAO
 			profiles.setMarkerProfiles(markerProfileIdList);
 
 			list.add(profiles);
+
+			long totalCount = DatabaseUtils.getTotalCount(statement);
 
 			result = new BrapiBaseResource<BrapiGermplasmMarkerProfiles>(profiles, currentPage, list.size(), totalCount);
 		}
@@ -232,42 +219,33 @@ public class GermplasmDAO
 		switch (matchingMethod)
 		{
 			case WILDCARD:
-				countQuery = getCountLinesByNameRegex;
 				getQuery = getLinesByNameRegex;
 				name = name.replace("*", "%");
 				name = name.replace("?", "_");
 				break;
 			default:
-				countQuery = getCountLinesByNameExact;
 				getQuery = getLinesByNameExact;
 		}
 
-		long totalCount = DatabaseUtils.getTotalCountById(countQuery, name);
-
-		if (totalCount != -1)
+		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+		// prepared statement (which includes a limit statement)
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdLimitStatement(con, getQuery, name, currentPage, pageSize);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
-			// prepared statement (which includes a limit statement)
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createByIdLimitStatement(con, getQuery, name, currentPage, pageSize);
-				 ResultSet resultSet = statement.executeQuery())
+			while (resultSet.next())
 			{
-				while (resultSet.next())
-				{
-					resultGermplasm.add(getBrapiGermplasm(resultSet));
+				resultGermplasm.add(getBrapiGermplasm(resultSet));
 
-					// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
-					wrappedList = new BrapiListResource<BrapiGermplasm>(resultGermplasm, currentPage, pageSize, totalCount);
-				}
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
+				long totalCount = DatabaseUtils.getTotalCount(statement);
+
+				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+				wrappedList = new BrapiListResource<BrapiGermplasm>(resultGermplasm, currentPage, pageSize, totalCount);
 			}
 		}
-		else
+		catch (SQLException e)
 		{
-			wrappedList.getMetadata().setPagination(Pagination.empty());
+			e.printStackTrace();
 		}
 
 		return wrappedList;
@@ -314,28 +292,25 @@ public class GermplasmDAO
 		// this is what's returned
 		BrapiListResource<BrapiGermplasmMcpd> result = new BrapiListResource<>();
 
-		long totalCount = DatabaseUtils.getParameterizedTotalCount(getCountLinesWhere, parameters);
-
-		if (totalCount != -1)
+		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+		// prepared statement (which includes a limit statement)
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createParameterizedLimitStatement(con, getLinesWhere, parameters, currentPage, pageSize);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
-			// prepared statement (which includes a limit statement)
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createParameterizedLimitStatement(con, getLinesWhere, parameters, currentPage, pageSize);
-				 ResultSet resultSet = statement.executeQuery())
-			{
-				List<BrapiGermplasmMcpd> list = new ArrayList<>();
+			List<BrapiGermplasmMcpd> list = new ArrayList<>();
 
-				while (resultSet.next())
-					list.add(getBrapiGermplasmMcpd(resultSet));
+			while (resultSet.next())
+				list.add(getBrapiGermplasmMcpd(resultSet));
 
-				// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
-				result = new BrapiListResource<BrapiGermplasmMcpd>(list, currentPage, pageSize, totalCount);
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
+			long totalCount = DatabaseUtils.getTotalCount(statement);
+
+			// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
+			result = new BrapiListResource<BrapiGermplasmMcpd>(list, currentPage, pageSize, totalCount);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 
 		return result;
