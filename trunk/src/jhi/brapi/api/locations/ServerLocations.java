@@ -12,9 +12,22 @@ public class ServerLocations extends BaseBrapiServerResource
 {
 	private LocationDAO locationDAO = new LocationDAO();
 
+	private String locationType;
+
+	@Override
+	public void doInit()
+	{
+		super.doInit();
+
+		this.locationType = getQueryValue("locationType");
+	}
+
 	@Get("json")
 	public BrapiListResource<BrapiLocation> getJson()
 	{
-		return locationDAO.getAll(currentPage, pageSize);
+		if (locationType == null || locationType.equals(""))
+			return locationDAO.getAll(currentPage, pageSize);
+		else
+			return locationDAO.getByLocationType(locationType, currentPage, pageSize);
 	}
 }
