@@ -65,9 +65,9 @@ public class GermplasmDAO
 		return result;
 	}
 
-	public BrapiBaseResource<BrapiGermplasm> getById(String id)
+	public BrapiBaseResource<BrapiGermplasmMcpd> getById(String id)
 	{
-		BrapiBaseResource<BrapiGermplasm> wrappedResult = new BrapiBaseResource<>();
+		BrapiBaseResource<BrapiGermplasmMcpd> germplasm = new BrapiBaseResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, getSpecificLine, id);
@@ -76,7 +76,7 @@ public class GermplasmDAO
 			if (resultSet.first())
 			{
 				// Set the ServerGermplasmSearch bean using the data returned from the database
-				wrappedResult = new BrapiBaseResource<>(getBrapiGermplasm(resultSet));
+				germplasm = new BrapiBaseResource<BrapiGermplasmMcpd>(getBrapiGermplasmMcpd(resultSet));
 			}
 		}
 		catch (SQLException e)
@@ -84,7 +84,7 @@ public class GermplasmDAO
 			e.printStackTrace();
 		}
 
-		return wrappedResult;
+		return germplasm;
 	}
 
 	private BrapiGermplasm getBrapiGermplasm(ResultSet resultSet)
@@ -134,7 +134,7 @@ public class GermplasmDAO
 		mcpd.setCommonCropName(null); // TODO
 		mcpd.setInstituteCode(resultSet.getString("institutions.code"));
 		mcpd.setInstituteName(resultSet.getString("institutions.name"));
-		mcpd.setBiologicalStatusOfGermplasmCode(null); // TODO
+		mcpd.setBiologicalStatusOfAccessionCode(null); // TODO
 		mcpd.setCountryOfOriginCode(resultSet.getString("countries.country_code3"));
 		mcpd.setTypeOfGermplasmStorageCode(null); // TODO
 		mcpd.setGenus(resultSet.getString("taxonomies.genus"));
@@ -178,7 +178,7 @@ public class GermplasmDAO
 			List<String> markerProfileIdList = new ArrayList<>();
 			while (resultSet.next())
 			{
-				profiles.setGermplasmDbId(resultSet.getInt("germinatebase_id"));
+				profiles.setGermplasmDbId(resultSet.getString("germinatebase_id"));
 				markerProfileIdList.add(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
 			}
 			profiles.setMarkerProfiles(markerProfileIdList);

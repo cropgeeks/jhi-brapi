@@ -4,13 +4,13 @@ import java.util.*;
 
 public class BrapiGermplasmMarkerProfiles
 {
-	private int germplasmDbId;
+	private String germplasmDbId;
 	private List<String> markerProfiles;
 
-	public int getGermplasmDbId()
+	public String getGermplasmDbId()
 		{ return germplasmDbId; }
 
-	public void setGermplasmDbId(int germplasmDbId)
+	public void setGermplasmDbId(String germplasmDbId)
 		{ this.germplasmDbId = germplasmDbId; }
 
 	public List<String> getMarkerProfiles()
