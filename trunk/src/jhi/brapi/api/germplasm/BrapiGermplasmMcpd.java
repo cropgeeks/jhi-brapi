@@ -7,7 +7,7 @@ public class BrapiGermplasmMcpd extends BrapiGermplasm
 	private String commonCropName;
 	private String instituteCode;
 	private String instituteName;
-	private String biologicalStatusOfGermplasmCode;
+	private String biologicalStatusOfAccessionCode;
 	private String countryOfOriginCode;
 	private List<String> typeOfGermplasmStorageCode;
 	private String genus;
@@ -36,11 +36,11 @@ public class BrapiGermplasmMcpd extends BrapiGermplasm
 	public void setInstituteName(String instituteName)
 		{ this.instituteName = instituteName; }
 
-	public String getBiologicalStatusOfGermplasmCode()
-		{ return biologicalStatusOfGermplasmCode; }
+	public String getBiologicalStatusOfAccessionCode()
+		{ return biologicalStatusOfAccessionCode; }
 
-	public void setBiologicalStatusOfGermplasmCode(String biologicalStatusOfGermplasmCode)
-		{ this.biologicalStatusOfGermplasmCode = biologicalStatusOfGermplasmCode; }
+	public void setBiologicalStatusOfAccessionCode(String biologicalStatusOfAccessionCode)
+		{ this.biologicalStatusOfAccessionCode = biologicalStatusOfAccessionCode; }
 
 	public String getCountryOfOriginCode()
 		{ return countryOfOriginCode; }
@@ -111,7 +111,7 @@ public class BrapiGermplasmMcpd extends BrapiGermplasm
 				", commonCropName='" + commonCropName + '\'' +
 				", instituteCode='" + instituteCode + '\'' +
 				", instituteName='" + instituteName + '\'' +
-				", biologicalStatusOfGermplasmCode='" + biologicalStatusOfGermplasmCode + '\'' +
+				", biologicalStatusOfAccessionCode='" + biologicalStatusOfAccessionCode + '\'' +
 				", countryOfOriginCode='" + countryOfOriginCode + '\'' +
 				", typeOfGermplasmStorageCode=" + typeOfGermplasmStorageCode +
 				", genus='" + genus + '\'' +

@@ -43,13 +43,12 @@ public class Brapi extends Application
 		corsFilter.setAllowedOrigins(new HashSet<>(Collections.singletonList("*")));
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(false);
-
-		attachToRouter(router, "/germplasm", ServerGermplasmSearch.class); // GM
-		attachToRouter(router, "/germplasm/mcpd", ServerGermplasmMcpdSearch.class);
+		
 		attachToRouter(router, "/germplasm/{id}", ServerGermplasm.class);
 		attachToRouter(router, "/germplasm/{id}/mcpd", ServerGermplasmMcpd.class); // GM
 		attachToRouter(router, "/germplasm/{id}/markerprofiles", ServerGermplasmMarkerProfiles.class);
 		attachToRouter(router, "/germplasm/{id}/pedigree", ServerGermplasmPedigree.class);
+		attachToRouter(router, "/germplasm-search", ServerGermplasmMcpdSearch.class);
 		attachToRouter(router, "/maps", ServerGenomeMaps.class); // FJ
 		attachToRouter(router, "/maps/{id}", ServerGenomeMapMetaData.class); // FJ
 		attachToRouter(router, "/maps/{id}/positions", ServerGenomeMapMarkerData.class); // FJ

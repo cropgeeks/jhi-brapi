@@ -59,4 +59,27 @@ public class ServerGermplasmMcpdSearch extends BaseBrapiServerResource
 		if (value != null && value.length() != 0)
 			map.put(key, value);
 	}
+
+	@Post("json")
+	public BrapiListResource<BrapiGermplasmMcpd> postJson(BrapiGermplasmPost params)
+	{
+		setFromPostBody(params);
+		setParams(params);
+
+		return getJson();
+	}
+
+	private void setFromPostBody(BrapiGermplasmPost params)
+	{
+		pui = params.getGermplasmPUI();
+		dbId = params.getGermplasmDbId();
+		genus = params.getGermplasmGenus();
+		species = params.getGermplasmSpecies();
+		name = params.getGermplasmName();
+	}
+
+	private void setParams(BrapiGermplasmPost params)
+	{
+		setPaginationParameters(params);
+	}
 }
