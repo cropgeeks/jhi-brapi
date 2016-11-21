@@ -15,7 +15,7 @@ public class MarkerProfileDAO
 
 	private final String allMarkerProfiles = "SELECT SQL_CALC_FOUND_ROWS DISTINCT markerprofile_id, germinatebase_id, germinatebase_name FROM ( SELECT genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, CONCAT( genotypes.dataset_id, '-', genotypes.germinatebase_id ) AS markerprofile_id, germinatebase.id AS germinatebase_name FROM genotypes INNER JOIN markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id INNER JOIN germinatebase ON genotypes.germinatebase_id = germinatebase.id ) AS markerprofiles LIMIT ?, ?";
 
-	public BrapiListResource<BrapiMarkerProfile> getAll(int currentPage, int pageSize)
+	public BrapiListResource<BrapiMarkerProfile> getAll(MarkerProfilesSearchParams params, int currentPage, int pageSize)
 	{
 		BrapiListResource<BrapiMarkerProfile> result = new BrapiListResource<>();
 
@@ -43,7 +43,7 @@ public class MarkerProfileDAO
 	 * @param id	The id of the BrapiMarkerProfile to getJson
 	 * @return		A BrapiMarkerProfile object identified by id (or null if none exists).
 	 */
-	public BrapiBaseResource<BrapiMarkerProfileData> getById(String id)
+	public BrapiBaseResource<BrapiMarkerProfileData> getById(String id, GenotypeEncodingParams params)
 	{
 		BrapiBaseResource<BrapiMarkerProfileData> result = new BrapiBaseResource<>();
 
@@ -55,7 +55,7 @@ public class MarkerProfileDAO
 			 PreparedStatement markerProfileStatement = createByIdStatement(con, allMarkers, germinatebaseId, datasetId);
 			 ResultSet resultSet = markerProfileStatement.executeQuery())
 		{
-			result = new BrapiBaseResource<>(getProfile(resultSet));
+			result = new BrapiBaseResource<>(getProfile(resultSet, params));
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 
@@ -95,7 +95,7 @@ public class MarkerProfileDAO
 
 	// Given a ResultSet generated from the allMarkers query, returns a BrapiMarkerProfile object which has been initialized
 	// with the information from the ResultSet
-	private BrapiMarkerProfileData getProfile(ResultSet resultSet)
+	private BrapiMarkerProfileData getProfile(ResultSet resultSet, GenotypeEncodingParams params)
 		throws SQLException
 	{
 		BrapiMarkerProfileData profile = new BrapiMarkerProfileData();
@@ -105,7 +105,10 @@ public class MarkerProfileDAO
 			profile.setGermplasmId(resultSet.getString("germinatebase_id"));
 			profile.setMarkerprofileId(resultSet.getString("markerprofile_id"));
 			// TODO: Make this conform with the new Allele encoding
-			alleles.put(resultSet.getString("marker_name"), resultSet.getString("allele1") + resultSet.getString("allele2"));
+			String allele1 = resultSet.getString("allele1");
+			String allele2 = resultSet.getString("allele2");
+			String encodedAllele = GenotypeEncodingUtils.getString(allele1, allele2, params);
+			alleles.put(resultSet.getString("marker_name"), encodedAllele);
 		}
 		profile.setData(alleles);
 
