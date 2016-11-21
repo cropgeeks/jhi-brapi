@@ -14,13 +14,15 @@ public class MarkerDAO
 {
 	private final String queryPartSynonyms = " ( SELECT GROUP_CONCAT( DISTINCT synonym ORDER BY synonym ) FROM synonyms LEFT JOIN synonymtypes ON synonyms.synonymtype_id = synonymtypes.id WHERE synonymtypes.target_table = 'markers' AND synonyms.foreign_id = markers.id ) AS synonyms ";
 
-	private final String getLines = "SELECT SQL_CALC_FOUND_ROWS markers.*, " + queryPartSynonyms + " FROM markers LIMIT ?, ?";
+	private final String getMarkers = "SELECT SQL_CALC_FOUND_ROWS markers.*, genotypes.allele1, genotypes.allele2, markertypes.description," + queryPartSynonyms + " FROM markers LEFT JOIN genotypes ON genotypes.id = markers.id LEFT JOIN markertypes ON markertypes.id = markers.markertype_id LIMIT ?, ?";
 
-	private final String getLinesByType = "SELECT SQL_CALC_FOUND_ROWS markers.*, " + queryPartSynonyms + " FROM markers LEFT JOIN markertypes ON markertypes.id = markers.markertype_id WHERE markertypes.description = ? LIMIT ?, ?";
+	private final String getMarkersByType = "SELECT SQL_CALC_FOUND_ROWS markers.*, " + queryPartSynonyms + " FROM markers LEFT JOIN markertypes ON markertypes.id = markers.markertype_id WHERE markertypes.description = ? LIMIT ?, ?";
 
-	private final String getLinesByNameExact = "SELECT SQL_CALC_FOUND_ROWS markers.*, " + queryPartSynonyms + " FROM markers WHERE markers.marker_name = ? LIMIT ?, ?";
+	private final String getMarkersByNameExact = "SELECT SQL_CALC_FOUND_ROWS markers.*, " + queryPartSynonyms + " FROM markers WHERE markers.marker_name = ? LIMIT ?, ?";
 
-	private final String getLinesByNameRegex = "SELECT SQL_CALC_FOUND_ROWS markers.*, " + queryPartSynonyms + " FROM markers WHERE markers.marker_name LIKE ? LIMIT ?, ?";
+	private final String getMarkersByNameRegex = "SELECT SQL_CALC_FOUND_ROWS markers.*, " + queryPartSynonyms + " FROM markers WHERE markers.marker_name LIKE ? LIMIT ?, ?";
+
+	private final String getMarkerById = "SELECT SQL_CALC_FOUND_ROWS markers.*, genotypes.allele1, genotypes.allele2, markertypes.description," + queryPartSynonyms + " FROM markers LEFT JOIN genotypes ON genotypes.id = markers.id LEFT JOIN markertypes ON markertypes.id = markers.markertype_id WHERE markers.id = ?";
 
 	public BrapiListResource<BrapiMarker> getAll(int currentPage, int pageSize)
 	{
@@ -31,7 +33,7 @@ public class MarkerDAO
 		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 		// prepared statement (which includes a limit statement)
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, getLines, currentPage, pageSize);
+			 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, getMarkers, currentPage, pageSize);
 			 ResultSet resultSet = statement.executeQuery())
 		{
 			List<BrapiMarker> list = new ArrayList<>();
@@ -54,7 +56,7 @@ public class MarkerDAO
 
 	public BrapiListResource<BrapiMarker> getByType(String type, int currentPage, int pageSize)
 	{
-		return getData(getLinesByType, type, currentPage, pageSize);
+		return getData(getMarkersByType, type, currentPage, pageSize);
 	}
 
 	private BrapiListResource<BrapiMarker> getData(String dataSql, String parameter, int currentPage, int pageSize)
@@ -91,15 +93,31 @@ public class MarkerDAO
 		switch (matchingMethod)
 		{
 			case WILDCARD:
-				getQuery = getLinesByNameRegex;
+				getQuery = getMarkersByNameRegex;
 				name = name.replace("*", "%");
 				name = name.replace("?", "_");
 				break;
 			default:
-				getQuery = getLinesByNameExact;
+				getQuery = getMarkersByNameExact;
 		}
 
 		return getData(getQuery, name, currentPage, pageSize);
+	}
+
+	public BrapiBaseResource<BrapiMarker> getById(String id)
+	{
+		BrapiBaseResource<BrapiMarker> result = new BrapiBaseResource<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statemet = DatabaseUtils.createByIdStatement(con, getMarkerById, id);
+			 ResultSet resultSet = statemet.executeQuery())
+		{
+			if (resultSet.next())
+				result = new BrapiBaseResource<>(getBrapiMarker(resultSet));
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+		return result;
 	}
 
 	private BrapiMarker getBrapiMarker(ResultSet resultSet)
@@ -116,6 +134,18 @@ public class MarkerDAO
 			String[] synonymsArray = synonymsString.split(",");
 			marker.setSynonyms(Arrays.asList(synonymsArray));
 		}
+
+		String allele1 = resultSet.getString("allele1");
+		String allele2 = resultSet.getString("allele2");
+		if (allele1 != null && allele2 != null)
+		{
+			List<String> refAlt = new ArrayList<>();
+			refAlt.add(allele1);
+			refAlt.add(allele2);
+			marker.setRefAlt(refAlt);
+		}
+
+		marker.setType(resultSet.getString("description"));
 
 		return marker;
 	}

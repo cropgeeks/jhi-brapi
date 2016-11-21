@@ -9,7 +9,7 @@ import org.restlet.resource.*;
  * Queries the database for the ServerGermplasmSearch (germinatebase?) with the given ID then returns a JSON (Jackson) representation of the ServerGermplasmSearch for API
  * clients to consume.
  */
-public class ServerMarkers extends BaseBrapiServerResource
+public class ServerMarkersSearch extends BaseBrapiServerResource
 {
 	private MarkerDAO markerDAO = new MarkerDAO();
 
