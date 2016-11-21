@@ -11,7 +11,6 @@ import jhi.brapi.api.markerprofiles.*;
 import jhi.brapi.api.markers.*;
 import jhi.brapi.api.authentication.*;
 import jhi.brapi.api.studies.*;
-import jhi.brapi.api.traits.*;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
@@ -55,7 +54,8 @@ public class Brapi extends Application
 		attachToRouter(router, "/maps/{id}/positions/{linkageGroupId}", ServerGenomeMapLinkageGroupMarkers.class);
 		attachToRouter(router, "/markerprofiles", ServerMarkerProfiles.class); // FJ
 		attachToRouter(router, "/markerprofiles/{id}", ServerMarkerProfileData.class);
-		attachToRouter(router, "/markers", ServerMarkers.class);
+		attachToRouter(router, "/markers", ServerMarkersSearch.class);
+		attachToRouter(router, "/markers/{id}", ServerMarkersData.class);
 //		attachToRouter(router, "/traits", TraitListServerResource.class);
 //		attachToRouter(router, "/traits/{id}", TraitServerResource.class);
 		attachToRouter(router, "/allelematrix-search", ServerAlleleMatrix.class); // FJ
