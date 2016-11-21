@@ -3,6 +3,7 @@ package jhi.brapi.api.markerprofiles;
 import java.util.*;
 
 import jhi.brapi.api.*;
+import jhi.brapi.util.*;
 
 import org.restlet.data.*;
 import org.restlet.ext.jackson.*;
@@ -19,7 +20,7 @@ public class ServerAlleleMatrix extends BaseBrapiServerResource
 	// Temporarily included markerProfileDAO for dummy HTML get of ServerAlleleMatrix
 	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 	private String format;
-	private jhi.brapi.util.GenotypeEncodingParams params = new jhi.brapi.util.GenotypeEncodingParams();
+	private GenotypeEncodingParams params = new GenotypeEncodingParams();
 
 	// Temporary, TODO remove this after testing with large DB to find limits of call
 //	@Get("json")
