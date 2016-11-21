@@ -1,5 +1,8 @@
 package jhi.brapi.api.markerprofiles;
 
+
+import java.util.*;
+
 import jhi.brapi.api.*;
 
 import org.restlet.resource.*;
@@ -12,28 +15,41 @@ public class ServerMarkerProfiles extends BaseBrapiServerResource
 {
 	private MarkerProfileDAO markerProfileDAO = new MarkerProfileDAO();
 
-	private MarkerProfilesSearchParams params = new MarkerProfilesSearchParams();
+	private String germplasmId;
+	private String studyId;
+	private String sampleId;
+	private String extractId;
+	private String methodId;
 
 	@Override
 	public void doInit()
 	{
 		super.doInit();
 
-		if (getQuery().getNames().contains("germplasmDbId"))
-			params.setGermplasm(getQueryValue("germplasmDbId"));
-		if (getQuery().getNames().contains("studyDbId"))
-			params.setStudy(getQueryValue("studyDbId"));
-		if (getQuery().getNames().contains("sampleDbId"))
-			params.setStudy(getQueryValue("sampleDbId"));
-		if (getQuery().getNames().contains("extractDbId"))
-			params.setStudy(getQueryValue("extractDbId"));
-		if (getQuery().getNames().contains("methodDbId"))
-			params.setStudy(getQueryValue("methodDbId"));
+		germplasmId = getQueryValue("germplasmDbId");
+		studyId = getQueryValue("studyDbId");
+		sampleId = getQueryValue("sampleDbId");
+		extractId = getQueryValue("extractDbId");
+		methodId = getQueryValue("methodDbId");
+	}
+
+	private void addParameter(Map<String, String> map, String key, String value)
+	{
+		if (value != null && value.length() != 0)
+			map.put(key, value);
 	}
 
 	@Get("json")
 	public BrapiListResource<BrapiMarkerProfile> getJson()
 	{
-		return markerProfileDAO.getAll(params, currentPage, pageSize);
+		LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
+		addParameter(parameters, "germinatebase_id", germplasmId);
+		addParameter(parameters, "dataset_id", studyId);
+
+		// Provide a default for the WHERE clause which won't filter the results
+		if(parameters.size() < 1)
+			parameters.put("1", "1");
+
+		return markerProfileDAO.getAll(parameters, currentPage, pageSize);
 	}
 }

@@ -48,6 +48,7 @@ public class ServerGermplasmMcpdSearch extends BaseBrapiServerResource
 		addParameter(parameters, "subtaxa.taxonomic_identifier", subtaxa);
 		// TODO: panel, collection?
 
+		// Provide a default for the WHERE clause which won't filter the results
 		if(parameters.size() < 1)
 			parameters.put("1", "1");
 

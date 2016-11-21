@@ -13,14 +13,19 @@ public class MarkerProfileDAO
 		"AS markerprofile_id, markers.marker_name from genotypes INNER JOIN markers ON genotypes.marker_id = markers.id " +
 		"INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id=? AND datasets.id=?";
 
-	private final String allMarkerProfiles = "SELECT SQL_CALC_FOUND_ROWS DISTINCT markerprofile_id, germinatebase_id, germinatebase_name FROM ( SELECT genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, markers.marker_name, CONCAT( genotypes.dataset_id, '-', genotypes.germinatebase_id ) AS markerprofile_id, germinatebase.id AS germinatebase_name FROM genotypes INNER JOIN markers ON genotypes.marker_id = markers.id INNER JOIN datasets ON genotypes.dataset_id = datasets.id INNER JOIN germinatebase ON genotypes.germinatebase_id = germinatebase.id ) AS markerprofiles LIMIT ?, ?";
+	private final String allMarkerProfiles = "SELECT SQL_CALC_FOUND_ROWS DISTINCT markerprofile_id, germinatebase_id, " +
+		"germinatebase_name FROM ( SELECT genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, " +
+		"markers.marker_name, CONCAT( genotypes.dataset_id, '-', genotypes.germinatebase_id ) AS markerprofile_id, " +
+		"germinatebase.id AS germinatebase_name FROM genotypes INNER JOIN markers ON genotypes.marker_id = markers.id " +
+		"INNER JOIN datasets ON genotypes.dataset_id = datasets.id INNER JOIN germinatebase ON genotypes.germinatebase_id " +
+		"= germinatebase.id ) AS markerprofiles WHERE %s LIMIT ?, ?";
 
-	public BrapiListResource<BrapiMarkerProfile> getAll(MarkerProfilesSearchParams params, int currentPage, int pageSize)
+	public BrapiListResource<BrapiMarkerProfile> getAll(LinkedHashMap<String, String> params, int currentPage, int pageSize)
 	{
 		BrapiListResource<BrapiMarkerProfile> result = new BrapiListResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement markerProfileStatement = DatabaseUtils.createLimitStatement(con, allMarkerProfiles, currentPage, pageSize);
+			 PreparedStatement markerProfileStatement = DatabaseUtils.createParameterizedLimitStatement(con, allMarkerProfiles, params, currentPage, pageSize);
 			 ResultSet resultSet = markerProfileStatement.executeQuery())
 		{
 			List<BrapiMarkerProfile> markerProfiles = getProfiles(resultSet);
