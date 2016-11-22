@@ -2,7 +2,7 @@ package jhi.brapi.api.locations;
 
 public class BrapiLocation
 {
-	private int locationDbId;
+	private String locationDbId;
 	private String locationType;
 	private String name;
 	private String abbreviation;
@@ -13,10 +13,10 @@ public class BrapiLocation
 	private double altitude;
 	private Object additionalInfo = null;
 
-	public int getLocationDbId()
+	public String getLocationDbId()
 		{ return locationDbId; }
 
-	public void setLocationDbId(int locationDbId)
+	public void setLocationDbId(String locationDbId)
 		{ this.locationDbId = locationDbId; }
 
 	public String getLocationType()

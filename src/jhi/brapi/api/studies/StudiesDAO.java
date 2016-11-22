@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import jhi.brapi.api.*;
+import jhi.brapi.api.locations.*;
 import jhi.brapi.util.*;
 
 /**
@@ -12,9 +13,9 @@ import jhi.brapi.util.*;
 public class StudiesDAO
 {
 	// Simply selects all fields from germinatebase
-	private final String getStudyDetails = "SELECT datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE datasets.id = ?";
+	private final String getStudyDetails = "SELECT datasets.*, experiments.description AS trial_name, experimenttypes.description AS trial_type, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE datasets.id = ?";
 
-	private final String getStudies = "SELECT SQL_CALC_FOUND_ROWS datasets.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE 1=1 %s GROUP BY datasets.id LIMIT ?, ?";
+	private final String getStudies = "SELECT SQL_CALC_FOUND_ROWS datasets.*, experiments.description AS trial_name, experimenttypes.description AS trial_type, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE 1=1 %s GROUP BY datasets.id LIMIT ?, ?";
 
 	private final String studyDetailsTable = "call phenotype_data_complete (?)";
 
@@ -103,14 +104,17 @@ public class StudiesDAO
 	}
 
 	private BrapiStudies getBrapiStudies(ResultSet resultSet)
-			throws SQLException
+		throws SQLException
 	{
 		BrapiStudies studies = new BrapiStudies();
 		studies.setStudyDbId(resultSet.getString("datasets.id"));
 		studies.setName(resultSet.getString("description"));
-		studies.setLocationDbId(resultSet.getString("location_id"));
-		studies.setOptionalInfo(new LinkedHashMap<String, Object>());
-
+		studies.setStudyType(resultSet.getString("trial_type"));
+		studies.setTrialDbId(resultSet.getString("datasets.experiment_id"));
+		studies.setTrialName(resultSet.getString("trial_name"));
+		studies.setStartDate(resultSet.getDate("datasets.date_start"));
+		studies.setEndDate(resultSet.getDate("datasets.date_end"));
+		studies.setActive(false);
 		// Parse out the years
 		String seasonString = resultSet.getString("years");
 		if(seasonString != null)
@@ -118,6 +122,12 @@ public class StudiesDAO
 			String[] yearArray = seasonString.split(",");
 			studies.setSeasons(Arrays.asList(yearArray));
 		}
+
+		BrapiLocation location = new BrapiLocation();
+		location.setLocationDbId(resultSet.getString("location_id"));
+
+		studies.setLocation(location);
+		studies.setOptionalInfo(new LinkedHashMap<String, Object>());
 
 		return studies;
 	}

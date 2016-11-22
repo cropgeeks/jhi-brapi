@@ -12,6 +12,8 @@ public class LocationDAO
 
 	private final String getLocationsWhere = "SELECT SQL_CALC_FOUND_ROWS countries.country_code3, countries.country_name, locations.id, site_name, site_name_short, latitude, longitude, elevation, locationtypes.name FROM locations LEFT JOIN  countries ON country_id = countries.id LEFT JOIN locationtypes ON locationtype_id = locationtypes.id WHERE name = ? LIMIT ?, ?";
 
+	private final String getLocation = "SELECT countries.country_code3, countries.country_name, locations.id, site_name, site_name_short, latitude, longitude, elevation, locationtypes.name FROM locations LEFT JOIN  countries ON country_id = countries.id LEFT JOIN locationtypes ON locationtype_id = locationtypes.id WHERE locations.id = ?";
+
 	public BrapiListResource<BrapiLocation> getAll(int currentPage, int pageSize)
 	{
 		// Create empty BrapiBaseResource of type BrapiLocation (if for whatever reason we can't get data from the database
@@ -72,6 +74,29 @@ public class LocationDAO
 		return result;
 	}
 
+	public BrapiBaseResource<BrapiLocation> getById(String id)
+	{
+		// Create empty BrapiBaseResource of type BrapiLocation (if for whatever reason we can't get data from the database
+		// this is what's returned
+		BrapiBaseResource<BrapiLocation> result = new BrapiBaseResource<>();
+
+		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
+		// prepared statement (which includes a limit statement)
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, getLocation, id);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			if (resultSet.next())
+				result = new BrapiBaseResource<BrapiLocation>(getBrapiLocation(resultSet));
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 	private BrapiLocation getBrapiLocation(ResultSet resultSet)
 		throws SQLException
 	{
@@ -83,7 +108,7 @@ public class LocationDAO
 		location.setAltitude(resultSet.getDouble("locations.elevation"));
 		location.setLatitude(resultSet.getDouble("locations.latitude"));
 		location.setLongitude(resultSet.getDouble("locations.longitude"));
-		location.setLocationDbId(resultSet.getInt("locations.id"));
+		location.setLocationDbId(resultSet.getString("locations.id"));
 		location.setAdditionalInfo(null);
 		location.setLocationType(resultSet.getString("locationtypes.name"));
 		location.setAbbreviation(resultSet.getString("locations.site_name_short"));
