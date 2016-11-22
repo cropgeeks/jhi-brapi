@@ -1,6 +1,7 @@
 package jhi.brapi.api.studies;
 
 import jhi.brapi.api.*;
+import jhi.brapi.api.locations.*;
 
 import org.restlet.resource.*;
 
@@ -11,6 +12,7 @@ import org.restlet.resource.*;
 public class ServerStudyDetails extends BaseBrapiServerResource
 {
 	private StudiesDAO studiesDAO = new StudiesDAO();
+	private LocationDAO locationDAO = new LocationDAO();
 
 	private String id;
 
@@ -24,6 +26,12 @@ public class ServerStudyDetails extends BaseBrapiServerResource
 	@Get("json")
 	public BrapiBaseResource<BrapiStudies> getJson()
 	{
-		return studiesDAO.getById(id);
+		BrapiBaseResource<BrapiStudies> study = studiesDAO.getById(id);
+		String locationId = study.getResult().getLocation().getLocationDbId();
+
+		BrapiLocation location = locationDAO.getById(locationId).getResult();
+		study.getResult().setLocation(location);
+
+		return study;
 	}
 }
