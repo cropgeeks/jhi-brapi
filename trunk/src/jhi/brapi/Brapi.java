@@ -34,11 +34,14 @@ public class Brapi extends Application
 	@Override
 	public Restlet createInboundRoot()
 	{
-		Router router = new Router(getContext());
+		// Get restlet context
+		Context context = getContext();
 
-		Filter encoder = new Encoder(getContext(), false, true, new EncoderService(true));
+		Router router = new Router(context);
+
+		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
 		encoder.setNext(router);
-		CorsFilter corsFilter = new CorsFilter(getContext(), encoder);
+		CorsFilter corsFilter = new CorsFilter(context, encoder);
 		corsFilter.setAllowedOrigins(new HashSet<>(Collections.singletonList("*")));
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(false);

@@ -12,79 +12,78 @@ public class CallDAO
 
 	static
 	{
-		CALLS.add(new BrapiCall("allelematrix")
-				.addDatatype("json")
-				.addDatatype("tsv")
-				.addMethod("POST")
-				.addMethod("GET"));
+		CALLS.add(new BrapiCall("allelematrix-search")
+			.addDatatype("json")
+			.addDatatype("tsv")
+			.addMethod("POST"));
 
 		CALLS.add(new BrapiCall("calls")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 
-		CALLS.add(new BrapiCall("germplasm")
-				.addDatatype("json")
-				.addMethod("GET"));
+		CALLS.add(new BrapiCall("germplasm-search")
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		CALLS.add(new BrapiCall("germplasm/id")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		CALLS.add(new BrapiCall("germplasm/id/mcpd")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		CALLS.add(new BrapiCall("germplasm/id/pedigree")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		CALLS.add(new BrapiCall("germplasm/id/markerprofiles")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		CALLS.add(new BrapiCall("markers")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		CALLS.add(new BrapiCall("markerprofiles")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		CALLS.add(new BrapiCall("markerprofiles/id")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		// TODO: Check if correct
-		CALLS.add(new BrapiCall("studies")
-				.addDatatype("json")
-				.addMethod("GET"));
+		CALLS.add(new BrapiCall("studies-search")
+			.addDatatype("json")
+			.addMethod("GET"));
 
-		CALLS.add(new BrapiCall("studies/studyDbId")
-				.addDatatype("json")
-				.addMethod("GET"));
+		CALLS.add(new BrapiCall("studies/id")
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		CALLS.add(new BrapiCall("maps")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 
-		CALLS.add(new BrapiCall("maps/mapId")
-				.addDatatype("json")
-				.addMethod("GET"));
+		CALLS.add(new BrapiCall("maps/id")
+			.addDatatype("json")
+			.addMethod("GET"));
 
-		CALLS.add(new BrapiCall("maps/mapId/positions")
-				.addDatatype("json")
-				.addMethod("GET"));
+		CALLS.add(new BrapiCall("maps/id/positions")
+			.addDatatype("json")
+			.addMethod("GET"));
 
 		CALLS.add(new BrapiCall("locations")
-				.addDatatype("json")
-				.addMethod("GET"));
+			.addDatatype("json")
+			.addMethod("GET"));
 	}
 
 	public static BrapiListResource<BrapiCall> getAll(String dataType, int currentPage, int pageSize)
 	{
 		List<BrapiCall> calls = CALLS;
 
-		if (dataType != null && !Objects.equals(dataType, ""))
+		if (dataType != null && !dataType.isEmpty())
 		{
 			calls = calls.stream()
 						 .filter(c -> c.getDatatypes().contains(dataType)) // Get the calls that support the query data type

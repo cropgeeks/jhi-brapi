@@ -1,44 +1,67 @@
 package jhi.brapi.api.markerprofiles;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
 import jhi.brapi.api.*;
 import jhi.brapi.util.*;
+import org.restlet.Context;
 
 public class MarkerProfileDAO
 {
+	private final String genotypeDatasets = "SELECT datasets.id FROM datasets " +
+		"LEFT JOIN experiments ON experiment_id = experiments.id WHERE " +
+		"experiments.experiment_type_id = 1";
+
 	private final String allMarkers = "select genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
 		"genotypes.germinatebase_id, genotypes.dataset_id, CONCAT(genotypes.dataset_id, '-', genotypes.germinatebase_id) " +
 		"AS markerprofile_id, markers.marker_name from genotypes INNER JOIN markers ON genotypes.marker_id = markers.id " +
 		"INNER JOIN datasets ON genotypes.dataset_id = datasets.id where germinatebase_id=? AND datasets.id=?";
 
-	private final String allMarkerProfiles = "SELECT SQL_CALC_FOUND_ROWS DISTINCT markerprofile_id, germinatebase_id, " +
-		"germinatebase_name FROM ( SELECT genotypes.marker_id, genotypes.germinatebase_id, genotypes.dataset_id, " +
-		"markers.marker_name, CONCAT( genotypes.dataset_id, '-', genotypes.germinatebase_id ) AS markerprofile_id, " +
-		"germinatebase.id AS germinatebase_name FROM genotypes INNER JOIN markers ON genotypes.marker_id = markers.id " +
-		"INNER JOIN datasets ON genotypes.dataset_id = datasets.id INNER JOIN germinatebase ON genotypes.germinatebase_id " +
-		"= germinatebase.id ) AS markerprofiles WHERE %s LIMIT ?, ?";
-
-	public BrapiListResource<BrapiMarkerProfile> getAll(LinkedHashMap<String, String> params, int currentPage, int pageSize)
+	public BrapiListResource<BrapiMarkerProfile> getAll(Context context, LinkedHashMap<String, String> params, int currentPage, int pageSize)
 	{
 		BrapiListResource<BrapiMarkerProfile> result = new BrapiListResource<>();
+		List<BrapiMarkerProfile> markerProfiles = new ArrayList<>();
 
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement markerProfileStatement = DatabaseUtils.createParameterizedLimitStatement(con, allMarkerProfiles, params, currentPage, pageSize);
-			 ResultSet resultSet = markerProfileStatement.executeQuery())
-		{
-			List<BrapiMarkerProfile> markerProfiles = getProfiles(resultSet);
-			long totalCount = DatabaseUtils.getTotalCount(markerProfileStatement);
+		List<String> dataSetIds = getDataSetIds();
 
-			result = new BrapiListResource<BrapiMarkerProfile>(markerProfiles, currentPage, pageSize, totalCount);
-		}
-		catch (SQLException e)
+		dataSetIds.forEach(id ->
 		{
-			e.printStackTrace();
-		}
+			String hdf5File = HDF5Utils.getHdf5File(id);
+
+			String folder = context.getParameters().getFirstValue("hdf5-folder");
+
+			try(Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File)))
+			{
+				List<String> lineNames = extractor.getLines();
+				LinkedHashMap<String, String> map = HDF5Utils.getGermplasmMappingForNames(lineNames);
+
+				markerProfiles.addAll(getProfiles(id, map));
+			}
+			catch (Exception e) { e.printStackTrace(); }
+		});
+
+		result = new BrapiListResource<BrapiMarkerProfile>(markerProfiles, currentPage, pageSize, markerProfiles.size());
 
 		return result;
+	}
+
+	private List<String> getDataSetIds()
+	{
+		List<String> dataSetIds = new ArrayList<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = con.prepareStatement(genotypeDatasets);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			while (resultSet.next())
+				dataSetIds.add(resultSet.getString("id"));
+		}
+		catch (SQLException e) {e.printStackTrace(); }
+
+		return dataSetIds;
 	}
 
 	/**
@@ -78,22 +101,19 @@ public class MarkerProfileDAO
 		return statement;
 	}
 
-	// Given a ResultSet generated from the allMarkers query, returns a BrapiMarkerProfile object which has been initialized
-	// with the information from the ResultSet
-	private List<BrapiMarkerProfile> getProfiles(ResultSet resultSet)
-		throws SQLException
+	private List<BrapiMarkerProfile> getProfiles(String id, LinkedHashMap<String, String> germplasmNamesById)
 	{
 		List<BrapiMarkerProfile> profiles = new ArrayList<>();
 
-		while (resultSet.next())
+		germplasmNamesById.forEach((germplasmId, name) ->
 		{
 			BrapiMarkerProfile profile = new BrapiMarkerProfile();
-			profile.setMarkerProfileDbId(resultSet.getString("markerprofile_id"));
-			profile.setGermplasmDbId(resultSet.getString("germinatebase_id"));
-			profile.setUniqueDisplayName(resultSet.getString("germinatebase_name"));
+			profile.setMarkerProfileDbId(id + "-" + germplasmId);
+			profile.setGermplasmDbId(germplasmId);
+			profile.setUniqueDisplayName(name);
 
 			profiles.add(profile);
-		}
+		});
 
 		return profiles;
 	}

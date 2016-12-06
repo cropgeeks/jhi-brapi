@@ -1,6 +1,7 @@
 package jhi.brapi.api.germplasm;
 
 import java.sql.*;
+import java.sql.Date;
 import java.text.*;
 import java.util.*;
 
@@ -159,7 +160,9 @@ public class GermplasmDAO
 		}
 
 		mcpd.setDonors(donorList);
-		mcpd.setAcquisitionDate(FORMAT_OUTPUT.format(resultSet.getDate("germinatebase.colldate")));
+		Date acquisitionDate = resultSet.getDate("germinatebase.colldate");
+		if (acquisitionDate != null)
+			mcpd.setAcquisitionDate(FORMAT_OUTPUT.format(resultSet.getDate("germinatebase.colldate")));
 
 		return mcpd;
 	}

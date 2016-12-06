@@ -50,6 +50,6 @@ public class ServerMarkerProfiles extends BaseBrapiServerResource
 		if(parameters.size() < 1)
 			parameters.put("1", "1");
 
-		return markerProfileDAO.getAll(parameters, currentPage, pageSize);
+		return markerProfileDAO.getAll(getContext(), parameters, currentPage, pageSize);
 	}
 }

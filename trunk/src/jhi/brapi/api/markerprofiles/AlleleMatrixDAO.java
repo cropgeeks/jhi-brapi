@@ -8,7 +8,10 @@ import jhi.brapi.api.*;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
+import org.restlet.ext.servlet.*;
 import org.restlet.resource.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class AlleleMatrixDAO
 {
@@ -20,22 +23,6 @@ public class AlleleMatrixDAO
 		callData.add(allele);
 
 		return callData;
-	}
-
-	private String getHdf5File(String datasetId)
-	{
-		String file = null;
-
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, "SELECT * FROM datasets WHERE id = ?", datasetId);
-			 ResultSet resultSet = statement.executeQuery())
-		{
-			if(resultSet.next())
-				file = resultSet.getString("source_file");
-		}
-		catch (SQLException e) { e.printStackTrace(); }
-
-		return file;
 	}
 
 	public BrapiBaseResource<BrapiAlleleMatrix> getFromHdf5(Request request, Context context, List<String> profileIds, List<String> markerDbIds, String format, GenotypeEncodingParams params, int currentPage, int pageSize)
@@ -56,7 +43,7 @@ public class AlleleMatrixDAO
 			datasetId = tokens[0];
 		}
 
-		String hdf5File = getHdf5File(datasetId);
+		String hdf5File = HDF5Utils.getHdf5File(datasetId);
 
 		String folder = context.getParameters().getFirstValue("hdf5-folder");
 
@@ -89,14 +76,14 @@ public class AlleleMatrixDAO
 				{
 					File file = File.createTempFile("allelematrix", ".tsv");
 
-					Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName, params);
+					Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName, params, datasetId);
 					converter.readInput();
 					converter.extractData(file.getAbsolutePath(), "");
 
 					BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
 
-					// Get the original URL from the request
 					String url = request.getRootRef().toString();
+
 					Datafile datafile = new Datafile(url + "/files/" + file.getName());
 					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 					return result;
@@ -171,7 +158,7 @@ public class AlleleMatrixDAO
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = createOrderedInStatement(con, query, germinatebaseIds);
+			 PreparedStatement statement = DatabaseUtils.createOrderedInStatement(con, query, germinatebaseIds);
 			 ResultSet resultSet = statement.executeQuery())
 		{
 			while(resultSet.next())
@@ -195,7 +182,7 @@ public class AlleleMatrixDAO
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = createOrderedInStatement(con, query, markerDbIds);
+			 PreparedStatement statement = DatabaseUtils.createOrderedInStatement(con, query, markerDbIds);
 			 ResultSet resultSet = statement.executeQuery())
 		{
 			while(resultSet.next())
@@ -219,7 +206,7 @@ public class AlleleMatrixDAO
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = createOrderedInStatement(con, query, markerNames);
+			 PreparedStatement statement = DatabaseUtils.createOrderedInStatement(con, query, markerNames);
 			 ResultSet resultSet = statement.executeQuery())
 		{
 			while(resultSet.next())
@@ -228,30 +215,5 @@ public class AlleleMatrixDAO
 		catch (SQLException e) { e.printStackTrace(); }
 
 		return map;
-	}
-
-	/**
-	 * Create a statement that will search for items with the given "IN" call. This will also order the items based on these values
-	 *
-	 * @param con   The database {@link Connection}
-	 * @param sql   The SQL query containing two "%s" placeholders, one in the "IN" block and one for the order of the items
-	 * @param items The items to put into the two placeholders
-	 * @return The {@link PreparedStatement} representing the query
-	 * @throws SQLException Thrown if the query fails on the database
-	 */
-	private PreparedStatement createOrderedInStatement(Connection con, String sql, List<?> items) throws SQLException
-	{
-		String formatted = String.format(sql, DatabaseUtils.createPlaceholders(items.size()), DatabaseUtils.createPlaceholders(items.size()));
-
-		PreparedStatement stmt = con.prepareStatement(formatted);
-
-		int i = 1;
-		for(Object item : items)
-			stmt.setString(i++, item.toString());
-
-		for(Object item : items)
-			stmt.setString(i++, item.toString());
-
-		return stmt;
 	}
 }
