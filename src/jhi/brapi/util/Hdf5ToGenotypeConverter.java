@@ -29,15 +29,18 @@ public class Hdf5ToGenotypeConverter
 
 	private GenotypeEncodingParams params;
 
+	private String datasetId;
+
 	private IHDF5Reader reader;
 
-	public Hdf5ToGenotypeConverter(File hdf5File, Map<String, String> germplasmIdToName, Map<String, String> markerIdToName, GenotypeEncodingParams params)
+	public Hdf5ToGenotypeConverter(File hdf5File, Map<String, String> germplasmIdToName, Map<String, String> markerIdToName, GenotypeEncodingParams params, String datasetId)
 	{
 		// Setup input and output files
 		this.hdf5File = hdf5File;
 		this.germplasmIdToName = germplasmIdToName;
 		this.markerIdToName = markerIdToName;
 		this.params = params;
+		this.datasetId = datasetId;
 	}
 
 	public void readInput()
@@ -95,7 +98,7 @@ public class Hdf5ToGenotypeConverter
 				writer.print(headerLines);
 
 			// Write the header line of a Flapjack file
-			writer.println(germplasmIdToName.entrySet().parallelStream().map(Map.Entry::getKey).collect(Collectors.joining("\t", "markerprofileDbIds\t", "")));
+			writer.println(germplasmIdToName.entrySet().parallelStream().map(entry -> datasetId + "-" + entry.getKey()).collect(Collectors.joining("\t", "markerprofileDbIds\t", "")));
 
 			s = System.currentTimeMillis();
 

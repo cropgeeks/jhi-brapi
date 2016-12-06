@@ -181,6 +181,31 @@ public class DatabaseUtils
 		return statement;
 	}
 
+	/**
+	 * Create a statement that will search for items with the given "IN" call. This will also order the items based on these values
+	 *
+	 * @param con   The database {@link Connection}
+	 * @param sql   The SQL query containing two "%s" placeholders, one in the "IN" block and one for the order of the items
+	 * @param items The items to put into the two placeholders
+	 * @return The {@link PreparedStatement} representing the query
+	 * @throws SQLException Thrown if the query fails on the database
+	 */
+	public static PreparedStatement createOrderedInStatement(Connection con, String sql, List<?> items) throws SQLException
+	{
+		String formatted = String.format(sql, DatabaseUtils.createPlaceholders(items.size()), DatabaseUtils.createPlaceholders(items.size()));
+
+		PreparedStatement stmt = con.prepareStatement(formatted);
+
+		int i = 1;
+		for(Object item : items)
+			stmt.setString(i++, item.toString());
+
+		for(Object item : items)
+			stmt.setString(i++, item.toString());
+
+		return stmt;
+	}
+
 	public static int getLimitStart(int currentPage, int pageSize)
 	{
 		return currentPage * pageSize;

@@ -64,21 +64,23 @@ public class ServerAlleleMatrix extends BaseBrapiServerResource
 		Form form = new Form(rep);
 		for (Parameter parameter : form)
 		{
-			if (parameter.getName().equals("markerprofileDbId"))
+			if (parameter.getName().equalsIgnoreCase("markerprofileDbId"))
 				profileIds.add(parameter.getValue());
-			else if (parameter.getName().equals("markerDbId"))
+			else if (parameter.getName().equalsIgnoreCase("markerDbId"))
 				markerIds.add(parameter.getValue());
-			else if (parameter.getName().equals("format"))
+			else if (parameter.getName().equalsIgnoreCase("format"))
 				format = parameter.getValue();
-			else if (parameter.getName().equals("unknownString"))
+			else if (parameter.getName().equalsIgnoreCase("unknownString"))
 				params.setUnknownString(parameter.getValue());
-			else if (parameter.getName().equals("sepPhased"))
+			else if (parameter.getName().equalsIgnoreCase("sepPhased"))
 				params.setSepPhased(parameter.getValue());
-			else if (parameter.getName().equals("sepUnphased"))
+			else if (parameter.getName().equalsIgnoreCase("sepUnphased"))
 				params.setSepUnphased(parameter.getValue());
 		}
 
-		// TODO: Get page and pageSize parameters and potentially all of these parameters from json post?
+		getHostRef();
+
+				// TODO: Get page and pageSize parameters and potentially all of these parameters from json post?
 
 //		if(format != null) // TODO: Why is this using the DB and not HDF5?
 //			return new JacksonRepresentation<BrapiBaseResource<ServerAlleleMatrix>>(alleleMatrixDAO.get(getRequest(), profileIds, markerIds, format, params, currentPage, pageSize));

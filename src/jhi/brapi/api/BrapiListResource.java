@@ -39,4 +39,9 @@ public class BrapiListResource<T>
 
 	public void setResult(Map<String, List<T>> result)
 		{ this.result = result; }
+
+	public List<T> data()
+	{
+		return result.get("data");
+	}
 }
