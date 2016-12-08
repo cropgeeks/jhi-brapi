@@ -50,6 +50,7 @@ public class Files extends ServerResource
 			disp.setFilename(file.getName());
 			disp.setSize(file.length());
 			fileRepresentation.setDisposition(disp);
+			fileRepresentation.setAutoDeleting(true);
 
 			return fileRepresentation;
 		}
