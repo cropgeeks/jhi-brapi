@@ -77,6 +77,10 @@ public class CallDAO
 		CALLS.add(new BrapiCall("locations")
 			.addDatatype("json")
 			.addMethod("GET"));
+
+		CALLS.add(new BrapiCall("token")
+			.addDatatype("json")
+			.addMethod("GET"));
 	}
 
 	public static BrapiListResource<BrapiCall> getAll(String dataType, int currentPage, int pageSize)
