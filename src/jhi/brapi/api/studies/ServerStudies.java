@@ -42,4 +42,23 @@ public class ServerStudies extends BaseBrapiServerResource
 
 		return result;
 	}
+
+	@Post("json")
+	public BrapiListResource<BrapiStudies> postJson(BrapiStudiesPost params)
+	{
+		setFromPostBody(params);
+		setParams(params);
+
+		return getJson();
+	}
+
+	private void setFromPostBody(BrapiStudiesPost params)
+	{
+		studyType = params.getStudyType();
+	}
+
+	private void setParams(BrapiStudiesPost params)
+	{
+		setPaginationParameters(params);
+	}
 }
