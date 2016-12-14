@@ -43,9 +43,12 @@ public class MarkerProfileDAO
 			catch (Exception e) { e.printStackTrace(); }
 		});
 
-		result = new BrapiListResource<BrapiMarkerProfile>(markerProfiles, currentPage, pageSize, markerProfiles.size());
+		int start = DatabaseUtils.getLimitStart(currentPage, pageSize);
+		int end = Math.min(start + pageSize, markerProfiles.size());
 
-		return result;
+		List<BrapiMarkerProfile> filteredProfiles = markerProfiles.subList(start, end);
+
+		return new BrapiListResource<BrapiMarkerProfile>(filteredProfiles, currentPage, pageSize, markerProfiles.size());
 	}
 
 	private List<String> getDataSetIds()
