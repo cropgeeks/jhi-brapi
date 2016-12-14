@@ -53,10 +53,10 @@ public class CallDAO
 			.addDatatype("json")
 			.addMethod("GET"));
 
-		// TODO: Check if correct
 		CALLS.add(new BrapiCall("studies-search")
 			.addDatatype("json")
-			.addMethod("GET"));
+			.addMethod("GET")
+			.addMethod("POST"));
 
 		CALLS.add(new BrapiCall("studies/id")
 			.addDatatype("json")
