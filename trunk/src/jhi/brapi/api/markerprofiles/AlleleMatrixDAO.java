@@ -88,6 +88,22 @@ public class AlleleMatrixDAO
 					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 					return result;
 				}
+				else if (format.equals("flapjack"))
+				{
+					File file = File.createTempFile("allelematrix", ".dat");
+
+					Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName, params, datasetId);
+					converter.readInput();
+					converter.extractDataFJ(file.getAbsolutePath(), Collections.singletonList("# fjFile = genotype"));
+
+					BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
+
+					String url = request.getRootRef().toString();
+
+					Datafile datafile = new Datafile(url + "/files/" + file.getName());
+					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
+					return result;
+				}
 				else
 				{
 					throw new ResourceException(400); // TODO: check if correct code

@@ -15,6 +15,7 @@ public class CallDAO
 		CALLS.add(new BrapiCall("allelematrix-search")
 			.addDatatype("json")
 			.addDatatype("tsv")
+			.addDatatype("flapjack")
 			.addMethod("POST"));
 
 		CALLS.add(new BrapiCall("calls")
