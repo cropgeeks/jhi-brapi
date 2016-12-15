@@ -84,7 +84,7 @@ public class AlleleMatrixDAO
 
 					String url = request.getRootRef().toString();
 
-					Datafile datafile = new Datafile(url + "/files/" + file.getName());
+					String datafile = url + "/files/" + file.getName();
 					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 					return result;
 				}
@@ -100,7 +100,7 @@ public class AlleleMatrixDAO
 
 					String url = request.getRootRef().toString();
 
-					Datafile datafile = new Datafile(url + "/files/" + file.getName());
+					String datafile = url + "/files/" + file.getName();
 					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 					return result;
 				}
