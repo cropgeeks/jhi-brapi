@@ -57,6 +57,7 @@
 		<jar jarfile="brapi-client.jar">
 			<fileset dir="${cls}">
 				<include name="**/api/**"/>
+				<include name="**/client/**"/>
 				<exclude name="**/*Test.class"/>
 				<exclude name="**/Server*.class"/>
 				<exclude name="**/*DAO*.class"/>
