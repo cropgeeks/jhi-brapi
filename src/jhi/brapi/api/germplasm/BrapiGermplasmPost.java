@@ -4,56 +4,51 @@ import jhi.brapi.api.*;
 
 import com.fasterxml.jackson.annotation.*;
 
+import java.util.*;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiGermplasmPost extends BasicPost
 {
-	private String germplasmPUI;
-	private String germplasmDbId;
-	private String germplasmSpecies;
-	private String germplasmGenus;
-	private String germplasmName;
+	private List<String> germplasmPUIs;
+	private List<String> germplasmDbIds;
+	private List<String> germplasmSpecies;
+	private List<String> germplasmGenus;
+	private List<String> germplasmNames;
+	private List<String> germplasmAccessionNumbers;
 
-	public String getGermplasmPUI()
-		{ return germplasmPUI; }
+	public List<String> getGermplasmPUIs()
+		{ return germplasmPUIs; }
 
-	public void setGermplasmPUI(String germplasmPUI)
-		{ this.germplasmPUI = germplasmPUI; }
+	public void setGermplasmPUIs(List<String> germplasmPUIs)
+		{ this.germplasmPUIs = germplasmPUIs; }
 
-	public String getGermplasmDbId()
-		{ return germplasmDbId; }
+	public List<String> getGermplasmDbIds()
+		{ return germplasmDbIds; }
 
-	public void setGermplasmDbId(String germplasmDbId)
-		{ this.germplasmDbId = germplasmDbId; }
+	public void setGermplasmDbIds(List<String> germplasmDbIds)
+		{ this.germplasmDbIds = germplasmDbIds; }
 
-	public String getGermplasmSpecies()
+	public List<String> getGermplasmSpecies()
 		{ return germplasmSpecies; }
 
-	public void setGermplasmSpecies(String germplasmSpecies)
+	public void setGermplasmSpecies(List<String> germplasmSpecies)
 		{ this.germplasmSpecies = germplasmSpecies; }
 
-	public String getGermplasmGenus()
+	public List<String> getGermplasmGenus()
 		{ return germplasmGenus; }
 
-	public void setGermplasmGenus(String germplasmGenus)
+	public void setGermplasmGenus(List<String> germplasmGenus)
 		{ this.germplasmGenus = germplasmGenus; }
 
-	public String getGermplasmName()
-		{ return germplasmName; }
+	public List<String> getGermplasmNames()
+		{ return germplasmNames; }
 
-	public void setGermplasmName(String germplasmName)
-		{ this.germplasmName = germplasmName; }
+	public void setGermplasmNames(List<String> germplasmNames)
+		{ this.germplasmNames = germplasmNames; }
 
-	@Override
-	public String toString()
-	{
-		return "BrapiGermplasmPost{" +
-				"germplasmPUI='" + germplasmPUI + '\'' +
-				", germplasmDbId='" + germplasmDbId + '\'' +
-				", germplasmSpecies='" + germplasmSpecies + '\'' +
-				", germplasmGenus='" + germplasmGenus + '\'' +
-				", germplasmName='" + germplasmName + '\'' +
-				", pageSize=" + pageSize +
-				", page=" + page +
-				'}';
-	}
+	public List<String> getGermplasmAccessionNumbers()
+		{ return germplasmAccessionNumbers; }
+
+	public void setGermplasmAccessionNumbers(List<String> germplasmAccessionNumbers)
+		{ this.germplasmAccessionNumbers = germplasmAccessionNumbers; }
 }
