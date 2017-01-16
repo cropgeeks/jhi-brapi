@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import jhi.brapi.api.*;
-import jhi.brapi.api.germplasm.BrapiGermplasm.*;
+import jhi.brapi.api.markers.BrapiMarker.*;
 import jhi.brapi.util.*;
 
 /**
