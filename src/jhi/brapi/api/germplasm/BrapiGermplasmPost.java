@@ -14,7 +14,7 @@ public class BrapiGermplasmPost extends BasicPost
 	private List<String> germplasmSpecies;
 	private List<String> germplasmGenus;
 	private List<String> germplasmNames;
-	private List<String> germplasmAccessionNumbers;
+	private List<String> accessionNumbers;
 
 	public List<String> getGermplasmPUIs()
 		{ return germplasmPUIs; }
@@ -46,9 +46,9 @@ public class BrapiGermplasmPost extends BasicPost
 	public void setGermplasmNames(List<String> germplasmNames)
 		{ this.germplasmNames = germplasmNames; }
 
-	public List<String> getGermplasmAccessionNumbers()
-		{ return germplasmAccessionNumbers; }
+	public List<String> getAccessionNumbers()
+		{ return accessionNumbers; }
 
-	public void setGermplasmAccessionNumbers(List<String> germplasmAccessionNumbers)
-		{ this.germplasmAccessionNumbers = germplasmAccessionNumbers; }
+	public void setAccessionNumbers(List<String> accessionNumbers)
+		{ this.accessionNumbers = accessionNumbers; }
 }
