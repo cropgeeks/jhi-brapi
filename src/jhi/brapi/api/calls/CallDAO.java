@@ -31,10 +31,6 @@ public class CallDAO
 			.addDatatype("json")
 			.addMethod("GET"));
 
-		CALLS.add(new BrapiCall("germplasm/id/mcpd")
-			.addDatatype("json")
-			.addMethod("GET"));
-
 		CALLS.add(new BrapiCall("germplasm/id/pedigree")
 			.addDatatype("json")
 			.addMethod("GET"));
