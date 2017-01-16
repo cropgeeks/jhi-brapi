@@ -24,7 +24,8 @@ public class CallDAO
 
 		CALLS.add(new BrapiCall("germplasm-search")
 			.addDatatype("json")
-			.addMethod("GET"));
+			.addMethod("GET")
+			.addMethod("POST"));
 
 		CALLS.add(new BrapiCall("germplasm/id")
 			.addDatatype("json")

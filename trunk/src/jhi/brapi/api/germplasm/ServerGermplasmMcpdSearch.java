@@ -21,7 +21,7 @@ public class ServerGermplasmMcpdSearch extends BaseBrapiServerResource
 	private List<String> germplasmSpecies;
 	private List<String> germplasmGenus;
 	private List<String> germplasmNames;
-	private List<String> germplasmAccessionNumbers;
+	private List<String> accessionNumbers;
 
 	@Override
 	public void doInit()
@@ -55,7 +55,7 @@ public class ServerGermplasmMcpdSearch extends BaseBrapiServerResource
 		germplasmSpecies = params.getGermplasmSpecies();
 		germplasmGenus = params.getGermplasmGenus();
 		germplasmNames = params.getGermplasmNames();
-		germplasmAccessionNumbers = params.getGermplasmAccessionNumbers();
+		accessionNumbers = params.getAccessionNumbers();
 
 		setPaginationParameters(params);
 
