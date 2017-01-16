@@ -46,4 +46,30 @@ public class BrapiMarker
 
 	public void setAnalysisMethods(List<String> analysisMethods)
 		{ this.analysisMethods = analysisMethods; }
+
+	public enum MatchingMethod
+	{
+		EXACT,
+		WILDCARD;
+
+		public static MatchingMethod getValue(String input)
+		{
+			if (input == null || input.equals(""))
+			{
+				return EXACT;
+			}
+			else
+			{
+				try
+				{
+					return MatchingMethod.valueOf(input.toUpperCase());
+				}
+				catch (Exception e)
+				{
+					// TODO: Return a 501 HTTP error code
+					return EXACT;
+				}
+			}
+		}
+	}
 }

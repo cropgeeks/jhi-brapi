@@ -2,8 +2,19 @@ package jhi.brapi.api.germplasm;
 
 import java.util.*;
 
-public class BrapiGermplasmMcpd extends BrapiGermplasm
+import com.fasterxml.jackson.annotation.*;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BrapiGermplasmMcpd
 {
+	private String germplasmDbId;
+	private String defaultDisplayName;
+	private String germplasmName;
+	private String accessionNumber;
+	private String germplasmPUI;
+	private String pedigree;
+	private String seedSource;
+	private List<String> synonyms;
 	private String commonCropName;
 	private String instituteCode;
 	private String instituteName;
@@ -17,6 +28,54 @@ public class BrapiGermplasmMcpd extends BrapiGermplasm
 	private String subtaxaAuthority;
 	private List<BrapiGermplasmDonor> donors;
 	private String acquisitionDate;
+
+	public String getGermplasmDbId()
+	{ return germplasmDbId; }
+
+	public void setGermplasmDbId(String germplasmDbId)
+	{ this.germplasmDbId = germplasmDbId; }
+
+	public String getDefaultDisplayName()
+	{ return defaultDisplayName; }
+
+	public void setDefaultDisplayName(String defaultDisplayName)
+	{ this.defaultDisplayName = defaultDisplayName; }
+
+	public String getGermplasmName()
+	{ return germplasmName; }
+
+	public void setGermplasmName(String germplasmName)
+	{ this.germplasmName = germplasmName; }
+
+	public String getAccessionNumber()
+	{ return accessionNumber; }
+
+	public void setAccessionNumber(String accessionNumber)
+	{ this.accessionNumber = accessionNumber; }
+
+	public String getGermplasmPUI()
+	{ return germplasmPUI; }
+
+	public void setGermplasmPUI(String germplasmPUI)
+	{ this.germplasmPUI = germplasmPUI; }
+
+	public String getPedigree()
+	{ return pedigree; }
+
+	public void setPedigree(String pedigree)
+	{ this.pedigree = pedigree; }
+
+	public String getSeedSource()
+	{ return seedSource; }
+
+	public void setSeedSource(String seedSource)
+	{ this.seedSource = seedSource; }
+
+	public List<String> getSynonyms()
+	{ return synonyms; }
+
+	public void setSynonyms(List<String> synonyms)
+	{ this.synonyms = synonyms; }
 
 	public String getCommonCropName()
 		{ return commonCropName; }
@@ -95,32 +154,4 @@ public class BrapiGermplasmMcpd extends BrapiGermplasm
 
 	public void setAcquisitionDate(String acquisitionDate)
 		{ this.acquisitionDate = acquisitionDate; }
-
-	@Override
-	public String toString()
-	{
-		return "BrapiGermplasmMcpd{" +
-				"germplasmDbId='" + getGermplasmDbId() + '\'' +
-				", defaultDisplayName='" + getDefaultDisplayName() + '\'' +
-				", germplasmName='" + getGermplasmName() + '\'' +
-				", accessionNumber='" + getAccessionNumber() + '\'' +
-				", germplasmPUI='" + getGermplasmPUI() + '\'' +
-				", pedigree='" + getPedigree() + '\'' +
-				", seedSource='" + getSeedSource() + '\'' +
-				", synonyms=" + getSynonyms() +
-				", commonCropName='" + commonCropName + '\'' +
-				", instituteCode='" + instituteCode + '\'' +
-				", instituteName='" + instituteName + '\'' +
-				", biologicalStatusOfAccessionCode='" + biologicalStatusOfAccessionCode + '\'' +
-				", countryOfOriginCode='" + countryOfOriginCode + '\'' +
-				", typeOfGermplasmStorageCode=" + typeOfGermplasmStorageCode +
-				", genus='" + genus + '\'' +
-				", species='" + species + '\'' +
-				", speciesAuthority='" + speciesAuthority + '\'' +
-				", subtaxa='" + subtaxa + '\'' +
-				", subtaxaAuthority='" + subtaxaAuthority + '\'' +
-				", donors=" + donors +
-				", acquisitionDate='" + acquisitionDate + '\'' +
-				'}';
-	}
 }
