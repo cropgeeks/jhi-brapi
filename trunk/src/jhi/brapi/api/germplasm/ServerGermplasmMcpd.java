@@ -5,7 +5,7 @@ import jhi.brapi.api.*;
 import org.restlet.resource.*;
 
 /**
- * Given an id, returns the markerprofile ids which relate to the germplasm indicated by id.
+ * Given an id, return the BrapiGermplasmMcpd for that id.
  */
 public class ServerGermplasmMcpd extends BaseBrapiServerResource
 {
