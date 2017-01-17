@@ -6,10 +6,10 @@ public class BrapiMarker
 {
 	private String markerDbId;
 	private String defaultDisplayName;
-	private List<String> synonyms;
-	private List<String> refAlt;
+	private List<String> synonyms = new ArrayList<>();
+	private List<String> refAlt = new ArrayList<>();
 	private String type;
-	private List<String> analysisMethods;
+	private List<String> analysisMethods = new ArrayList<>();
 
 	public String getMarkerDbId()
 		{ return markerDbId; }
