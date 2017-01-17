@@ -23,6 +23,6 @@ public class ServerGermplasmMarkerProfiles extends BaseBrapiServerResource
 	@Get("json")
 	public BrapiBaseResource<BrapiGermplasmMarkerProfiles> getJson()
 	{
-		return germplasmDAO.getMarkerProfilesFor(id, currentPage, pageSize);
+		return germplasmDAO.getMarkerProfilesFor(getContext(), id, currentPage, pageSize);
 	}
 }

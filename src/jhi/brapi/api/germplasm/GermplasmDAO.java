@@ -1,5 +1,6 @@
 package jhi.brapi.api.germplasm;
 
+import java.io.*;
 import java.sql.*;
 import java.sql.Date;
 import java.text.*;
@@ -7,6 +8,8 @@ import java.util.*;
 
 import jhi.brapi.api.*;
 import jhi.brapi.util.*;
+
+import org.restlet.*;
 
 /**
  * Specifies the public interface which any ServerGermplasmSearch data accessing classes must implement.
@@ -24,10 +27,12 @@ public class GermplasmDAO
 	// Simply selects all fields from germinatebase where the given id matches the id from the URI
 	private final String getSpecificLine = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " where germinatebase.id=?";
 
-	// Query to extract the markerprofiles which relate to the germplasm indicated by id
-	private final String markrerProfileIdQuery = "select SQL_CALC_FOUND_ROWS DISTINCT(dataset_id), germinatebase_id from genotypes where germinatebase_id=? LIMIT ?, ?";
-
 	private final String pedigreeByIdQuery = "SELECT p1.germinatebase_id, p1.parent_id as 'left_parent', p2.parent_id as 'right_parent', definition , name FROM pedigrees p1 INNER JOIN pedigrees p2 ON p1.germinatebase_id = p2.germinatebase_id and p1.pedigreedescription_id = 1 and p2.pedigreedescription_id = 2 JOIN germinatebase ON p1.germinatebase_id = germinatebase.id JOIN pedigreedefinitions ON p1.germinatebase_id WHERE p1.germinatebase_id = ?";
+
+	// Used to get the genotpye data sets that are held in HDF5 files
+	private final String genotypeDatasets = "SELECT datasets.id FROM datasets " +
+		"LEFT JOIN experiments ON experiment_id = experiments.id WHERE " +
+		"experiments.experiment_type_id = 1";
 
 	public BrapiBaseResource<BrapiGermplasmMcpd> getById(String id)
 	{
@@ -114,36 +119,63 @@ public class GermplasmDAO
 		return mcpd;
 	}
 
-	public BrapiBaseResource<BrapiGermplasmMarkerProfiles> getMarkerProfilesFor(String id, int currentPage, int pageSize)
+	private List<String> getDataSetIds()
+	{
+		List<String> dataSetIds = new ArrayList<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = con.prepareStatement(genotypeDatasets);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			while (resultSet.next())
+				dataSetIds.add(resultSet.getString("id"));
+		}
+		catch (SQLException e) {e.printStackTrace(); }
+
+		return dataSetIds;
+	}
+
+	public BrapiBaseResource<BrapiGermplasmMarkerProfiles> getMarkerProfilesFor(Context context, String id, int currentPage, int pageSize)
 	{
 		BrapiBaseResource<BrapiGermplasmMarkerProfiles> result = new BrapiBaseResource<>();
 
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = DatabaseUtils.createByIdLimitStatement(con, markrerProfileIdQuery, id, currentPage, pageSize);
-			 ResultSet resultSet = statement.executeQuery())
+		// Grab the BrapiGermplasm object with the given id, if there is none
+		// with the given id return
+		BrapiGermplasmMcpd mcpd = getMcpdFor(id).getResult();
+		if (mcpd != null)
 		{
-			List<BrapiGermplasmMarkerProfiles> list = new ArrayList<>();
-
 			BrapiGermplasmMarkerProfiles profiles = new BrapiGermplasmMarkerProfiles();
+			profiles.setGermplasmDbId(id);
+
 			List<String> markerProfileIdList = new ArrayList<>();
-			while (resultSet.next())
+
+			// Get the dataset ids of genotype datasets to iterate over
+			List<String> dataSetIds = getDataSetIds();
+
+			// Loop over each data set to load the hdf5 file with germplasm data
+			dataSetIds.forEach(dataSetId ->
 			{
-				profiles.setGermplasmDbId(resultSet.getString("germinatebase_id"));
-				markerProfileIdList.add(resultSet.getInt("dataset_id") + "-" + resultSet.getInt("germinatebase_id"));
-			}
+				String hdf5File = HDF5Utils.getHdf5File(dataSetId);
+
+				String folder = context.getParameters().getFirstValue("hdf5-folder");
+
+				// Grab the names of accessions in this dataset from the hdf5
+				// file and find those matching our germplasm. The markerprofile
+				// id is a concatenation of the dataset id a hyphen and the germplasm id
+				try (Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File)))
+				{
+					List<String> lineNames = extractor.getLines();
+					if (lineNames.contains(mcpd.getDefaultDisplayName()))
+						markerProfileIdList.add(dataSetId + "-" + id);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			});
 			profiles.setMarkerProfiles(markerProfileIdList);
-
-			list.add(profiles);
-
-			long totalCount = DatabaseUtils.getTotalCount(statement);
-
-			result = new BrapiBaseResource<BrapiGermplasmMarkerProfiles>(profiles, currentPage, list.size(), totalCount);
+			result = new BrapiBaseResource<BrapiGermplasmMarkerProfiles>(profiles, currentPage, 0, 0);
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
 		return result;
 	}
 
