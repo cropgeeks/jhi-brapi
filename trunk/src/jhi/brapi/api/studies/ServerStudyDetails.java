@@ -5,10 +5,6 @@ import jhi.brapi.api.locations.*;
 
 import org.restlet.resource.*;
 
-/**
- * Queries the database for the ServerGermplasmSearch with the given ID then returns a JSON (Jackson)
- * representation of the ServerGermplasmSearch for API clients to consume.
- */
 public class ServerStudyDetails extends BaseBrapiServerResource
 {
 	private StudiesDAO studiesDAO = new StudiesDAO();
@@ -23,7 +19,7 @@ public class ServerStudyDetails extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BrapiBaseResource<BrapiStudies> getJson()
+	public BrapiBaseResource<BrapiStudiesDetail> getJson()
 	{
 		return studiesDAO.getById(id);
 	}
