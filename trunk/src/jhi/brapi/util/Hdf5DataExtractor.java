@@ -48,17 +48,53 @@ public class Hdf5DataExtractor implements AutoCloseable
 
 			alleleValue = stateTable[genotypes[markerIndex]];
 
-			String[] values;
+			alleleValue = encodeAllele(alleleValue, params);
+		}
 
-			if (alleleValue.contains("/"))
+		return alleleValue;
+	}
+
+	/**
+	 * Return the a list of the alleles for the line specified by the parameter
+	 * line, encoded using the parameters provided in params.
+	 *
+	 * @param line		The name of the line to return alleles of
+	 * @param params	The encoding parameters used to encode allele strings
+	 *
+	 * @return			A list of encoded allele strings
+	 */
+	public List<String> getAllelesForLine(String line, GenotypeEncodingParams params)
+	{
+		List<String> alleles = new ArrayList<>();
+
+		int lineIndex = hdf5Lines.indexOf(line);
+
+		if (lineIndex != -1)
+		{
+			byte[] genotypes = reader.int8().readMatrixBlock("DataMatrix", 1, hdf5Markers.size(), lineIndex, 0)[0];
+			for (int i=0; i < genotypes.length; i++)
 			{
-				values = alleleValue.split("/");
-				alleleValue = jhi.brapi.util.GenotypeEncodingUtils.getString(values[0], values[1], params);
+				String alleleValue = stateTable[genotypes[i]];
+				alleleValue = encodeAllele(alleleValue, params);
+				alleles.add(alleleValue);
 			}
-			else if (alleleValue.length() == 2)
-			{
-				alleleValue = jhi.brapi.util.GenotypeEncodingUtils.getString(Character.toString(alleleValue.charAt(0)), Character.toString(alleleValue.charAt(1)), params);
-			}
+		}
+
+		return alleles;
+	}
+
+	private String encodeAllele(String alleleValue, GenotypeEncodingParams params)
+	{
+		String[] values;
+
+		if (alleleValue.contains("/"))
+		{
+			values = alleleValue.split("/");
+			alleleValue = GenotypeEncodingUtils.getString(values[0], values[1], params);
+		}
+		else if (alleleValue.length() == 2)
+		{
+			alleleValue = GenotypeEncodingUtils.getString(Character.toString(alleleValue.charAt(0)), Character.toString(alleleValue.charAt(1)), params);
 		}
 
 		return alleleValue;

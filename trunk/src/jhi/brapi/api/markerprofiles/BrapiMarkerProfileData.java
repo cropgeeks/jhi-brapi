@@ -8,10 +8,9 @@ public class BrapiMarkerProfileData
 	private String germplasmId;
 	private String extractId;
 	private String analysisMethod;
-	private String encoding;
 	// Seems to be the best way to have Jackson automatically generate a data array in json with comma separated
 	// key : value pairs as outlined in the apiary.io documentation for the API
-	private HashMap<String, String> data;
+	private List<Map<String, String>> data;
 
 	public String getMarkerprofileId()
 		{ return markerprofileId; }
@@ -37,28 +36,9 @@ public class BrapiMarkerProfileData
 	public void setAnalysisMethod(String analysisMethod)
 		{ this.analysisMethod = analysisMethod; }
 
-	public String getEncoding()
-		{ return encoding; }
-
-	public void setEncoding(String encoding)
-		{ this.encoding = encoding; }
-
-	public HashMap<String, String> getData()
+	public List<Map<String, String>> getData()
 		{ return data; }
 
-	public void setData(HashMap<String, String> data)
+	public void setData(List<Map<String, String>> data)
 		{ this.data = data; }
-
-	@Override
-	public String toString()
-	{
-		return "MarkerProfile{" +
-			"markerprofileId=" + markerprofileId +
-			", germplasmId=" + germplasmId +
-			", extractId=" + extractId +
-			", analysisMethod='" + analysisMethod + '\'' +
-			", encoding='" + encoding + '\'' +
-			", data=" + data +
-			'}';
-	}
 }

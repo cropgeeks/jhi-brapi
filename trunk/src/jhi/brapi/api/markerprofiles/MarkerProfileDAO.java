@@ -15,6 +15,9 @@ public class MarkerProfileDAO
 		"LEFT JOIN experiments ON experiment_id = experiments.id WHERE " +
 		"experiments.experiment_type_id = 1";
 
+	private final String getNameForGermplasmId = "SELECT name FROM germinatebase " +
+		"WHERE id = ?";
+
 	private final String allMarkers = "select genotypes.allele1, genotypes.allele2, genotypes.marker_id, " +
 		"genotypes.germinatebase_id, genotypes.dataset_id, CONCAT(genotypes.dataset_id, '-', genotypes.germinatebase_id) " +
 		"AS markerprofile_id, markers.marker_name from genotypes INNER JOIN markers ON genotypes.marker_id = markers.id " +
@@ -51,6 +54,23 @@ public class MarkerProfileDAO
 		return new BrapiListResource<BrapiMarkerProfile>(filteredProfiles, currentPage, pageSize, markerProfiles.size());
 	}
 
+	private List<BrapiMarkerProfile> getProfiles(String id, LinkedHashMap<String, String> germplasmNamesById)
+	{
+		List<BrapiMarkerProfile> profiles = new ArrayList<>();
+
+		germplasmNamesById.forEach((germplasmId, name) ->
+		{
+			BrapiMarkerProfile profile = new BrapiMarkerProfile();
+			profile.setMarkerProfileDbId(id + "-" + germplasmId);
+			profile.setGermplasmDbId(germplasmId);
+			profile.setUniqueDisplayName(name);
+
+			profiles.add(profile);
+		});
+
+		return profiles;
+	}
+
 	private List<String> getDataSetIds()
 	{
 		List<String> dataSetIds = new ArrayList<>();
@@ -74,72 +94,75 @@ public class MarkerProfileDAO
 	 * @param id	The id of the BrapiMarkerProfile to getJson
 	 * @return		A BrapiMarkerProfile object identified by id (or null if none exists).
 	 */
-	public BrapiBaseResource<BrapiMarkerProfileData> getById(String id, GenotypeEncodingParams params)
+	public BrapiBaseResource<BrapiMarkerProfileData> getById(Context context, String id, GenotypeEncodingParams params, int currentPage, int pageSize)
 	{
 		BrapiBaseResource<BrapiMarkerProfileData> result = new BrapiBaseResource<>();
+		BrapiMarkerProfileData profileData = new BrapiMarkerProfileData();
 
+		// The markerprofile id is the datasetId separated from the lineId with a hyphen
 		String[] tokens = id.split("-");
-		int datasetId = Integer.parseInt(tokens[0]);
-		int germinatebaseId = Integer.parseInt(tokens[1]);
+		String datasetId = tokens[0];
+		String germinatebaseId = tokens[1];
 
-		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement markerProfileStatement = createByIdStatement(con, allMarkers, germinatebaseId, datasetId);
-			 ResultSet resultSet = markerProfileStatement.executeQuery())
+		// Get the germplasmName of the germplasm with the given germinatebaseId
+		String name = getLineNameFromId(germinatebaseId);
+
+		// If the line doesn't exist in the db return a blank result
+		if (!name.isEmpty())
 		{
-			result = new BrapiBaseResource<>(getProfile(resultSet, params));
+			String hdf5File = HDF5Utils.getHdf5File(datasetId);
+			String folder = context.getParameters().getFirstValue("hdf5-folder");
+
+			List<Map<String, String>> allelesByMarker = new ArrayList<>();
+
+			// We're going to read allele data in from the 2D matrix stored in the
+			// HDF5 file for this data set
+			try (Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File)))
+			{
+				List<String> alleles = extractor.getAllelesForLine(name, params);
+				List<String> markers = extractor.getMarkers();
+
+				// Link our marker names and allele calls
+				for (int i=0; i < markers.size(); i++)
+				{
+					Map<String, String> map = new HashMap<String, String>();
+					map.put(markers.get(i), alleles.get(i));
+					allelesByMarker.add(map);
+				}
+
+				// Subset the data for the purposes of paging
+				int start = DatabaseUtils.getLimitStart(currentPage, pageSize);
+				int end = Math.min(start + pageSize, allelesByMarker.size());
+				List<Map<String, String>> subset = allelesByMarker.subList(start, end);
+
+				profileData.setMarkerprofileId(id);
+				profileData.setGermplasmId(germinatebaseId);
+				profileData.setData(subset);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+
+			result = new BrapiBaseResource<BrapiMarkerProfileData>(profileData, currentPage, pageSize, allelesByMarker.size());
 		}
-		catch (SQLException e) { e.printStackTrace(); }
 
 		return result;
 	}
 
-	private PreparedStatement createByIdStatement(Connection con, String query, int germinatebaseId, int datasetId)
-		throws SQLException
+	private String getLineNameFromId(String germinatebaseId)
 	{
-		// Get the basic information on the map
-		PreparedStatement statement = con.prepareStatement(query);
-		statement.setInt(1, germinatebaseId);
-		statement.setInt(2, datasetId);
+		String name = "";
 
-		return statement;
-	}
-
-	private List<BrapiMarkerProfile> getProfiles(String id, LinkedHashMap<String, String> germplasmNamesById)
-	{
-		List<BrapiMarkerProfile> profiles = new ArrayList<>();
-
-		germplasmNamesById.forEach((germplasmId, name) ->
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, getNameForGermplasmId, germinatebaseId);
+			 ResultSet resultSet = statement.executeQuery())
 		{
-			BrapiMarkerProfile profile = new BrapiMarkerProfile();
-			profile.setMarkerProfileDbId(id + "-" + germplasmId);
-			profile.setGermplasmDbId(germplasmId);
-			profile.setUniqueDisplayName(name);
-
-			profiles.add(profile);
-		});
-
-		return profiles;
-	}
-
-	// Given a ResultSet generated from the allMarkers query, returns a BrapiMarkerProfile object which has been initialized
-	// with the information from the ResultSet
-	private BrapiMarkerProfileData getProfile(ResultSet resultSet, GenotypeEncodingParams params)
-		throws SQLException
-	{
-		BrapiMarkerProfileData profile = new BrapiMarkerProfileData();
-		HashMap<String, String> alleles = new HashMap<>();
-		while (resultSet.next())
-		{
-			profile.setGermplasmId(resultSet.getString("germinatebase_id"));
-			profile.setMarkerprofileId(resultSet.getString("markerprofile_id"));
-			// TODO: Make this conform with the new Allele encoding
-			String allele1 = resultSet.getString("allele1");
-			String allele2 = resultSet.getString("allele2");
-			String encodedAllele = GenotypeEncodingUtils.getString(allele1, allele2, params);
-			alleles.put(resultSet.getString("marker_name"), encodedAllele);
+			if (resultSet.next())
+				name = resultSet.getString("name");
 		}
-		profile.setData(alleles);
+		catch (SQLException e) {e.printStackTrace(); }
 
-		return profile;
+		return name;
 	}
 }
