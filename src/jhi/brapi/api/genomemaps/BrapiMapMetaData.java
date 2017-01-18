@@ -4,10 +4,10 @@ import java.util.*;
 
 public class BrapiMapMetaData
 {
-	private String             mapDbId;
-	private String             name;
-	private String             type;
-	private String             unit;
+	private String mapDbId;
+	private String name;
+	private String type;
+	private String unit;
 	private List<BrapiLinkageGroup> linkageGroups;
 
 	public String getMapDbId()
