@@ -1,13 +1,11 @@
 package jhi.brapi.api.studies;
 
+import java.util.*;
+
 import jhi.brapi.api.*;
 
 import org.restlet.resource.*;
 
-/**
- * Queries the database for the ServerGermplasmSearch (germinatebase?) with the given ID then returns a JSON (Jackson) representation of the ServerGermplasmSearch for API
- * clients to consume.
- */
 public class ServerStudies extends BaseBrapiServerResource
 {
 	private static final String PARAM_PROGRAM_ID = "programDbId";
@@ -31,34 +29,36 @@ public class ServerStudies extends BaseBrapiServerResource
 		this.locationId = getQueryValue(PARAM_LOCATION_ID);
 		this.seasonId = getQueryValue(PARAM_SEASON_ID);
 		this.studyType = getQueryValue(PARAM_STUDY_TYPE);
+
+		// Fudge the param into an acceptable germinate value
+		if (studyType != null && studyType.equals("trial"))
+			studyType = "trials";
 	}
 
 	@Get("json")
 	public BrapiListResource<BrapiStudies> getJson()
 	{
-		BrapiListResource<BrapiStudies> result;
+		LinkedHashMap<String, List<String>> parameters = new LinkedHashMap<>();
+		addParameter(parameters, "experimenttypes.description", studyType);
+		addParameter(parameters, "experiments.id", programId);
+		addParameter(parameters, "datasets.location_id", locationId);
+		addParameter(parameters, "YEAR(phenotypedata.recording_date)", seasonId);
 
-		result = studiesDAO.getAll(currentPage, pageSize, studyType, programId, locationId, seasonId);
-
-		return result;
+		return studiesDAO.getAll(parameters, currentPage, pageSize);
 	}
 
 	@Post("json")
 	public BrapiListResource<BrapiStudies> postJson(BrapiStudiesPost params)
 	{
-		setFromPostBody(params);
-		setParams(params);
+		studyType = params.getStudyType();
+		setPaginationParameters(params);
 
 		return getJson();
 	}
 
-	private void setFromPostBody(BrapiStudiesPost params)
+	private void addParameter(Map<String, List<String>> map, String key, String value)
 	{
-		studyType = params.getStudyType();
-	}
-
-	private void setParams(BrapiStudiesPost params)
-	{
-		setPaginationParameters(params);
+		if (value != null && value.length() != 0)
+			map.put(key, Collections.singletonList(value));
 	}
 }

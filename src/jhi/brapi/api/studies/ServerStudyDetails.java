@@ -12,7 +12,6 @@ import org.restlet.resource.*;
 public class ServerStudyDetails extends BaseBrapiServerResource
 {
 	private StudiesDAO studiesDAO = new StudiesDAO();
-	private LocationDAO locationDAO = new LocationDAO();
 
 	private String id;
 
@@ -26,12 +25,6 @@ public class ServerStudyDetails extends BaseBrapiServerResource
 	@Get("json")
 	public BrapiBaseResource<BrapiStudies> getJson()
 	{
-		BrapiBaseResource<BrapiStudies> study = studiesDAO.getById(id);
-		String locationId = study.getResult().getLocation().getLocationDbId();
-
-		BrapiLocation location = locationDAO.getById(locationId).getResult();
-		study.getResult().setLocation(location);
-
-		return study;
+		return studiesDAO.getById(id);
 	}
 }

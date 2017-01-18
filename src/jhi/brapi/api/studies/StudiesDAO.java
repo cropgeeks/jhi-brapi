@@ -15,7 +15,7 @@ public class StudiesDAO
 	// Simply selects all fields from germinatebase
 	private final String getStudyDetails = "SELECT datasets.*, experiments.description AS trial_name, experimenttypes.description AS trial_type, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM phenotypedata LEFT JOIN datasets ON datasets.id = phenotypedata.dataset_id LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE datasets.id = ?";
 
-	private final String getStudies = "SELECT SQL_CALC_FOUND_ROWS datasets.*, experiments.description AS trial_name, experimenttypes.description AS trial_type, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE 1=1 %s GROUP BY datasets.id LIMIT ?, ?";
+	private final String getStudies = "SELECT SQL_CALC_FOUND_ROWS datasets.*, experiments.description AS trial_name, experimenttypes.description AS trial_type, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id %s GROUP BY datasets.id LIMIT ?, ?";
 
 	private final String studyDetailsTable = "call phenotype_data_complete (?)";
 
@@ -37,52 +37,16 @@ public class StudiesDAO
 		return result;
 	}
 
-	public BrapiListResource<BrapiStudies> getAll(int currentPage, int pageSize, String studyType, String programId, String locationId, String seasonId)
+	public BrapiListResource<BrapiStudies> getAll(Map<String, List<String>> parameters, int currentPage, int pageSize)
 	{
 		// Create empty BrapiBaseResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
 		// this is what's returned
 		BrapiListResource<BrapiStudies> result = new BrapiListResource<>();
 
-		// TODO: Can we do this kind of concept in a generic way somewhere?
-		StringBuilder builder = new StringBuilder();
-		if(studyType != null)
-		{
-			switch(studyType.toLowerCase())
-			{
-				case "genotype":
-					builder.append(" AND experimenttypes.description = 'genotype' ");
-					break;
-				case "trial":
-					builder.append(" AND experimenttypes.description = 'trials' ");
-					break;
-				default:
-					return result;
-			}
-		}
-
-		List<String> values = new ArrayList<>();
-		if (programId != null && !programId.isEmpty())
-		{
-			builder.append(" AND experiments.id = ?");
-			values.add(programId);
-		}
-		if (locationId != null && !locationId.isEmpty())
-		{
-			builder.append(" AND datasets.location_id = ?");
-			values.add(locationId);
-		}
-		if (seasonId != null && !seasonId.isEmpty())
-		{
-			builder.append(" AND YEAR(phenotypedata.recording_date) = ?");
-			values.add(seasonId);
-		}
-
-		String finalGetStudies = String.format(getStudies, builder.toString());
-
 		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 		// prepared statement (which includes a limit statement)
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = DatabaseUtils.createValueLimitStatement(con, finalGetStudies, values, currentPage, pageSize);
+			 PreparedStatement statement = DatabaseUtils.createParameterizedLimitStatement(con, getStudies, parameters, currentPage, pageSize);
 			 ResultSet resultSet = statement.executeQuery())
 		{
 			List<BrapiStudies> list = new ArrayList<>();
@@ -115,6 +79,7 @@ public class StudiesDAO
 		studies.setStartDate(resultSet.getDate("datasets.date_start"));
 		studies.setEndDate(resultSet.getDate("datasets.date_end"));
 		studies.setActive(false);
+		studies.setLocationDbId(resultSet.getString("location_id"));
 		// Parse out the years
 		String seasonString = resultSet.getString("years");
 		if(seasonString != null)
@@ -122,12 +87,7 @@ public class StudiesDAO
 			String[] yearArray = seasonString.split(",");
 			studies.setSeasons(Arrays.asList(yearArray));
 		}
-
-		BrapiLocation location = new BrapiLocation();
-		location.setLocationDbId(resultSet.getString("location_id"));
-
-		studies.setLocation(location);
-		studies.setOptionalInfo(new LinkedHashMap<String, Object>());
+		studies.setAdditionalInfo(new LinkedHashMap<String, Object>());
 
 		return studies;
 	}
