@@ -12,15 +12,18 @@ public class BrapiStudies
 {
 	private String studyDbId;
 	private String name;
-	private String studyType;
-	private List<String> seasons;
 	private String trialDbId;
 	private String trialName;
+	private List<String> seasons;
+	private String locationDbId;
+	private String locationName;
+	private String programDbId;
+	private String programName;
 	private Date startDate;
 	private Date endDate;
+	private String studyType;
 	private boolean active;
-	private BrapiLocation location;
-	private Object optionalInfo;
+	private Object additionalInfo;
 
 	public String getStudyDbId()
 		{ return studyDbId; }
@@ -76,15 +79,33 @@ public class BrapiStudies
 	public void setActive(boolean active)
 		{ this.active = active; }
 
-	public BrapiLocation getLocation()
-		{ return location; }
+	public Object getAdditionalInfo()
+		{ return additionalInfo; }
 
-	public void setLocation(BrapiLocation location)
-		{ this.location = location; }
+	public void setAdditionalInfo(Object additionalInfo)
+		{ this.additionalInfo = additionalInfo; }
 
-	public Object getOptionalInfo()
-		{ return optionalInfo; }
+	public String getLocationDbId()
+		{ return locationDbId; }
 
-	public void setOptionalInfo(Object optionalInfo)
-		{ this.optionalInfo = optionalInfo; }
+	public void setLocationDbId(String locationDbId)
+		{ this.locationDbId = locationDbId; }
+
+	public String getLocationName()
+		{ return locationName; }
+
+	public void setLocationName(String locationName)
+		{ this.locationName = locationName; }
+
+	public String getProgramDbId()
+		{ return programDbId; }
+
+	public void setProgramDbId(String programDbId)
+		{ this.programDbId = programDbId; }
+
+	public String getProgramName()
+		{ return programName; }
+
+	public void setProgramName(String programName)
+		{ this.programName = programName; }
 }

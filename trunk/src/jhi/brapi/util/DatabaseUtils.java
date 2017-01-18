@@ -41,22 +41,6 @@ public class DatabaseUtils
 		return statement;
 	}
 
-	public static PreparedStatement createValueLimitStatement(Connection con, String query, Collection<String> values, int currentPage, int pageSize)
-			throws SQLException
-	{
-		// Prepare statement with low and high params for a limit query
-		PreparedStatement statement = con.prepareStatement(query);
-
-		int i = 1;
-		for(String value : values)
-			statement.setString(i++, value);
-
-		statement.setInt(i++, getLimitStart(currentPage, pageSize));
-		statement.setInt(i++, pageSize);
-
-		return statement;
-	}
-
 	public static PreparedStatement createParameterizedLimitStatement(Connection con, String query, Map<String, List<String>> parameters, int currentPage, int pageSize)
 		throws SQLException
 	{
@@ -83,42 +67,6 @@ public class DatabaseUtils
 		for (Map.Entry<String, List<String>> entry : parameters.entrySet())
 		{
 			for (String value : entry.getValue())
-				statement.setString(i++, value);
-		}
-
-		statement.setInt(i++, getLimitStart(currentPage, pageSize));
-		statement.setInt(i++, pageSize);
-
-		return statement;
-	}
-
-	public static PreparedStatement createParameterizedLimitStatement(Connection con, String query, List<String> keys, List<List<String>> values, int currentPage, int pageSize)
-		throws SQLException
-	{
-		StringBuilder builder = new StringBuilder();
-
-		for (int i = 0; i < keys.size(); i++)
-		{
-			if (builder.length() != 0)
-				builder.append(" AND ");
-
-			if (builder.length() == 0 && values.get(i).size() > 0)
-				builder.append("WHERE ");
-
-			builder.append(keys.get(i))
-				.append(DatabaseUtils.createInPlaceholders(values.get(i).size()));
-		}
-
-		query = String.format(query, builder.toString());
-
-		// Prepare statement with low and high params for a limit query
-		PreparedStatement statement = con.prepareStatement(query);
-
-		int i = 1;
-
-		for (List<String> v : values)
-		{
-			for (String value : v)
 				statement.setString(i++, value);
 		}
 
