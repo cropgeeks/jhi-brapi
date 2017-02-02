@@ -8,10 +8,7 @@ import jhi.brapi.api.*;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
-import org.restlet.ext.servlet.*;
 import org.restlet.resource.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class AlleleMatrixDAO
 {

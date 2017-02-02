@@ -7,9 +7,6 @@ import jhi.brapi.*;
 import jhi.brapi.api.*;
 import jhi.brapi.util.*;
 
-import org.restlet.data.Form;
-import org.restlet.data.Parameter;
-import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 public class ServerTokenAuthenticator extends BaseBrapiServerResource
@@ -56,30 +53,20 @@ public class ServerTokenAuthenticator extends BaseBrapiServerResource
 	@Get("json")
 	public BrapiSessionToken getJson()
 	{
-		return login(new StringRepresentation(""));
+		return login(new BrapiTokenPost());
 	}
 
 	@Post
-	public BrapiSessionToken login(Representation rep)
+	public BrapiSessionToken login(BrapiTokenPost post)
 	{
-		// TODO: Should the doInit parsing still happen if we only expect a form
-		// to contain the data rather than query parameters?
-		for (Parameter parameter : new Form(rep))
-		{
-			if (parameter.getName().equals("grant_type"))
-				grantType = parameter.getValue();
-			else if (parameter.getName().equals("username"))
-				username = parameter.getValue();
-			else if (parameter.getName().equals("password"))
-				password = parameter.getValue();
-			else if (parameter.getName().equals("client_id"))
-				clientId = parameter.getValue();
-		}
+		grantType = post.getGrant_type();
+		username = post.getUsername();
+		password = post.getPassword();
+		clientId = post.getClient_id();
 
 		// Authenticate with Germinate Gatekeeper
 		if (GatekeeperUtils.authenticate(username, password) == false)
 			throw new ResourceException(400);
-
 
 		// Generate a unique token for this session
 		String token = new BigInteger(256, new SecureRandom()).toString(32);
