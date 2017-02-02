@@ -16,7 +16,7 @@
   limitations under the License.
 -->
 <!-- The contents of this file will be loaded for each web application -->
-<Context>
+<Context swallowOutput="true">
 
     <!-- Default set of monitored resources. If one of these changes, the    -->
     <!-- web application will be reloaded.                                   -->
@@ -35,6 +35,8 @@
     -->
 
     <Parameter name="hdf5-folder" value="@hdf5.folder@" override="true" />
+
+    <Parameter name="auth-routes" value="@auth.routes@" override="true" />
 
     <Resource name="@datasource.germinate@" auth="Container" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
         type="javax.sql.DataSource" maxTotal="30" maxIdle="10" maxWaitMillis="10000" username="@database.germinate.username@"
