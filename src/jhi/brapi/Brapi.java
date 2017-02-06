@@ -62,6 +62,7 @@ public class Brapi extends Application
 			ChallengeAuthenticator guard = new ChallengeAuthenticator(context, HTTP_OAUTH_BEARER, "JHI-BrAPI");
 			TokenBasedVerifier verifier = new TokenBasedVerifier();
 			guard.setVerifier(verifier);
+			guard.setRechallenging(false);
 			guard.setNext(appRoutes);
 
 			unauthenticated.attachDefault(guard);
