@@ -9,7 +9,7 @@ import org.restlet.resource.*;
 /**
  * Given an id, returns the markerprofile ids which relate to the germplasm indicated by id.
  */
-public class ServerGermplasmMcpdSearch extends BaseBrapiServerResource
+public class ServerGermplasmSearch extends BaseBrapiServerResource
 {
 	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
@@ -32,7 +32,7 @@ public class ServerGermplasmMcpdSearch extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BrapiListResource<BrapiGermplasmMcpd> getJson()
+	public BrapiListResource<BrapiGermplasm> getJson()
 	{
 		LinkedHashMap<String, List<String>> parameters = new LinkedHashMap<>();
 		addParameter(parameters, "germinatebase.id", dbId);
@@ -48,7 +48,7 @@ public class ServerGermplasmMcpdSearch extends BaseBrapiServerResource
 	}
 
 	@Post("json")
-	public BrapiListResource<BrapiGermplasmMcpd> postJson(BrapiGermplasmPost params)
+	public BrapiListResource<BrapiGermplasm> postJson(BrapiGermplasmPost params)
 	{
 		germplasmPUIs = params.getGermplasmPUIs();
 		germplasmDbIds = params.getGermplasmDbIds();

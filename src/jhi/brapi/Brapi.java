@@ -85,10 +85,10 @@ public class Brapi extends Application
 	{
 		// These routes require an authentication token to access (you can get
 		// this by providing a username and password to the /token resource
-		attachToRouter(router, "/germplasm/{id}", ServerGermplasmMcpd.class);
+		attachToRouter(router, "/germplasm/{id}", ServerGermplasm.class);
 		attachToRouter(router, "/germplasm/{id}/markerprofiles", ServerGermplasmMarkerProfiles.class);
 		attachToRouter(router, "/germplasm/{id}/pedigree", ServerGermplasmPedigree.class);
-		attachToRouter(router, "/germplasm-search", ServerGermplasmMcpdSearch.class);
+		attachToRouter(router, "/germplasm-search", ServerGermplasmSearch.class);
 		attachToRouter(router, "/maps", ServerGenomeMaps.class); // FJ
 		attachToRouter(router, "/maps/{id}", ServerGenomeMapMetaData.class); // FJ
 		attachToRouter(router, "/maps/{id}/positions", ServerGenomeMapMarkerData.class); // FJ
