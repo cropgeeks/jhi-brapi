@@ -176,4 +176,13 @@ public interface RetrofitService
 	@FormUrlEncoded
 	@POST("allelematrix-search")
 	Call<BrapiBaseResource<BrapiAlleleMatrix>> getAlleleMatrix(@Field("markerprofileDbId") List<String> markerProfileDbIds, @Field("markerDbId") List<String> markerDbId, @Field("format") String format, @Field("expandHomozygotes") Boolean expandHomoozygotes, @Field("unknownString") String unknownString, @Field("sepPhased") String sepPhased, @Field("sepUnphased") String sepUnphased, @Field("pageSize") Integer pageSize, @Field("page") Integer page);
+
+	/**
+	 *
+	 *
+	 * @param id
+	 * @return
+	 */
+	@GET("allelematrix-search/status/{id}")
+	Call<BrapiListResource<Object>> getAlleleMatrixStatus(@Path("id") String id);
 }
