@@ -4,7 +4,7 @@ public class BrapiLinkageGroup
 {
 	private String linkageGroupId;
 	private int numberMarkers;
-	private long maxPosition;
+	private double maxPosition;
 
 	public String getLinkageGroupId()
 		{ return linkageGroupId; }
@@ -18,9 +18,9 @@ public class BrapiLinkageGroup
 	public void setNumberMarkers(int numberMarkers)
 		{ this.numberMarkers = numberMarkers; }
 
-	public long getMaxPosition()
+	public double getMaxPosition()
 		{ return maxPosition; }
 
-	public void setMaxPosition(long maxPosition)
+	public void setMaxPosition(double maxPosition)
 		{ this.maxPosition = maxPosition; }
 }
