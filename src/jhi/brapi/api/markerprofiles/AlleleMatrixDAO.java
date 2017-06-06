@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import jhi.brapi.api.*;
+import jhi.brapi.api.Status;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
@@ -79,10 +80,12 @@ public class AlleleMatrixDAO
 
 					BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
 
-					String url = request.getRootRef().toString();
+//					String url = request.getRootRef().toString();
+//					String datafile = url + "/files/" + file.getName();
+//					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 
-					String datafile = url + "/files/" + file.getName();
-					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
+					result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
+
 					return result;
 				}
 				else if (format.equals("flapjack"))
