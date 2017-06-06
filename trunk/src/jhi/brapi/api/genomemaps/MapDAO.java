@@ -158,7 +158,7 @@ public class MapDAO
 		{
 			BrapiLinkageGroup linkageGroup = new BrapiLinkageGroup();
 			linkageGroup.setLinkageGroupId(resultSet.getString("chromosome"));
-			linkageGroup.setMaxPosition(resultSet.getLong("max"));
+			linkageGroup.setMaxPosition(resultSet.getDouble("max"));
 			linkageGroup.setNumberMarkers(resultSet.getInt("number_markers"));
 			linkageGroups.add(linkageGroup);
 		}
