@@ -5,7 +5,7 @@ import java.util.*;
 import com.fasterxml.jackson.annotation.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BrapiGermplasmMcpd
+public class BrapiGermplasm
 {
 	private String germplasmDbId;
 	private String defaultDisplayName;

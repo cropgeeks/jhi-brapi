@@ -5,9 +5,9 @@ import jhi.brapi.api.*;
 import org.restlet.resource.*;
 
 /**
- * Given an id, return the BrapiGermplasmMcpd for that id.
+ * Given an id, return the BrapiGermplasm for that id.
  */
-public class ServerGermplasmMcpd extends BaseBrapiServerResource
+public class ServerGermplasm extends BaseBrapiServerResource
 {
 	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
@@ -21,7 +21,7 @@ public class ServerGermplasmMcpd extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BrapiBaseResource<BrapiGermplasmMcpd> getJson()
+	public BrapiBaseResource<BrapiGermplasm> getJson()
 	{
 		return germplasmDAO.getMcpdFor(id);
 	}
