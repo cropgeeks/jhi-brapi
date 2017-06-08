@@ -12,27 +12,41 @@ public class AsyncChecker
 	public static final String ASYNC_FINISHED = "FINISHED";
 	public static final String ASYNC_FAILED = "FAILED";
 
-	public static Optional<Status> hasAsyncId(List<Status> statuses)
+	public static Status hasAsyncId(List<Status> statuses)
 	{
-		return statuses.stream()
+		Status status = null;
+
+		Optional<Status> asyncStatus = statuses.stream()
 			.filter(s -> s.getCode().equals(ASYNCID))
 			.findFirst();
+
+		if (asyncStatus.isPresent())
+			status = asyncStatus.get();
+
+		return status;
 	}
 
-	public static Optional<Status> checkAsyncStatus(List<Status> statuses)
+	public static Status checkAsyncStatus(List<Status> statuses)
 	{
-		return statuses.stream()
+		Status status = null;
+
+		Optional<Status> asyncStatus = statuses.stream()
 			.filter(s -> s.getCode().equals(ASYNCSTATUS))
 			.findFirst();
+
+		if (asyncStatus.isPresent())
+			status = asyncStatus.get();
+
+		return status;
 	}
 
 	public static boolean callInProcess(Status status)
 	{
-		return status.getMessage().equals(ASYNC_INPROCESS);
+		return status != null && status.getMessage().equals(ASYNC_INPROCESS);
 	}
 
 	public static boolean callFinished(Status status)
 	{
-		return status.getMessage().equals(ASYNC_FINISHED);
+		return status != null && status.getMessage().equals(ASYNC_FINISHED);
 	}
 }
