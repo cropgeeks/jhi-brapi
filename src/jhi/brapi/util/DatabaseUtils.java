@@ -76,6 +76,38 @@ public class DatabaseUtils
 		return statement;
 	}
 
+	public static PreparedStatement createParameterizedStatement(Connection con, String query, Map<String, List<String>> parameters)
+			throws SQLException
+	{
+		StringBuilder builder = new StringBuilder();
+		for (Map.Entry<String, List<String>> entry : parameters.entrySet())
+		{
+			if (builder.length() != 0)
+				builder.append(" AND ");
+
+			if (builder.length() == 0 && entry.getValue().size() > 0)
+				builder.append("WHERE ");
+
+			builder.append(entry.getKey())
+				   .append(DatabaseUtils.createInPlaceholders(entry.getValue().size()));
+		}
+
+		query = String.format(query, builder.toString());
+
+		// Prepare statement with low and high params for a limit query
+		PreparedStatement statement = con.prepareStatement(query);
+
+		int i = 1;
+
+		for (Map.Entry<String, List<String>> entry : parameters.entrySet())
+		{
+			for (String value : entry.getValue())
+				statement.setString(i++, value);
+		}
+
+		return statement;
+	}
+
 	public static PreparedStatement createByIdLimitStatement(Connection con, String query, String id, int currentPage, int pageSize)
 			throws SQLException
 	{

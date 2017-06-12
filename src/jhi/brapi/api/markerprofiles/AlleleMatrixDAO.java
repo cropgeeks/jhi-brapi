@@ -70,7 +70,7 @@ public class AlleleMatrixDAO
 
 			if(format != null)
 			{
-				if(format.equals("tsv"))
+				if(format.equals("tsv")) // TODO: TSV result should be transposed
 				{
 					File file = File.createTempFile("allelematrix", ".tsv");
 
