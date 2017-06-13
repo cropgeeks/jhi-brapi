@@ -13,6 +13,7 @@ import jhi.brapi.api.markers.*;
 import jhi.brapi.api.authentication.*;
 import jhi.brapi.api.studies.*;
 import jhi.brapi.api.phenotypes.*;
+import jhi.brapi.api.trials.*;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
@@ -107,6 +108,8 @@ public class Brapi extends Application
 		attachToRouter(router, "/studies-search", ServerStudies.class);  // FJ
 		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
 		attachToRouter(router, "/phenotypes-search", ServerPhenotypesSearch.class);
+		attachToRouter(router, "/trials", ServerTrialList.class);
+		attachToRouter(router, "/trials/{id}", ServerTrial.class);
 		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
 	}
 
