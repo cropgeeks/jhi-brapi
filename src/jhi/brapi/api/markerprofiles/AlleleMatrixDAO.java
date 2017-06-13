@@ -38,7 +38,6 @@ public class AlleleMatrixDAO
 			String[] tokens = profileId.split("-");
 			germplasmDbIdToDataset.put(tokens[1], tokens[0]);
 			germinatebaseIds.add(Integer.parseInt(tokens[1]));
-			datasetId = tokens[0];
 		}
 
 		String hdf5File = HDF5Utils.getHdf5File(datasetId);
@@ -231,5 +230,71 @@ public class AlleleMatrixDAO
 		catch (SQLException e) { e.printStackTrace(); }
 
 		return map;
+	}
+
+	private LinkedHashMap<String, String> getGermplasmMappingForNames(List<String> lineNames)
+	{
+		String query = "SELECT id, name FROM germinatebase WHERE name IN (%s) ORDER BY FIELD (name, %s)";
+
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createOrderedInStatement(con, query, lineNames);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			while(resultSet.next())
+				map.put(resultSet.getString("id"), resultSet.getString("name"));
+		}
+		catch (SQLException e) { e.printStackTrace(); }
+
+		return map;
+	}
+
+	public BrapiBaseResource<BrapiAlleleMatrix> getFromHdf5ByMatrixId(Request request, Context context, String matrixDbId, GenotypeEncodingParams params, int currentPage, int pageSize)
+	{
+		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
+
+		String datasetId = matrixDbId;
+
+		String hdf5File = HDF5Utils.getHdf5File(datasetId);
+
+		String folder = context.getParameters().getFirstValue("hdf5-folder");
+
+		// Get the bidirectional mapping between germplasm/marker id and name
+		LinkedHashMap<String, String> germplasmIdToName;
+		LinkedHashMap<String, String> markerIdToName;
+
+		try (Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File))) {
+			// If the user didn't request specific markers, get all of the ones from the file
+			markerIdToName = getMarkerMappingForNames(extractor.getMarkers());
+			germplasmIdToName = getGermplasmMappingForNames(extractor.getLines());
+
+			List<String> internalGermplasmIds = new ArrayList<>(germplasmIdToName.keySet());
+			List<String> internalMarkerIds = new ArrayList<>(markerIdToName.keySet());
+
+			int nrOfMarkers = internalMarkerIds.size();
+			int nrOfLines = internalGermplasmIds.size();
+
+			File file = File.createTempFile("allelematrix", ".dat");
+
+			Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName, params, datasetId);
+			converter.readInput();
+			converter.extractDataFJ(file.getAbsolutePath(), Collections.singletonList("# fjFile = genotype"));
+
+			BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
+
+//			String url = request.getRootRef().toString();
+//
+//			String datafile = url + "/files/" + file.getName();
+//			result.getMetadata().setDatafiles(Collections.singletonList(datafile));
+
+			result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
+			return result;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return new BrapiBaseResource<BrapiAlleleMatrix>(matrix, currentPage, pageSize, 0);
+		}
 	}
 }

@@ -20,6 +20,8 @@ public class ServerAlleleMatrix extends BaseBrapiServerResource
 	private String format;
 	private GenotypeEncodingParams params = new GenotypeEncodingParams();
 
+	private String matrixDbId;
+
 	public BrapiBaseResource<BrapiAlleleMatrix> getJson()
 	{
 		throw new ResourceException(404);
@@ -36,17 +38,28 @@ public class ServerAlleleMatrix extends BaseBrapiServerResource
 		{
 			if (parameter.getName().equalsIgnoreCase("markerprofileDbId"))
 				profileIds.add(parameter.getValue());
+
 			else if (parameter.getName().equalsIgnoreCase("markerDbId"))
 				markerIds.add(parameter.getValue());
+
 			else if (parameter.getName().equalsIgnoreCase("format"))
 				format = parameter.getValue();
+
 			else if (parameter.getName().equalsIgnoreCase("unknownString"))
 				params.setUnknownString(parameter.getValue());
+
 			else if (parameter.getName().equalsIgnoreCase("sepPhased"))
 				params.setSepPhased(parameter.getValue());
+
 			else if (parameter.getName().equalsIgnoreCase("sepUnphased"))
 				params.setSepUnphased(parameter.getValue());
+
+			else if (parameter.getName().equalsIgnoreCase("matrixDbId"))
+				matrixDbId = parameter.getValue();
 		}
+
+		if (matrixDbId != null)
+			return new JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5ByMatrixId(getRequest(), getContext(), matrixDbId, params, currentPage, pageSize));
 
 		return new JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), profileIds, markerIds, format, params, currentPage, pageSize));
 	}
