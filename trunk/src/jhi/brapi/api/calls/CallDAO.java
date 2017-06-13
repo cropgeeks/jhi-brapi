@@ -12,6 +12,10 @@ public class CallDAO
 
 	static
 	{
+		CALLS.add(new BrapiCall("allelematrices")
+			.addDatatype("json")
+			.addMethod("GET"));
+
 		CALLS.add(new BrapiCall("allelematrix-search")
 			.addDatatype("json")
 			.addDatatype("tsv")
