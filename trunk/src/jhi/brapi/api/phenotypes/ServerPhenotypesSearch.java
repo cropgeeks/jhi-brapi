@@ -49,13 +49,13 @@ public class ServerPhenotypesSearch extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BrapiListResource<BrapiPhenotypes> getJson()
+	public BrapiListResource<BrapiPhenotype> getJson()
 	{
 		return getData();
 	}
 
 	@Post("json")
-	public BrapiListResource<BrapiPhenotypes> postJson(BrapiPhenotypesPost params)
+	public BrapiListResource<BrapiPhenotype> postJson(BrapiPhenotypePost params)
 	{
 		germplasmDbIds = params.getGermplasmDbIds();
 		observationVariableDbIds = params.getObservationVariableDbIds();
@@ -70,7 +70,7 @@ public class ServerPhenotypesSearch extends BaseBrapiServerResource
 		return getData();
 	}
 
-	private BrapiListResource<BrapiPhenotypes> getData()
+	private BrapiListResource<BrapiPhenotype> getData()
 	{
 		Map<String, List<String>> parameters = new LinkedHashMap<>();
 		addParameterPost(parameters, "phenotypedata.germinatebase_id", germplasmDbIds);

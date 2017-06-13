@@ -7,7 +7,7 @@ import java.util.*;
 import jhi.brapi.api.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BrapiPhenotypesPost extends BasicPost
+public class BrapiPhenotypePost extends BasicPost
 {
 	private List<String> germplasmDbIds;
 	private List<String> observationVariableDbIds;
@@ -22,7 +22,7 @@ public class BrapiPhenotypesPost extends BasicPost
 		return germplasmDbIds;
 	}
 
-	public BrapiPhenotypesPost setGermplasmDbIds(List<String> germplasmDbIds)
+	public BrapiPhenotypePost setGermplasmDbIds(List<String> germplasmDbIds)
 	{
 		this.germplasmDbIds = germplasmDbIds;
 		return this;
@@ -33,7 +33,7 @@ public class BrapiPhenotypesPost extends BasicPost
 		return observationVariableDbIds;
 	}
 
-	public BrapiPhenotypesPost setObservationVariableDbIds(List<String> observationVariableDbIds)
+	public BrapiPhenotypePost setObservationVariableDbIds(List<String> observationVariableDbIds)
 	{
 		this.observationVariableDbIds = observationVariableDbIds;
 		return this;
@@ -44,7 +44,7 @@ public class BrapiPhenotypesPost extends BasicPost
 		return studyDbIds;
 	}
 
-	public BrapiPhenotypesPost setStudyDbIds(List<String> studyDbIds)
+	public BrapiPhenotypePost setStudyDbIds(List<String> studyDbIds)
 	{
 		this.studyDbIds = studyDbIds;
 		return this;
@@ -55,7 +55,7 @@ public class BrapiPhenotypesPost extends BasicPost
 		return locationDbIds;
 	}
 
-	public BrapiPhenotypesPost setLocationDbIds(List<String> locationDbIds)
+	public BrapiPhenotypePost setLocationDbIds(List<String> locationDbIds)
 	{
 		this.locationDbIds = locationDbIds;
 		return this;
@@ -66,7 +66,7 @@ public class BrapiPhenotypesPost extends BasicPost
 		return programDbIds;
 	}
 
-	public BrapiPhenotypesPost setProgramDbIds(List<String> programDbIds)
+	public BrapiPhenotypePost setProgramDbIds(List<String> programDbIds)
 	{
 		this.programDbIds = programDbIds;
 		return this;
@@ -77,7 +77,7 @@ public class BrapiPhenotypesPost extends BasicPost
 		return seasonDbIds;
 	}
 
-	public BrapiPhenotypesPost setSeasonDbIds(List<String> seasonDbIds)
+	public BrapiPhenotypePost setSeasonDbIds(List<String> seasonDbIds)
 	{
 		this.seasonDbIds = seasonDbIds;
 		return this;
@@ -88,7 +88,7 @@ public class BrapiPhenotypesPost extends BasicPost
 		return observationLevel;
 	}
 
-	public BrapiPhenotypesPost setObservationLevel(String observationLevel)
+	public BrapiPhenotypePost setObservationLevel(String observationLevel)
 	{
 		this.observationLevel = observationLevel;
 		return this;
