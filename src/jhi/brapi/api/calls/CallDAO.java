@@ -76,6 +76,11 @@ public class CallDAO
 			.addDatatype("json")
 			.addMethod("GET"));
 
+		CALLS.add(new BrapiCall("phenotypes-search")
+			.addDatatype("json")
+			.addMethod("GET")
+			.addMethod("POST"));
+
 		CALLS.add(new BrapiCall("token")
 			.addDatatype("json")
 			.addMethod("GET"));
