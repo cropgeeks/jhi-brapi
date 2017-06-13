@@ -3,6 +3,7 @@ package jhi.brapi.client;
 import java.util.*;
 
 import jhi.brapi.api.*;
+import jhi.brapi.api.allelematrices.*;
 import jhi.brapi.api.authentication.*;
 import jhi.brapi.api.calls.*;
 import jhi.brapi.api.genomemaps.*;
@@ -66,6 +67,20 @@ public interface RetrofitService
 	 */
 	@GET("studies-search")
 	Call<BrapiListResource<BrapiStudies>> getStudies(@Query("studyType") String studyType, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+
+	/**
+	 * Searches the BrAPI provider's list of matrices via an HTTP GET.
+	 *
+	 * @param pageSize	The desired size of the returned page
+	 * @param page		The desired page of data
+	 *
+	 * @return			A Retrofit Call object which contains a
+	 * 					BrapiListResource which wraps a List of BrapiAlleleMatrixDataset
+	 * 					objects which contain details of the matrices which
+	 * 					matched the search criteria
+	 */
+	@GET("allelematrices")
+	Call<BrapiListResource<BrapiAlleleMatrixDataset>> getMatrices(@Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 	/**
 	 * Searches the BrAPI provider's list of studies, filtering by the
