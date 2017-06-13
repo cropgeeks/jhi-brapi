@@ -97,6 +97,10 @@ public class CallDAO
 			.addDatatype("json")
 			.addMethod("GET"));
 
+		CALLS.add(new BrapiCall("crops")
+			.addDatatype("json")
+			.addMethod("GET"));
+
 		CALLS.sort(Comparator.comparing(BrapiCall::getCall));
 	}
 
