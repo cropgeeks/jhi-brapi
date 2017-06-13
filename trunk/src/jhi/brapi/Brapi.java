@@ -4,6 +4,7 @@ import java.util.*;
 
 import jhi.brapi.api.allelematrices.ServerAlleleMatrixDataset;
 import jhi.brapi.api.calls.*;
+import jhi.brapi.api.crops.*;
 import jhi.brapi.api.files.*;
 import jhi.brapi.api.genomemaps.*;
 import jhi.brapi.api.germplasm.*;
@@ -111,6 +112,7 @@ public class Brapi extends Application
 		attachToRouter(router, "/trials", ServerTrialList.class);
 		attachToRouter(router, "/trials/{id}", ServerTrial.class);
 		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
+		attachToRouter(router, "/crops", ServerCrop.class);
 	}
 
 	private void attachToRouter(Router router, String url, Class<? extends ServerResource> clazz)
