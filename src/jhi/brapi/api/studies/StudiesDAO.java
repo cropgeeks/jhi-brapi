@@ -87,7 +87,6 @@ public class StudiesDAO
 			String[] yearArray = seasonString.split(",");
 			studies.setSeasons(Arrays.asList(yearArray));
 		}
-		studies.setAdditionalInfo(new LinkedHashMap<String, Object>());
 
 		return studies;
 	}
