@@ -15,11 +15,11 @@ public class PhenotypesDAO
 	private final String getLinesForDatasets = "SELECT SQL_CALC_FOUND_ROWS germinatebase.*, datasets.*, locations.* FROM " + tables + " %s GROUP BY germinatebase.id, datasets.id, locations.id LIMIT ?, ?";
 	private final String getDataForLines     = "SELECT * FROM phenotypedata LEFT JOIN phenotypes ON phenotypes.id = phenotypedata.phenotype_id %s";
 
-	public BrapiListResource<BrapiPhenotypes> getPhenotypesForSearch(Map<String, List<String>> parameters, int currentPage, int pageSize)
+	public BrapiListResource<BrapiPhenotype> getPhenotypesForSearch(Map<String, List<String>> parameters, int currentPage, int pageSize)
 	{
 		// Create empty BrapiBaseResource of type BrapiGermplasm (if for whatever reason we can't get data from the database
 		// this is what's returned
-		BrapiListResource<BrapiPhenotypes> result = new BrapiListResource<>();
+		BrapiListResource<BrapiPhenotype> result = new BrapiListResource<>();
 
 		// Paginate over the data by passing the currentPage and pageSize values to the code which generates the
 		// prepared statement (which includes a limit statement)
@@ -34,11 +34,11 @@ public class PhenotypesDAO
 			 PreparedStatement statement = DatabaseUtils.createParameterizedLimitStatement(con, getLinesForDatasets, reducedParameters, currentPage, pageSize);
 			 ResultSet resultSet = statement.executeQuery())
 		{
-			List<BrapiPhenotypes> list = new ArrayList<>();
+			List<BrapiPhenotype> list = new ArrayList<>();
 
 			while (resultSet.next())
 			{
-				BrapiPhenotypes phenotypes = getBrapiPhenotypes(resultSet);
+				BrapiPhenotype phenotypes = getBrapiPhenotypes(resultSet);
 
 				Map<String, List<String>> localParameters = new HashMap<>(parameters);
 				localParameters.put("phenotypedata.dataset_id", Collections.singletonList(phenotypes.getStudyDbId()));
@@ -62,7 +62,7 @@ public class PhenotypesDAO
 			long totalCount = DatabaseUtils.getTotalCount(statement);
 
 			// Pass the currentPage and totalCount to the BrapiBaseResource constructor so we generate correct metadata
-			result = new BrapiListResource<BrapiPhenotypes>(list, currentPage, pageSize, totalCount);
+			result = new BrapiListResource<BrapiPhenotype>(list, currentPage, pageSize, totalCount);
 		}
 		catch (SQLException e)
 		{
@@ -84,9 +84,9 @@ public class PhenotypesDAO
 		return observation;
 	}
 
-	private BrapiPhenotypes getBrapiPhenotypes(ResultSet resultSet) throws SQLException
+	private BrapiPhenotype getBrapiPhenotypes(ResultSet resultSet) throws SQLException
 	{
-		BrapiPhenotypes phenotypes = new BrapiPhenotypes();
+		BrapiPhenotype phenotypes = new BrapiPhenotype();
 
 		phenotypes.setGermplasmDbId(resultSet.getString("germinatebase.id"));
 		phenotypes.setGermplasmName(resultSet.getString("germinatebase.name"));
