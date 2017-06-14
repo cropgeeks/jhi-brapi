@@ -38,6 +38,7 @@ public class AlleleMatrixDAO
 			String[] tokens = profileId.split("-");
 			germplasmDbIdToDataset.put(tokens[1], tokens[0]);
 			germinatebaseIds.add(Integer.parseInt(tokens[1]));
+			datasetId = tokens[0];
 		}
 
 		String hdf5File = HDF5Utils.getHdf5File(datasetId);
@@ -97,10 +98,11 @@ public class AlleleMatrixDAO
 
 					BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
 
-					String url = request.getRootRef().toString();
-
-					String datafile = url + "/files/" + file.getName();
-					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
+//					String url = request.getRootRef().toString();
+//
+//					String datafile = url + "/files/" + file.getName();
+//					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
+					result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
 					return result;
 				}
 				else
