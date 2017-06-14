@@ -18,10 +18,9 @@ public class BrapiObservation
 		return observationDbId;
 	}
 
-	public BrapiObservation setObservationDbId(String observationDbId)
+	public void setObservationDbId(String observationDbId)
 	{
 		this.observationDbId = observationDbId;
-		return this;
 	}
 
 	public String getObservationVariableDbId()
@@ -29,10 +28,9 @@ public class BrapiObservation
 		return observationVariableDbId;
 	}
 
-	public BrapiObservation setObservationVariableDbId(String observationVariableDbId)
+	public void setObservationVariableDbId(String observationVariableDbId)
 	{
 		this.observationVariableDbId = observationVariableDbId;
-		return this;
 	}
 
 	public String getObservationVariableName()
@@ -40,10 +38,9 @@ public class BrapiObservation
 		return observationVariableName;
 	}
 
-	public BrapiObservation setObservationVariableName(String observationVariableName)
+	public void setObservationVariableName(String observationVariableName)
 	{
 		this.observationVariableName = observationVariableName;
-		return this;
 	}
 
 	public String getSeason()
@@ -51,10 +48,9 @@ public class BrapiObservation
 		return season;
 	}
 
-	public BrapiObservation setSeason(String season)
+	public void setSeason(String season)
 	{
 		this.season = season;
-		return this;
 	}
 
 	public String getValue()
@@ -62,10 +58,9 @@ public class BrapiObservation
 		return value;
 	}
 
-	public BrapiObservation setValue(String value)
+	public void setValue(String value)
 	{
 		this.value = value;
-		return this;
 	}
 
 	public String getObservationTimeStamp()
@@ -73,10 +68,9 @@ public class BrapiObservation
 		return observationTimeStamp;
 	}
 
-	public BrapiObservation setObservationTimeStamp(String observationTimeStamp)
+	public void setObservationTimeStamp(String observationTimeStamp)
 	{
 		this.observationTimeStamp = observationTimeStamp;
-		return this;
 	}
 
 	public String getCollector()
@@ -84,9 +78,8 @@ public class BrapiObservation
 		return collector;
 	}
 
-	public BrapiObservation setCollector(String collector)
+	public void setCollector(String collector)
 	{
 		this.collector = collector;
-		return this;
 	}
 }

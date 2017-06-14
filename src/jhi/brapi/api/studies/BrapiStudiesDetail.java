@@ -12,6 +12,7 @@ public class BrapiStudiesDetail
 {
 	private String studyDbId;
 	private String studyName;
+	private String studyDescription;
 	private String studyType;
 	private List<String> seasons;
 	private String trialDbId;
@@ -19,8 +20,10 @@ public class BrapiStudiesDetail
 	private Date startDate;
 	private Date endDate;
 	private boolean active;
+	private String license;
 	private BrapiLocation location;
 	private List<BrapiContact> contacts;
+	private BrapiLastUpdate lastUpdate;
 	private Object additionalInfo;
 
 	public String getStudyDbId()
@@ -34,6 +37,12 @@ public class BrapiStudiesDetail
 
 	public void setStudyName(String studyName)
 		{ this.studyName = studyName; }
+
+	public String getStudyDescription()
+		{ return studyDescription; }
+
+	public void setStudyDescription(String studyDescription)
+		{ this.studyDescription = studyDescription; }
 
 	public String getStudyType()
 		{ return studyType; }
@@ -94,4 +103,16 @@ public class BrapiStudiesDetail
 
 	public void setActive(boolean active)
 		{ this.active = active; }
+
+	public String getLicense()
+		{ return license; }
+
+	public void setLicense(String license)
+		{ this.license = license; }
+
+	public BrapiLastUpdate getLastUpdate()
+		{ return lastUpdate; }
+
+	public void setLastUpdate(BrapiLastUpdate lastUpdate)
+		{ this.lastUpdate = lastUpdate; }
 }

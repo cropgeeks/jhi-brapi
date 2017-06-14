@@ -24,6 +24,7 @@ public class BrapiPhenotype
 	private String X;
 	private String Y;
 	private List<BrapiTreatment> treatments;
+	private List<BrapiObservationUnitXref> observationUnitXref;
 	private List<BrapiObservation> observations;
 
 	public String getObservationUnitDbId()
@@ -31,10 +32,9 @@ public class BrapiPhenotype
 		return observationUnitDbId;
 	}
 
-	public BrapiPhenotype setObservationUnitDbId(String observationUnitDbId)
+	public void setObservationUnitDbId(String observationUnitDbId)
 	{
 		this.observationUnitDbId = observationUnitDbId;
-		return this;
 	}
 
 	public String getStudyDbId()
@@ -42,10 +42,9 @@ public class BrapiPhenotype
 		return studyDbId;
 	}
 
-	public BrapiPhenotype setStudyDbId(String studyDbId)
+	public void setStudyDbId(String studyDbId)
 	{
 		this.studyDbId = studyDbId;
-		return this;
 	}
 
 	public String getStudyName()
@@ -53,10 +52,9 @@ public class BrapiPhenotype
 		return studyName;
 	}
 
-	public BrapiPhenotype setStudyName(String studyName)
+	public void setStudyName(String studyName)
 	{
 		this.studyName = studyName;
-		return this;
 	}
 
 	public String getStudyLocationDbId()
@@ -64,10 +62,9 @@ public class BrapiPhenotype
 		return studyLocationDbId;
 	}
 
-	public BrapiPhenotype setStudyLocationDbId(String studyLocationDbId)
+	public void setStudyLocationDbId(String studyLocationDbId)
 	{
 		this.studyLocationDbId = studyLocationDbId;
-		return this;
 	}
 
 	public String getStudyLocation()
@@ -75,10 +72,9 @@ public class BrapiPhenotype
 		return studyLocation;
 	}
 
-	public BrapiPhenotype setStudyLocation(String studyLocation)
+	public void setStudyLocation(String studyLocation)
 	{
 		this.studyLocation = studyLocation;
-		return this;
 	}
 
 	public String getObservationLevel()
@@ -86,10 +82,9 @@ public class BrapiPhenotype
 		return observationLevel;
 	}
 
-	public BrapiPhenotype setObservationLevel(String observationLevel)
+	public void setObservationLevel(String observationLevel)
 	{
 		this.observationLevel = observationLevel;
-		return this;
 	}
 
 	public String getObservationLevels()
@@ -97,10 +92,9 @@ public class BrapiPhenotype
 		return observationLevels;
 	}
 
-	public BrapiPhenotype setObservationLevels(String observationLevels)
+	public void setObservationLevels(String observationLevels)
 	{
 		this.observationLevels = observationLevels;
-		return this;
 	}
 
 	public String getPlotNumber()
@@ -108,10 +102,9 @@ public class BrapiPhenotype
 		return plotNumber;
 	}
 
-	public BrapiPhenotype setPlotNumber(String plotNumber)
+	public void setPlotNumber(String plotNumber)
 	{
 		this.plotNumber = plotNumber;
-		return this;
 	}
 
 	public String getPlantNumber()
@@ -119,10 +112,9 @@ public class BrapiPhenotype
 		return plantNumber;
 	}
 
-	public BrapiPhenotype setPlantNumber(String plantNumber)
+	public void setPlantNumber(String plantNumber)
 	{
 		this.plantNumber = plantNumber;
-		return this;
 	}
 
 	public String getBlockNumber()
@@ -130,10 +122,9 @@ public class BrapiPhenotype
 		return blockNumber;
 	}
 
-	public BrapiPhenotype setBlockNumber(String blockNumber)
+	public void setBlockNumber(String blockNumber)
 	{
 		this.blockNumber = blockNumber;
-		return this;
 	}
 
 	public String getReplicate()
@@ -141,10 +132,9 @@ public class BrapiPhenotype
 		return replicate;
 	}
 
-	public BrapiPhenotype setReplicate(String replicate)
+	public void setReplicate(String replicate)
 	{
 		this.replicate = replicate;
-		return this;
 	}
 
 	public String getProgramName()
@@ -152,10 +142,9 @@ public class BrapiPhenotype
 		return programName;
 	}
 
-	public BrapiPhenotype setProgramName(String programName)
+	public void setProgramName(String programName)
 	{
 		this.programName = programName;
-		return this;
 	}
 
 	public String getGermplasmDbId()
@@ -163,10 +152,9 @@ public class BrapiPhenotype
 		return germplasmDbId;
 	}
 
-	public BrapiPhenotype setGermplasmDbId(String germplasmDbId)
+	public void setGermplasmDbId(String germplasmDbId)
 	{
 		this.germplasmDbId = germplasmDbId;
-		return this;
 	}
 
 	public String getGermplasmName()
@@ -174,10 +162,9 @@ public class BrapiPhenotype
 		return germplasmName;
 	}
 
-	public BrapiPhenotype setGermplasmName(String germplasmName)
+	public void setGermplasmName(String germplasmName)
 	{
 		this.germplasmName = germplasmName;
-		return this;
 	}
 
 	public String getX()
@@ -185,10 +172,9 @@ public class BrapiPhenotype
 		return X;
 	}
 
-	public BrapiPhenotype setX(String x)
+	public void setX(String x)
 	{
 		X = x;
-		return this;
 	}
 
 	public String getY()
@@ -196,10 +182,9 @@ public class BrapiPhenotype
 		return Y;
 	}
 
-	public BrapiPhenotype setY(String y)
+	public void setY(String y)
 	{
 		Y = y;
-		return this;
 	}
 
 	public List<BrapiTreatment> getTreatments()
@@ -207,10 +192,19 @@ public class BrapiPhenotype
 		return treatments;
 	}
 
-	public BrapiPhenotype setTreatments(List<BrapiTreatment> treatments)
+	public void setTreatments(List<BrapiTreatment> treatments)
 	{
 		this.treatments = treatments;
-		return this;
+	}
+
+	public List<BrapiObservationUnitXref> getObservationUnitXref()
+	{
+		return observationUnitXref;
+	}
+
+	public void setObservationUnitXref(List<BrapiObservationUnitXref> observationUnitXref)
+	{
+		this.observationUnitXref = observationUnitXref;
 	}
 
 	public List<BrapiObservation> getObservations()
@@ -218,9 +212,8 @@ public class BrapiPhenotype
 		return observations;
 	}
 
-	public BrapiPhenotype setObservations(List<BrapiObservation> observations)
+	public void setObservations(List<BrapiObservation> observations)
 	{
 		this.observations = observations;
-		return this;
 	}
 }

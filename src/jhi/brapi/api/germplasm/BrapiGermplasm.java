@@ -23,6 +23,7 @@ public class BrapiGermplasm
 	private List<String> typeOfGermplasmStorageCode;
 	private String genus;
 	private String species;
+	private List<BrapiTaxon> taxonIds;
 	private String speciesAuthority;
 	private String subtaxa;
 	private String subtaxaAuthority;
@@ -124,6 +125,12 @@ public class BrapiGermplasm
 
 	public void setSpecies(String species)
 		{ this.species = species; }
+
+	public List<BrapiTaxon> getTaxonIds()
+		{ return taxonIds; }
+
+	public void setTaxonIds(List<BrapiTaxon> taxonIds)
+		{ this.taxonIds = taxonIds; }
 
 	public String getSpeciesAuthority()
 		{ return speciesAuthority; }

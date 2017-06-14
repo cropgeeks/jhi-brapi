@@ -1,7 +1,5 @@
 package jhi.brapi.api.trials;
 
-import jhi.brapi.api.studies.*;
-
 import java.util.*;
 
 public class BrapiTrial
@@ -21,10 +19,9 @@ public class BrapiTrial
 		return trialDbId;
 	}
 
-	public BrapiTrial setTrialDbId(String trialDbId)
+	public void setTrialDbId(String trialDbId)
 	{
 		this.trialDbId = trialDbId;
-		return this;
 	}
 
 	public String getTrialName()
@@ -32,10 +29,9 @@ public class BrapiTrial
 		return trialName;
 	}
 
-	public BrapiTrial setTrialName(String trialName)
+	public void setTrialName(String trialName)
 	{
 		this.trialName = trialName;
-		return this;
 	}
 
 	public String getProgramDbId()
@@ -43,10 +39,9 @@ public class BrapiTrial
 		return programDbId;
 	}
 
-	public BrapiTrial setProgramDbId(String programDbId)
+	public void setProgramDbId(String programDbId)
 	{
 		this.programDbId = programDbId;
-		return this;
 	}
 
 	public String getProgramName()
@@ -54,10 +49,9 @@ public class BrapiTrial
 		return programName;
 	}
 
-	public BrapiTrial setProgramName(String programName)
+	public void setProgramName(String programName)
 	{
 		this.programName = programName;
-		return this;
 	}
 
 	public Date getStartDate()
@@ -65,10 +59,9 @@ public class BrapiTrial
 		return startDate;
 	}
 
-	public BrapiTrial setStartDate(Date startDate)
+	public void setStartDate(Date startDate)
 	{
 		this.startDate = startDate;
-		return this;
 	}
 
 	public Date getEndDate()
@@ -76,10 +69,9 @@ public class BrapiTrial
 		return endDate;
 	}
 
-	public BrapiTrial setEndDate(Date endDate)
+	public void setEndDate(Date endDate)
 	{
 		this.endDate = endDate;
-		return this;
 	}
 
 	public String getActive()
@@ -87,10 +79,9 @@ public class BrapiTrial
 		return active;
 	}
 
-	public BrapiTrial setActive(String active)
+	public void setActive(String active)
 	{
 		this.active = active;
-		return this;
 	}
 
 	public List<BrapiTrialStudy> getStudies()
@@ -98,10 +89,9 @@ public class BrapiTrial
 		return studies;
 	}
 
-	public BrapiTrial setStudies(List<BrapiTrialStudy> studies)
+	public void setStudies(List<BrapiTrialStudy> studies)
 	{
 		this.studies = studies;
-		return this;
 	}
 
 	public Map<String, String> getAdditionalInfo()
@@ -109,9 +99,8 @@ public class BrapiTrial
 		return additionalInfo;
 	}
 
-	public BrapiTrial setAdditionalInfo(Map<String, String> additionalInfo)
+	public void setAdditionalInfo(Map<String, String> additionalInfo)
 	{
 		this.additionalInfo = additionalInfo;
-		return this;
 	}
 }

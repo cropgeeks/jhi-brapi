@@ -14,10 +14,9 @@ public class BrapiTrialStudy
 		return studyDbId;
 	}
 
-	public BrapiTrialStudy setStudyDbId(String studyDbId)
+	public void setStudyDbId(String studyDbId)
 	{
 		this.studyDbId = studyDbId;
-		return this;
 	}
 
 	public String getStudyName()
@@ -25,10 +24,9 @@ public class BrapiTrialStudy
 		return studyName;
 	}
 
-	public BrapiTrialStudy setStudyName(String studyName)
+	public void setStudyName(String studyName)
 	{
 		this.studyName = studyName;
-		return this;
 	}
 
 	public String getLocationName()
@@ -36,9 +34,8 @@ public class BrapiTrialStudy
 		return locationName;
 	}
 
-	public BrapiTrialStudy setLocationName(String locationName)
+	public void setLocationName(String locationName)
 	{
 		this.locationName = locationName;
-		return this;
 	}
 }
