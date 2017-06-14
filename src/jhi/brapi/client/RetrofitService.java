@@ -80,7 +80,7 @@ public interface RetrofitService
 	 * 					matched the search criteria
 	 */
 	@GET("allelematrices")
-	Call<BrapiListResource<BrapiAlleleMatrixDataset>> getMatrices(@Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	Call<BrapiListResource<BrapiAlleleMatrixDataset>> getMatrices(@Query("studyDbId") String studyDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 	/**
 	 * Searches the BrAPI provider's list of studies, filtering by the
