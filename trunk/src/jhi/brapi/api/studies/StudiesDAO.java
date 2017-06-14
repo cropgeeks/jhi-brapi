@@ -173,9 +173,18 @@ public class StudiesDAO
 		}
 		study.setAdditionalInfo(new LinkedHashMap<String, Object>());
 
-		BrapiLocation location = new BrapiLocation();
-		location.setLocationDbId(resultSet.getString("location_id"));
-		study.setLocation(location);
+		String locationId = resultSet.getString("location_id");
+		if(locationId != null)
+		{
+			BrapiLocation location = new BrapiLocation();
+			location.setLocationDbId(locationId);
+			study.setLocation(location);
+		}
+
+		BrapiLastUpdate lastUpdate = new BrapiLastUpdate();
+		lastUpdate.setVersion("datasets.version");
+		lastUpdate.setTimestamp("datasets.updated_on");
+		study.setLastUpdate(lastUpdate);
 
 		return study;
 	}

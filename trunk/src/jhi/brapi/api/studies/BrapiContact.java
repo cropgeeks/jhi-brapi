@@ -7,6 +7,7 @@ public class BrapiContact
 {
 	private String contactDbId;
 	private String name;
+	private String instituteName;
 	private String email;
 	private String type;
 	private String orcid;
@@ -22,6 +23,12 @@ public class BrapiContact
 
 	public void setName(String name)
 		{ this.name = name; }
+
+	public String getInstituteName()
+		{ return instituteName;	}
+
+	public void setInstituteName(String instituteName)
+		{ this.instituteName = instituteName; }
 
 	public String getEmail()
 		{ return email; }

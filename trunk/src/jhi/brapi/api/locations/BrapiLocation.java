@@ -11,6 +11,8 @@ public class BrapiLocation
 	private double latitude;
 	private double longitude;
 	private double altitude;
+	private String instituteName;
+	private String instituteAdress;
 	private Object additionalInfo = null;
 
 	public String getLocationDbId()
@@ -66,6 +68,18 @@ public class BrapiLocation
 
 	public void setAltitude(double altitude)
 		{ this.altitude = altitude; }
+
+	public String getInstituteName()
+		{ return instituteName; }
+
+	public void setInstituteName(String instituteName)
+		{ this.instituteName = instituteName; }
+
+	public String getInstituteAdress()
+		{ return instituteAdress; }
+
+	public void setInstituteAdress(String instituteAdress)
+		{ this.instituteAdress = instituteAdress; }
 
 	public Object getAdditionalInfo()
 		{ return additionalInfo; }

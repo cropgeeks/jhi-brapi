@@ -13,10 +13,9 @@ public class BrapiTreatment
 		return factor;
 	}
 
-	public BrapiTreatment setFactor(String factor)
+	public void setFactor(String factor)
 	{
 		this.factor = factor;
-		return this;
 	}
 
 	public String getModality()
@@ -24,9 +23,8 @@ public class BrapiTreatment
 		return modality;
 	}
 
-	public BrapiTreatment setModality(String modality)
+	public void setModality(String modality)
 	{
 		this.modality = modality;
-		return this;
 	}
 }
