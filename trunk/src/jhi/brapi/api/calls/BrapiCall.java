@@ -28,6 +28,20 @@ public class BrapiCall
 		return this;
 	}
 
+	public boolean hasDataType(String dataType)
+	{
+		return datatypes.stream()
+			.filter(d -> d.equalsIgnoreCase(dataType))
+			.count() >= 1;
+	}
+
+	public boolean hasMethod(String method)
+	{
+		return methods.stream()
+			.filter(d -> d.equalsIgnoreCase(method))
+			.count() >= 1;
+	}
+
 	public String getCall()
 		{ return call; }
 
