@@ -44,13 +44,13 @@ public interface RetrofitService
 	 * Queries the BrAPI provider to attempt to retrieve an authentication token
 	 * using the provided username and password.
 	 *
-	 * @param tokenPost An BrapiTokenPost object with appropriate user data
+	 * @param tokenPost An BrapiTokenLoginPost object with appropriate user data
 	 * @return			A Retrofit Call object which wraps a BrapiSeesionToken
 	 * 					object to authenticate the user with the BrAPI provider
 	 * 					going forward
 	 */
 	@POST("token")
-	Call<BrapiSessionToken> getAuthToken(@Body BrapiTokenPost tokenPost);
+	Call<BrapiSessionToken> getAuthToken(@Body BrapiTokenLoginPost tokenPost);
 
 	/**
 	 * Searches the BrAPI provider's list of studies, filtering by the studyType

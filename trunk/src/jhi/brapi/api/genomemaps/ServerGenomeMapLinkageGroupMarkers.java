@@ -21,30 +21,22 @@ public class ServerGenomeMapLinkageGroupMarkers extends BaseBrapiServerResource
 		id = (String)getRequestAttributes().get("id");
 		linkageGroup = (String)getRequestAttributes().get("linkageGroupId");
 
-		String minS = getQueryValue("min");
-		if (minS != null)
+		try
 		{
-			try
-			{
-				this.min = Double.parseDouble(minS);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+			min = Double.parseDouble(getQueryValue("min"));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 
-		String maxS = getQueryValue("max");
-		if (minS != null)
+		try
 		{
-			try
-			{
-				this.max = Double.parseDouble(maxS);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+			max = Double.parseDouble(getQueryValue("max"));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 

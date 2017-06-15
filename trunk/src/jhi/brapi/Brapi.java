@@ -48,8 +48,8 @@ public class Brapi extends Application
 		// the available calls and access the login URI without requiring
 		// authentication
 		Router unauthenticated = new Router(context);
-		attachToRouter(unauthenticated, "/token", ServerTokenAuthenticator.class);
 		attachToRouter(unauthenticated, "/calls", ServerCalls.class);  // FJ
+		attachToRouter(unauthenticated, "/token", ServerTokenAuthenticator.class);
 
 		Router appRoutes = unauthenticated;
 		boolean authenticate = Boolean.parseBoolean(context.getParameters().getFirstValue("auth-routes"));
@@ -89,10 +89,16 @@ public class Brapi extends Application
 	{
 		// These routes require an authentication token to access (you can get
 		// this by providing a username and password to the /token resource
+		attachToRouter(router, "/allelematrix-search", ServerAlleleMatrix.class); // FJ
+		attachToRouter(router, "/allelematrix-search/status/{id}", ServerStatus.class);
+		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
+		attachToRouter(router, "/crops", ServerCrop.class);
+		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
 		attachToRouter(router, "/germplasm/{id}", ServerGermplasm.class);
 		attachToRouter(router, "/germplasm/{id}/markerprofiles", ServerGermplasmMarkerProfiles.class);
 		attachToRouter(router, "/germplasm/{id}/pedigree", ServerGermplasmPedigree.class);
 		attachToRouter(router, "/germplasm-search", ServerGermplasmSearch.class);
+		attachToRouter(router, "/locations", ServerLocations.class);
 		attachToRouter(router, "/maps", ServerGenomeMaps.class); // FJ
 		attachToRouter(router, "/maps/{id}", ServerGenomeMapMetaData.class); // FJ
 		attachToRouter(router, "/maps/{id}/positions", ServerGenomeMapMarkerData.class); // FJ
@@ -101,18 +107,12 @@ public class Brapi extends Application
 		attachToRouter(router, "/markerprofiles/{id}", ServerMarkerProfileData.class);
 		attachToRouter(router, "/markers", ServerMarkersSearch.class);
 		attachToRouter(router, "/markers/{id}", ServerMarkersData.class);
-		attachToRouter(router, "/allelematrix-search", ServerAlleleMatrix.class); // FJ
-		attachToRouter(router, "/allelematrix-search/status/{id}", ServerStatus.class);
-		attachToRouter(router, "/locations", ServerLocations.class);
+		attachToRouter(router, "/phenotypes-search", ServerPhenotypesSearch.class);
 		attachToRouter(router, "/studies/{id}", ServerStudyDetails.class);
 		attachToRouter(router, "/studies/{id}/table", ServerStudiesAsTable.class);
 		attachToRouter(router, "/studies-search", ServerStudies.class);  // FJ
-		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
-		attachToRouter(router, "/phenotypes-search", ServerPhenotypesSearch.class);
 		attachToRouter(router, "/trials", ServerTrialList.class);
 		attachToRouter(router, "/trials/{id}", ServerTrial.class);
-		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
-		attachToRouter(router, "/crops", ServerCrop.class);
 	}
 
 	private void attachToRouter(Router router, String url, Class<? extends ServerResource> clazz)

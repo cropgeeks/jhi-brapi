@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.*;
 import jhi.brapi.api.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BrapiTokenPost
+public class BrapiTokenLoginPost
 {
 	private String username;
 	private String password;
 	private String grant_type;
 	private String client_id;
 
-	public BrapiTokenPost()
+	public BrapiTokenLoginPost()
 	{
 	}
 
-	public BrapiTokenPost(String username, String password, String grant_type, String client_id)
+	public BrapiTokenLoginPost(String username, String password, String grant_type, String client_id)
 	{
 		this.username = username;
 		this.password = password;
