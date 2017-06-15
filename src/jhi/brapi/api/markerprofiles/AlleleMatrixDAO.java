@@ -266,16 +266,11 @@ public class AlleleMatrixDAO
 		LinkedHashMap<String, String> germplasmIdToName;
 		LinkedHashMap<String, String> markerIdToName;
 
-		try (Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File))) {
+		try (Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File)))
+		{
 			// If the user didn't request specific markers, get all of the ones from the file
 			markerIdToName = getMarkerMappingForNames(extractor.getMarkers());
 			germplasmIdToName = getGermplasmMappingForNames(extractor.getLines());
-
-			List<String> internalGermplasmIds = new ArrayList<>(germplasmIdToName.keySet());
-			List<String> internalMarkerIds = new ArrayList<>(markerIdToName.keySet());
-
-			int nrOfMarkers = internalMarkerIds.size();
-			int nrOfLines = internalGermplasmIds.size();
 
 			File file = File.createTempFile("allelematrix", ".dat");
 
