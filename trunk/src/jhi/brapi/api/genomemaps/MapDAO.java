@@ -210,7 +210,7 @@ public class MapDAO
 		BrapiListResource<BrapiMarkerPosition> result = new BrapiListResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes.toArray(new String[chromosomes.size()]), currentPage, pageSize);
+			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes == null ? null : chromosomes.toArray(new String[chromosomes.size()]), currentPage, pageSize);
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
 			List<BrapiMarkerPosition> markerPositions = getMapMarkersListFromResultSet(resultSet);
