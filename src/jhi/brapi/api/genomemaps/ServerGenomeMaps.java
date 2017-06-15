@@ -13,9 +13,19 @@ public class ServerGenomeMaps extends BaseBrapiServerResource
 {
 	private MapDAO mapDAO = new MapDAO();
 
+	private String species;
+
+	@Override
+	public void doInit()
+	{
+		super.doInit();
+		species = getAttribute("species");
+	}
+
 	@Get("json")
 	public BrapiListResource<BrapiGenomeMap> getJson()
 	{
+		// TODO: Filter on species? How?
 		return mapDAO.getAll(currentPage, pageSize);
 	}
 }

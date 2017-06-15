@@ -27,25 +27,13 @@ public class ServerPhenotypesSearch extends BaseBrapiServerResource
 	{
 		super.doInit();
 
-		germplasmDbIds = parseList("germplasmDbIds");
-		observationVariableDbIds = parseList("observationVariableDbIds");
-		studyDbIds = parseList("studyDbIds");
-		locationDbIds = parseList("locationDbIds");
-		programDbIds = parseList("programDbIds");
-		seasonDbIds = parseList("seasonDbIds");
+		germplasmDbIds = parseGetParameterList("germplasmDbIds");
+		observationVariableDbIds = parseGetParameterList("observationVariableDbIds");
+		studyDbIds = parseGetParameterList("studyDbIds");
+		locationDbIds = parseGetParameterList("locationDbIds");
+		programDbIds = parseGetParameterList("programDbIds");
+		seasonDbIds = parseGetParameterList("seasonDbIds");
 		observationLevel = getQueryValue("observationLevel");
-	}
-
-	private List<String> parseList(String input)
-	{
-		input = getQueryValue(input);
-
-		if (input != null)
-			return Arrays.stream(input.split(","))
-						 .map(String::trim)
-						 .collect(Collectors.toList());
-		else
-			return null;
 	}
 
 	@Get("json")

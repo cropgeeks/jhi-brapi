@@ -205,12 +205,12 @@ public class MapDAO
 		return createByChromStatement(con, detailByChromQuery, id, chromosome);
 	}
 
-	public BrapiListResource<BrapiMarkerPosition> getByIdMarkers(String id, String[] chromosomes, int currentPage, int pageSize)
+	public BrapiListResource<BrapiMarkerPosition> getByIdMarkers(String id, List<String> chromosomes, int currentPage, int pageSize)
 	{
 		BrapiListResource<BrapiMarkerPosition> result = new BrapiListResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes, currentPage, pageSize);
+			 PreparedStatement mapStatement = createByIdStatementMarkers(con, mapMarkersQuery, id, chromosomes.toArray(new String[chromosomes.size()]), currentPage, pageSize);
 			 ResultSet resultSet = mapStatement.executeQuery())
 		{
 			List<BrapiMarkerPosition> markerPositions = getMapMarkersListFromResultSet(resultSet);

@@ -13,9 +13,6 @@ public class ServerGermplasmSearch extends BaseBrapiServerResource
 {
 	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
-	private String dbId;
-	private String name;
-
 	private List<String> germplasmPUIs;
 	private List<String> germplasmDbIds;
 	private List<String> germplasmSpecies;
@@ -27,16 +24,19 @@ public class ServerGermplasmSearch extends BaseBrapiServerResource
 	public void doInit()
 	{
 		super.doInit();
-		this.dbId = getQueryValue("germplasmDbId");
-		this.name = getQueryValue("germplasmName");
+		germplasmDbIds = parseGetParameterList("germplasmDbId");
+		germplasmNames = parseGetParameterList("germplasmName");
+		germplasmPUIs = parseGetParameterList("germplasmPUI");
 	}
 
 	@Get("json")
 	public BrapiListResource<BrapiGermplasm> getJson()
 	{
-		LinkedHashMap<String, List<String>> parameters = new LinkedHashMap<>();
-		addParameter(parameters, "germinatebase.id", dbId);
-		addParameter(parameters, "germinatebase.name", name);
+		Map<String, List<String>> parameters = new LinkedHashMap<>();
+		addParameterPost(parameters, "germinatebase.id", germplasmDbIds);
+		addParameterPost(parameters, "germinatebase.name", germplasmNames);
+		addParameterPost(parameters, "genus", germplasmGenus);
+		addParameterPost(parameters, "species", germplasmSpecies);
 
 		return germplasmDAO.getMcpdForSearch(parameters, currentPage, pageSize);
 	}
@@ -59,13 +59,7 @@ public class ServerGermplasmSearch extends BaseBrapiServerResource
 
 		setPaginationParameters(params);
 
-		Map<String, List<String>> parameters = new LinkedHashMap<>();
-		addParameterPost(parameters, "germinatebase.id", germplasmDbIds);
-		addParameterPost(parameters, "germinatebase.name", germplasmNames);
-		addParameterPost(parameters, "genus", germplasmGenus);
-		addParameterPost(parameters, "species", germplasmSpecies);
-
-		return germplasmDAO.getMcpdForSearch(parameters, currentPage, pageSize);
+		return getJson();
 	}
 
 	private void addParameterPost(Map<String, List<String>> map, String key, List<String> value)

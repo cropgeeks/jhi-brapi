@@ -1,12 +1,11 @@
 package jhi.brapi.api.authentication;
 
-import java.math.*;
-import java.security.*;
-
 import jhi.brapi.*;
 import jhi.brapi.api.*;
+import jhi.brapi.api.Metadata;
 import jhi.brapi.util.*;
 
+import org.restlet.data.*;
 import org.restlet.resource.*;
 
 public class ServerTokenAuthenticator extends BaseBrapiServerResource
@@ -50,32 +49,32 @@ public class ServerTokenAuthenticator extends BaseBrapiServerResource
 		}
 	}
 
+	@Delete
+	public BrapiBaseResource<Void> logout(BrapiTokenLogoutPost post)
+	{
+		// TODO: implement
+		throw new ResourceException(501);
+	}
+
 	@Get("json")
 	public BrapiSessionToken getJson()
 	{
-		return login(new BrapiTokenPost());
+		// GET not supported
+		throw new ResourceException(405);
 	}
 
 	@Post
-	public BrapiSessionToken login(BrapiTokenPost post)
+	public BrapiSessionToken login(BrapiTokenLoginPost post)
 	{
 		grantType = post.getGrant_type();
 		username = post.getUsername();
 		password = post.getPassword();
 		clientId = post.getClient_id();
 
-		// Authenticate with Germinate Gatekeeper
-		if (GatekeeperUtils.authenticate(username, password) == false)
+		BrapiSessionToken sessionToken = GatekeeperUtils.authenticate(username, password);
+
+		if (sessionToken == null)
 			throw new ResourceException(400);
-
-		// Generate a unique token for this session
-		String token = new BigInteger(256, new SecureRandom()).toString(32);
-		// And add it to the sessions stored server-side
-		Brapi.getSessions().addSession(username, token);
-
-		// Create a BrapiSessionToken object to return the result to the client
-		BrapiSessionToken sessionToken = new BrapiSessionToken();
-		sessionToken.setSessionToken(token);
 
 		// BrapiSessionToken is a special case and doesn't get metadata by
 		// default, so we need to include it here (even though it isn't used)

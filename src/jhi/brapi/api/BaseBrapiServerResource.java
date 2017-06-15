@@ -6,6 +6,9 @@ import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
 import org.restlet.resource.*;
 
+import java.util.*;
+import java.util.stream.*;
+
 /**
  * Base ServerResource type for our BRAPI API implementation. All ServerResource objects should extend from this.
  * The format of our base call T getJson() is set out using an abstract method. In addition to this a concrete
@@ -52,6 +55,18 @@ public abstract class BaseBrapiServerResource<T> extends ServerResource
 				e.printStackTrace();
 			}
 		}
+	}
+
+	protected List<String> parseGetParameterList(String input)
+	{
+		input = getQueryValue(input);
+
+		if (input != null)
+			return Arrays.stream(input.split(","))
+						 .map(String::trim)
+						 .collect(Collectors.toList());
+		else
+			return null;
 	}
 
 	protected void setPaginationParameters(BasicPost parameters)
