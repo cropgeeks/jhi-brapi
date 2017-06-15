@@ -30,7 +30,7 @@ public class ServerAlleleMatrixDataset extends BaseBrapiServerResource
 		// We only want to return datasets we have genotype data for
 		addParameter(parameters, "experimenttypes.description", "genotype");
 		// The user might be subsetting by a given studyId
-		addParameter(parameters, "dataset_id", studyId);
+		addParameter(parameters, "datasets.id", studyId);
 
 		return alleleMatriceDAO.getAll(parameters, currentPage, pageSize);
 	}
