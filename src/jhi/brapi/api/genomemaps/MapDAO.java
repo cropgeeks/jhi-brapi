@@ -15,15 +15,15 @@ public class MapDAO
 	// mapdefinitions table so we can get a count of markers (by marker_id) and chromosomes.
 	private final String mapsQuery = "SELECT SQL_CALC_FOUND_ROWS maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
 			"mapdefinitions.marker_id) AS markercount, COUNT(DISTINCT mapdefinitions.chromosome) AS chromosomeCount " +
-			"from maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id LIMIT ?, ?";
+			"from maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id GROUP BY maps.id LIMIT ?, ?";
 
 	private final String detailQuery = "SELECT maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
 			"mapdefinitions.marker_id) AS markercount, COUNT(DISTINCT mapdefinitions.chromosome) AS chromosomeCount from " +
-			"maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id WHERE maps.id=?";
+			"maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id WHERE maps.id=? GROUP BY maps.id";
 
 	private final String detailByChromQuery = "SELECT maps.id, maps.description, maps.created_on, COUNT(DISTINCT " +
 			"mapdefinitions.marker_id) AS markercount, COUNT(DISTINCT mapdefinitions.chromosome) AS chromosomeCount from " +
-			"maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id WHERE maps.id=? AND mapdefinitions.chromosome=?";
+			"maps INNER JOIN mapdefinitions ON maps.id = mapdefinitions.map_id WHERE maps.id=? AND mapdefinitions.chromosome=? GROUP BY maps.id";
 
 	private final String linkageGroupQuery = "SELECT map_id, chromosome, MAX(definition_end) AS max, COUNT(marker_id) " +
 			"AS number_markers FROM mapdefinitions WHERE map_id=? GROUP BY chromosome";
