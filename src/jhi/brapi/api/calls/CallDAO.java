@@ -13,97 +13,97 @@ public class CallDAO
 	static
 	{
 		CALLS.add(new BrapiCall("allelematrices")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("allelematrix-search")
-			.addDatatype("json")
-			.addDatatype("tsv")
-			.addDatatype("flapjack")
-			.addMethod("POST"));
+			.withDatatypeJson()
+			.withDatatypeTsv()
+			.withDatatypeFlapjack()
+			.withMethodPost());
 
 		CALLS.add(new BrapiCall("allelematrix-search/status/{id}")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("calls")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("germplasm-search")
-			.addDatatype("json")
-			.addMethod("GET")
-			.addMethod("POST"));
+			.withDatatypeJson()
+			.withMethodGet()
+			.withMethodPost());
 
 		CALLS.add(new BrapiCall("germplasm/{id}")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("germplasm/{id}/pedigree")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("germplasm/{id}/markerprofiles")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("markers")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("markerprofiles")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("markerprofiles/{id}")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("studies-search")
-			.addDatatype("json")
-			.addMethod("GET")
-			.addMethod("POST"));
+			.withDatatypeJson()
+			.withMethodGet()
+			.withMethodPost());
 
 		CALLS.add(new BrapiCall("studies/{id}")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("maps")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("maps/{id}")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("maps/{id}/positions")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("locations")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("phenotypes-search")
-			.addDatatype("json")
-			.addMethod("GET")
-			.addMethod("POST"));
+			.withDatatypeJson()
+			.withMethodGet()
+			.withMethodPost());
 
 		CALLS.add(new BrapiCall("token")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodPost());
 
 		CALLS.add(new BrapiCall("trials")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("trials/{id}")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.add(new BrapiCall("crops")
-			.addDatatype("json")
-			.addMethod("GET"));
+			.withDatatypeJson()
+			.withMethodGet());
 
 		CALLS.sort(Comparator.comparing(BrapiCall::getCall));
 	}
