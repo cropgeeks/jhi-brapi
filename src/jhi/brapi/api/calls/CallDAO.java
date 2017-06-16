@@ -22,6 +22,10 @@ public class CallDAO
 			.addDatatype("flapjack")
 			.addMethod("POST"));
 
+		CALLS.add(new BrapiCall("allelematrix-search/status/{id}")
+			.addDatatype("json")
+			.addMethod("GET"));
+
 		CALLS.add(new BrapiCall("calls")
 			.addDatatype("json")
 			.addMethod("GET"));
