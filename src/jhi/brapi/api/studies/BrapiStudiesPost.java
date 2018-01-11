@@ -13,7 +13,7 @@ public class BrapiStudiesPost extends BasicPost
 	private List<String> studyLocations;
 	private List<String> programNames;
 	private List<String> germplasmDbIds;
-	private List<String> observationVariableIds;
+	private List<String> observationVariableDbIds;
 	private boolean active;
 	private String sortBy;
 	private String sortOrder;
@@ -48,11 +48,11 @@ public class BrapiStudiesPost extends BasicPost
 	public void setGermplasmDbIds(List<String> germplasmDbIds)
 		{ this.germplasmDbIds = germplasmDbIds; }
 
-	public List<String> getObservationVariableIds()
-		{ return observationVariableIds; }
+	public List<String> getObservationVariableDbIds()
+		{ return observationVariableDbIds; }
 
-	public void setObservationVariableIds(List<String> observationVariableIds)
-		{ this.observationVariableIds = observationVariableIds; }
+	public void setObservationVariableDbIds(List<String> observationVariableDbIds)
+		{ this.observationVariableDbIds = observationVariableDbIds; }
 
 	public String getSortBy()
 		{ return sortBy; }
