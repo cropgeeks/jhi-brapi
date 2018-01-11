@@ -3,8 +3,6 @@ package jhi.brapi.api.studies;
 import java.sql.Date;
 import java.util.*;
 
-import jhi.brapi.api.locations.*;
-
 import com.fasterxml.jackson.annotation.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
