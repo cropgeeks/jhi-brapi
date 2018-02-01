@@ -23,6 +23,8 @@ hs_err_pid*
 # Project specific settings
 build.properties
 build.wildcat.properties
+brapi-client.jar
+web/context.xml
 
 # IntelliJ IDEA specific settings
 .idea
