@@ -173,7 +173,7 @@ public class GermplasmDAO
 					e.printStackTrace();
 				}
 			});
-			profiles.setMarkerProfiles(markerProfileIdList);
+			profiles.setMarkerProfileDbIds(markerProfileIdList);
 			result = new BrapiBaseResource<BrapiGermplasmMarkerProfiles>(profiles, currentPage, 0, 0);
 		}
 		return result;

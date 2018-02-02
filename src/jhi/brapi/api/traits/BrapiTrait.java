@@ -4,23 +4,18 @@ import java.util.*;
 
 public class BrapiTrait
 {
+	private String traitDbId;
 	private String traitId;
 	private String name;
-	private String format;
-	private String unit;
-	private String method;
+	private String description;
 	private String defaultValue;
-	private String minimum;
-	private String maximum;
-	private List<String> categories;
-	private String isVisible;
-	private String realPosition;
+	private List<String> observationVariables;
 
-	public String getTraitId()
-		{ return traitId; }
+	public String getTraitDbId()
+		{ return traitDbId; }
 
-	public void setTraitId(String traitId)
-		{ this.traitId = traitId; }
+	public void setTraitDbId(String traitDbId)
+		{ this.traitDbId = traitDbId; }
 
 	public String getName()
 		{ return name; }
@@ -28,57 +23,27 @@ public class BrapiTrait
 	public void setName(String name)
 		{ this.name = name; }
 
-	public String getFormat()
-		{ return format; }
-
-	public void setFormat(String format)
-		{ this.format = format; }
-
-	public String getUnit()
-		{ return unit; }
-
-	public void setUnit(String unit)
-		{ this.unit = unit; }
-
-	public String getMethod()
-		{ return method; }
-
-	public void setMethod(String method)
-		{ this.method = method; }
-
 	public String getDefaultValue()
 		{ return defaultValue; }
 
 	public void setDefaultValue(String defaultValue)
 		{ this.defaultValue = defaultValue; }
 
-	public String getMinimum()
-		{ return minimum; }
+	public String getTraitId()
+		{ return traitId; }
 
-	public void setMinimum(String minimum)
-		{ this.minimum = minimum; }
+	public void setTraitId(String traitId)
+		{ this.traitId = traitId; }
 
-	public String getMaximum()
-		{ return maximum; }
+	public String getDescription()
+		{ return description; }
 
-	public void setMaximum(String maximum)
-		{ this.maximum = maximum; }
+	public void setDescription(String description)
+		{ this.description = description; }
 
-	public List<String> getCategories()
-		{ return categories; }
+	public List<String> getObservationVariables()
+		{ return observationVariables; }
 
-	public void setCategories(List<String> categories)
-		{ this.categories = categories; }
-
-	public String getIsVisible()
-		{ return isVisible; }
-
-	public void setIsVisible(String isVisible)
-		{ this.isVisible = isVisible; }
-
-	public String getRealPosition()
-		{ return realPosition; }
-
-	public void setRealPosition(String realPosition)
-		{ this.realPosition = realPosition; }
+	public void setObservationVariables(List<String> observationVariables)
+		{ this.observationVariables = observationVariables; }
 }

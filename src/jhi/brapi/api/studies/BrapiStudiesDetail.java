@@ -12,8 +12,8 @@ public class BrapiStudiesDetail
 {
 	private String studyDbId;
 	private String studyName;
-	private String studyDescription;
 	private String studyType;
+	private String studyDescription;
 	private List<String> seasons;
 	private String trialDbId;
 	private String trialName;
@@ -23,6 +23,7 @@ public class BrapiStudiesDetail
 	private String license;
 	private BrapiLocation location;
 	private List<BrapiContact> contacts;
+	private List<BrapiDataLinks> dataLinks;
 	private BrapiLastUpdate lastUpdate;
 	private Object additionalInfo;
 
@@ -115,4 +116,10 @@ public class BrapiStudiesDetail
 
 	public void setLastUpdate(BrapiLastUpdate lastUpdate)
 		{ this.lastUpdate = lastUpdate; }
+
+	public List<BrapiDataLinks> getDataLinks()
+		{ return dataLinks; }
+
+	public void setDataLinks(List<BrapiDataLinks> dataLinks)
+		{ this.dataLinks = dataLinks; }
 }

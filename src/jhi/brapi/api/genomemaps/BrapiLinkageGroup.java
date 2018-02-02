@@ -3,7 +3,7 @@ package jhi.brapi.api.genomemaps;
 public class BrapiLinkageGroup
 {
 	private String linkageGroupId;
-	private int numberMarkers;
+	private int markerCount;
 	private double maxPosition;
 
 	public String getLinkageGroupId()
@@ -12,11 +12,11 @@ public class BrapiLinkageGroup
 	public void setLinkageGroupId(String linkageGroupId)
 		{ this.linkageGroupId = linkageGroupId; }
 
-	public int getNumberMarkers()
-		{ return numberMarkers; }
+	public int getMarkerCount()
+		{ return markerCount; }
 
-	public void setNumberMarkers(int numberMarkers)
-		{ this.numberMarkers = numberMarkers; }
+	public void setMarkerCount(int markerCount)
+		{ this.markerCount = markerCount; }
 
 	public double getMaxPosition()
 		{ return maxPosition; }

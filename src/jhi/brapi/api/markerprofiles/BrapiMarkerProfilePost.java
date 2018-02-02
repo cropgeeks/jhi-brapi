@@ -6,7 +6,7 @@ import jhi.brapi.api.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiMarkerProfilePost extends BasicPost
 {
-	private String markerprofileDbId;
+	private String germplasmDbId;
 	private String studyDbId;
 	private String sampleDbId;
 	private String extractDbId;
@@ -15,19 +15,19 @@ public class BrapiMarkerProfilePost extends BasicPost
 	{
 	}
 
-	public BrapiMarkerProfilePost(String markerprofileDbId, String studyDbId, String sampleDbId, String extractDbId)
+	public BrapiMarkerProfilePost(String germplasmDbId, String studyDbId, String sampleDbId, String extractDbId)
 	{
-		this.markerprofileDbId = markerprofileDbId;
+		this.germplasmDbId = germplasmDbId;
 		this.studyDbId = studyDbId;
 		this.sampleDbId = sampleDbId;
 		this.extractDbId = extractDbId;
 	}
 
-	public String getMarkerprofileDbId()
-		{ return markerprofileDbId; }
+	public String getGermplasmDbId()
+		{ return germplasmDbId; }
 
-	public void setMarkerprofileDbId(String markerprofileDbId)
-		{ this.markerprofileDbId = markerprofileDbId; }
+	public void setGermplasmDbId(String germplasmDbId)
+		{ this.germplasmDbId = germplasmDbId; }
 
 	public String getStudyDbId()
 		{ return studyDbId; }

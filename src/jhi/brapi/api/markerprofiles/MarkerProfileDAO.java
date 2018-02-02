@@ -1,7 +1,6 @@
 package jhi.brapi.api.markerprofiles;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
@@ -135,8 +134,8 @@ public class MarkerProfileDAO
 				int end = Math.min(start + pageSize, allelesByMarker.size());
 				List<Map<String, String>> subset = allelesByMarker.subList(start, end);
 
-				profileData.setMarkerprofileId(id);
-				profileData.setGermplasmId(germinatebaseId);
+				profileData.setMarkerprofileDbId(id);
+				profileData.setGermplasmDbId(germinatebaseId);
 				profileData.setData(subset);
 			}
 			catch (Exception e)

@@ -5,7 +5,7 @@ import java.util.*;
 public class BrapiGermplasmMarkerProfiles
 {
 	private String germplasmDbId;
-	private List<String> markerProfiles;
+	private List<String> markerProfileDbIds;
 
 	public String getGermplasmDbId()
 		{ return germplasmDbId; }
@@ -13,18 +13,18 @@ public class BrapiGermplasmMarkerProfiles
 	public void setGermplasmDbId(String germplasmDbId)
 		{ this.germplasmDbId = germplasmDbId; }
 
-	public List<String> getMarkerProfiles()
-		{ return markerProfiles; }
+	public List<String> getMarkerProfileDbIds()
+		{ return markerProfileDbIds; }
 
-	public void setMarkerProfiles(List<String> markerProfileIds)
-		{ this.markerProfiles = markerProfileIds; }
+	public void setMarkerProfileDbIds(List<String> markerProfileIds)
+		{ this.markerProfileDbIds = markerProfileIds; }
 
 	@Override
 	public String toString()
 	{
 		return "GermplasmMarkerProfileList{" +
 			"germplasmDbId=" + germplasmDbId +
-			", markerProfileIds=" + markerProfiles +
+			", markerProfileIds=" + markerProfileDbIds +
 			'}';
 	}
 }

@@ -8,21 +8,24 @@ import java.util.*;
 public class BrapiPhenotype
 {
 	private String observationUnitDbId;
-	private String studyDbId;
-	private String studyName;
-	private String studyLocationDbId;
-	private String studyLocation;
 	private String observationLevel;
 	private String observationLevels;
 	private String plotNumber;
 	private String plantNumber;
 	private String blockNumber;
 	private String replicate;
-	private String programName;
+	private String observationUnitName;
 	private String germplasmDbId;
 	private String germplasmName;
+	private String studyDbId;
+	private String studyName;
+	private String studyLocationDbId;
+	private String studyLocation;
+	private String programName;
 	private String X;
 	private String Y;
+	private String entryType;
+	private String entryNumber;
 	private List<BrapiTreatment> treatments;
 	private List<BrapiObservationUnitXref> observationUnitXref;
 	private List<BrapiObservation> observations;
@@ -203,9 +206,7 @@ public class BrapiPhenotype
 	}
 
 	public void setObservationUnitXref(List<BrapiObservationUnitXref> observationUnitXref)
-	{
-		this.observationUnitXref = observationUnitXref;
-	}
+		{ this.observationUnitXref = observationUnitXref; }
 
 	public List<BrapiObservation> getObservations()
 	{
@@ -216,4 +217,22 @@ public class BrapiPhenotype
 	{
 		this.observations = observations;
 	}
+
+	public String getObservationUnitName()
+		{ return observationUnitName; }
+
+	public void setObservationUnitName(String observationUnitName)
+		{ this.observationUnitName = observationUnitName; }
+
+	public String getEntryType()
+		{ return entryType; }
+
+	public void setEntryType(String entryType)
+		{ this.entryType = entryType; }
+
+	public String getEntryNumber()
+		{ return entryNumber; }
+
+	public void setEntryNumber(String entryNumber)
+		{ this.entryNumber = entryNumber; }
 }

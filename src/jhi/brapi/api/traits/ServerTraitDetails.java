@@ -8,7 +8,7 @@ import org.restlet.resource.*;
  * Queries the database for the ServerGermplasmSearch with the given ID then returns a JSON (Jackson)
  * representation of the ServerGermplasmSearch for API clients to consume.
  */
-public class TraitServerResource extends BaseBrapiServerResource
+public class ServerTraitDetails extends BaseBrapiServerResource
 {
 	private TraitDAO traitDAO = new TraitDAO();
 
@@ -22,9 +22,9 @@ public class TraitServerResource extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BrapiTrait getJson()
+	public BrapiBaseResource<BrapiTrait> getJson()
 	{
-		BrapiTrait trait = traitDAO.getById(Integer.parseInt(id));
+		BrapiBaseResource<BrapiTrait> trait = traitDAO.getById(Integer.parseInt(id));
 
 		return trait;
 	}

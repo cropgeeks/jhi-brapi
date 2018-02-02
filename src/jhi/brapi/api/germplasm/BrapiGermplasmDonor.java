@@ -4,6 +4,7 @@ public class BrapiGermplasmDonor
 {
 	private String donorInstituteCode;
 	private String donorAccessionNumber;
+	private String donorGermplasmPUI;
 
 	public String getDonorInstituteCode()
 		{ return donorInstituteCode; }
@@ -17,12 +18,19 @@ public class BrapiGermplasmDonor
 	public void setDonorAccessionNumber(String donorAccessionNumber)
 		{ this.donorAccessionNumber = donorAccessionNumber; }
 
+	public String getDonorGermplasmPUI()
+		{ return donorGermplasmPUI; }
+
+	public void setDonorGermplasmPUI(String donorGermplasmPUI)
+		{ this.donorGermplasmPUI = donorGermplasmPUI; }
+
 	@Override
 	public String toString()
 	{
 		return "BrapiGermplasmDonor{" +
-				"donorInstituteCode='" + donorInstituteCode + '\'' +
-				", donorAccessionNumber='" + donorAccessionNumber + '\'' +
-				'}';
+			"donorInstituteCode='" + donorInstituteCode + '\'' +
+			", donorAccessionNumber='" + donorAccessionNumber + '\'' +
+			", donorGermplasmPUI='" + donorGermplasmPUI + '\'' +
+			'}';
 	}
 }

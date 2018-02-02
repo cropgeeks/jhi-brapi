@@ -16,6 +16,7 @@ public class BrapiPhenotypePost extends BasicPost
 	private List<String> programDbIds;
 	private List<String> seasonDbIds;
 	private String observationLevel;
+	private List<String> observationTimeStampRange;
 
 	public List<String> getGermplasmDbIds()
 	{
@@ -86,4 +87,10 @@ public class BrapiPhenotypePost extends BasicPost
 	{
 		this.observationLevel = observationLevel;
 	}
+
+	public List<String> getObservationTimeStampRange()
+		{ return observationTimeStampRange; }
+
+	public void setObservationTimeStampRange(List<String> observationTimeStampRange)
+		{ this.observationTimeStampRange = observationTimeStampRange; }
 }

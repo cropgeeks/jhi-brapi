@@ -4,17 +4,17 @@ import java.util.*;
 
 public class BrapiStudiesAsTable
 {
-	private String studyDbId;
+	private List<String> headerRow;
 	private List<String> observationVariableDbId;
 	private List<String> observationVariableName;
 
 	private List<List<String>> data;
 
-	public String getStudyDbId()
-		{ return studyDbId; }
+	public List<String> getHeaderRow()
+		{ return headerRow; }
 
-	public void setStudyDbId(String studyDbId)
-		{ this.studyDbId = studyDbId; }
+	public void setHeaderRow(List<String> headerRow)
+		{ this.headerRow = headerRow; }
 
 	public List<String> getObservationVariableDbId()
 		{ return observationVariableDbId; }
