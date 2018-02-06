@@ -60,7 +60,7 @@ public class MarkerProfileDAO
 		germplasmNamesById.forEach((germplasmId, name) ->
 		{
 			BrapiMarkerProfile profile = new BrapiMarkerProfile();
-			profile.setMarkerProfileDbId(id + "-" + germplasmId);
+			profile.setMarkerprofileDbId(id + "-" + germplasmId);
 			profile.setGermplasmDbId(germplasmId);
 			profile.setUniqueDisplayName(name);
 

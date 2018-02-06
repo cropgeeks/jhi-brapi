@@ -2,7 +2,7 @@ package jhi.brapi.api.markerprofiles;
 
 public class BrapiMarkerProfile
 {
-	private String markerProfileDbId;
+	private String markerprofileDbId;
 	private String germplasmDbId;
 	private String uniqueDisplayName;
 	private String extractDbId;
@@ -10,11 +10,11 @@ public class BrapiMarkerProfile
 	private int resultCount;
 	private String sampleDbId;
 
-	public String getMarkerProfileDbId()
-		{ return markerProfileDbId; }
+	public String getMarkerprofileDbId()
+		{ return markerprofileDbId; }
 
-	public void setMarkerProfileDbId(String markerProfileDbId)
-		{ this.markerProfileDbId = markerProfileDbId; }
+	public void setMarkerprofileDbId(String markerprofileDbId)
+		{ this.markerprofileDbId = markerprofileDbId; }
 
 	public String getGermplasmDbId()
 		{ return germplasmDbId; }
@@ -56,7 +56,7 @@ public class BrapiMarkerProfile
 	public String toString()
 	{
 		return "MarkerProfile{" +
-			"markerprofileDbId=" + markerProfileDbId +
+			"markerprofileDbId=" + markerprofileDbId +
 			", germplasmDbId=" + germplasmDbId +
 			", extractDbId=" + extractDbId +
 			", analysisMethod='" + analysisMethod + '\'' +
