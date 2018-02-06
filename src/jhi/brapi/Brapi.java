@@ -111,7 +111,7 @@ public class Brapi extends Application
 		attachToRouter(router, "/markers/{id}", ServerMarkersData.class);
 		attachToRouter(router, "/phenotypes-search", ServerPhenotypesSearch.class);
 		attachToRouter(router, "/studies/{id}", ServerStudyDetails.class);
-		attachToRouter(router, "/studies/{id}/table", ServerStudiesAsTable.class);
+//		attachToRouter(router, "/studies/{id}/table", ServerStudiesAsTable.class);
 		attachToRouter(router, "/studies-search", ServerStudies.class);  // FJ
 		attachToRouter(router, "/trials", ServerTrialList.class);
 		attachToRouter(router, "/trials/{id}", ServerTrial.class);
@@ -119,7 +119,35 @@ public class Brapi extends Application
 
 	private void setupNotImplementedRoutes(Router router)
 	{
-		attachToRouter(router, "/variables", ServerNotImplemented.class);
+		List<String> notImplemented = new ArrayList<String>();
+		notImplemented.add("/attributes/categories");
+		notImplemented.add("/germplasm/{id}/attributes");
+		notImplemented.add("/attributes?attributeCategoryDbId={attributeCategoryDbId}");
+		notImplemented.add("/locations/{id}");
+		notImplemented.add("/variables");
+		notImplemented.add("/variables/{id}");
+		notImplemented.add("/variables/datatypes");
+		notImplemented.add("/variables-search");
+		notImplemented.add("/ontologies");
+		notImplemented.add("/phenotypes");
+		notImplemented.add("/programs");
+		notImplemented.add("/programs-search");
+		notImplemented.add("/samples");
+		notImplemented.add("/samples/{id}");
+		notImplemented.add("/studies/{id}/observations");
+		notImplemented.add("/studies/{id}/observationsunits");
+		notImplemented.add("/studies/{id}/observationvariables");
+		notImplemented.add("/studies/{id}/layout");
+		notImplemented.add("/studies/{id}/germplasm");
+		notImplemented.add("/studies/{id}/table");
+		notImplemented.add("/observationsLevels");
+		notImplemented.add("/seasons");
+		notImplemented.add("/studyTypes");
+
+		notImplemented.forEach(url ->
+		{
+			attachToRouter(router, url, ServerNotImplemented.class);
+		});
 	}
 
 	private void attachToRouter(Router router, String url, Class<? extends ServerResource> clazz)
