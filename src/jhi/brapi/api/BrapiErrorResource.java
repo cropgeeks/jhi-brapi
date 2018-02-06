@@ -1,12 +1,14 @@
 package jhi.brapi.api;
 
+import java.util.*;
+
 import com.fasterxml.jackson.annotation.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiErrorResource
 {
 	private Metadata metadata = new Metadata();
-	private Object result = new Object();
+	private Map<Object, Object> result = new HashMap<>();
 
 	public BrapiErrorResource()
 	{
@@ -28,7 +30,7 @@ public class BrapiErrorResource
 		return result;
 	}
 
-	public void setResult(Object result)
+	public void setResult(Map<Object, Object> result)
 	{
 		this.result = result;
 	}

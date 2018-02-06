@@ -114,8 +114,9 @@ public class StudiesDAO
 			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, studyDetailsTable, id);
 			 ResultSet resultSet = statement.executeQuery())
 		{
+			//TODO: rework the studies as table code after change of format of response
 			BrapiStudiesAsTable studiesAsTable = new BrapiStudiesAsTable();
-			studiesAsTable.setStudyDbId(id);
+//			studiesAsTable.setStudyDbId(id);
 			studiesAsTable.setObservationVariableDbId(phenotypeIds);
 
 			List<String> colNames = new ArrayList<>();

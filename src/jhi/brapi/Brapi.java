@@ -2,6 +2,7 @@ package jhi.brapi;
 
 import java.util.*;
 
+import jhi.brapi.api.*;
 import jhi.brapi.api.allelematrices.ServerAlleleMatrixDataset;
 import jhi.brapi.api.calls.*;
 import jhi.brapi.api.crops.*;
@@ -73,6 +74,7 @@ public class Brapi extends Application
 		}
 
 		setupAppRoutes(appRoutes);
+		setupNotImplementedRoutes(appRoutes);
 
 		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
 		encoder.setNext(unauthenticated);
@@ -113,6 +115,11 @@ public class Brapi extends Application
 		attachToRouter(router, "/studies-search", ServerStudies.class);  // FJ
 		attachToRouter(router, "/trials", ServerTrialList.class);
 		attachToRouter(router, "/trials/{id}", ServerTrial.class);
+	}
+
+	private void setupNotImplementedRoutes(Router router)
+	{
+		attachToRouter(router, "/variables", ServerNotImplemented.class);
 	}
 
 	private void attachToRouter(Router router, String url, Class<? extends ServerResource> clazz)
