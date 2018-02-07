@@ -80,10 +80,6 @@ public class AlleleMatrixDAO
 
 					BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
 
-//					String url = request.getRootRef().toString();
-//					String datafile = url + "/files/" + file.getName();
-//					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
-
 					result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
 
 					return result;
@@ -98,10 +94,6 @@ public class AlleleMatrixDAO
 
 					BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
 
-//					String url = request.getRootRef().toString();
-//
-//					String datafile = url + "/files/" + file.getName();
-//					result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 					result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
 					return result;
 				}
@@ -279,11 +271,6 @@ public class AlleleMatrixDAO
 			converter.extractDataFJ(file.getAbsolutePath(), Collections.singletonList("# fjFile = genotype"));
 
 			BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
-
-//			String url = request.getRootRef().toString();
-//
-//			String datafile = url + "/files/" + file.getName();
-//			result.getMetadata().setDatafiles(Collections.singletonList(datafile));
 
 			result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
 			return result;

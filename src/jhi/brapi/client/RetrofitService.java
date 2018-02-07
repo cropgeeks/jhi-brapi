@@ -197,6 +197,9 @@ public interface RetrofitService
 	Call<BrapiBaseResource<BrapiAlleleMatrix>> getAlleleMatrix(@Field("matrixDbId") String matrixDbId, @Field("format") String format, @Field("expandHomozygotes") Boolean expandHomoozygotes, @Field("unknownString") String unknownString, @Field("sepPhased") String sepPhased, @Field("sepUnphased") String sepUnphased, @Field("pageSize") Integer pageSize, @Field("page") Integer page);
 
 
+	@POST("allelematrix-search")
+	Call<BrapiBaseResource<BrapiAlleleMatrix>> getAlleleMatrix(@Body BrapiAlleleMatrixSearchPost alleleMatrixSearchPost);
+
 	/**
 	 *
 	 *

@@ -17,9 +17,8 @@ public class AsyncChecker
 	{
 		Status status = null;
 
-		// TODO: remove temporary workarounds once other implemtentations are up to date
 		Optional<Status> asyncStatus = statuses.stream()
-			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCID) ||  s.getCode().equalsIgnoreCase("asynchid"))
+			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCID))
 			.findFirst();
 
 		if (asyncStatus.isPresent())
@@ -32,9 +31,8 @@ public class AsyncChecker
 	{
 		Status status = null;
 
-		// TODO: remove temporary workarounds once other implemtentations are up to date
 		Optional<Status> asyncStatus = statuses.stream()
-			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCSTATUS) || s.getCode().equalsIgnoreCase("asynchstatus"))
+			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCSTATUS))
 			.findFirst();
 
 		if (asyncStatus.isPresent())
