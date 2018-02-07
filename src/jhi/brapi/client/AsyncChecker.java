@@ -50,6 +50,11 @@ public class AsyncChecker
 
 	public static boolean callFinished(Status status)
 	{
-		return status != null && status.getMessage().equals(ASYNC_FINISHED);
+		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_FINISHED);
+	}
+
+	public static boolean callFailed(Status status)
+	{
+		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_FAILED);
 	}
 }
