@@ -18,7 +18,7 @@ public class AsyncChecker
 		Status status = null;
 
 		Optional<Status> asyncStatus = statuses.stream()
-			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCID))
+			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCID) || s.getCode().equalsIgnoreCase("asynchid"))
 			.findFirst();
 
 		if (asyncStatus.isPresent())
@@ -32,7 +32,7 @@ public class AsyncChecker
 		Status status = null;
 
 		Optional<Status> asyncStatus = statuses.stream()
-			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCSTATUS))
+			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCSTATUS) || s.getCode().equalsIgnoreCase("asynchstatus"))
 			.findFirst();
 
 		if (asyncStatus.isPresent())
