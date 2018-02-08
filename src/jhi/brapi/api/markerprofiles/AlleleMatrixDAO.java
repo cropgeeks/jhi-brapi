@@ -24,6 +24,7 @@ public class AlleleMatrixDAO
 	}
 
 	public BrapiBaseResource<BrapiAlleleMatrix> getFromHdf5(Request request, Context context, List<String> profileIds, List<String> markerDbIds, String format, GenotypeEncodingParams params, int currentPage, int pageSize)
+		throws Exception
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
@@ -154,11 +155,7 @@ public class AlleleMatrixDAO
 		{
 			e.printStackTrace();
 		}
-
-		BrapiBaseResource<BrapiAlleleMatrix> error =  new BrapiBaseResource<BrapiAlleleMatrix>(matrix, 0, 0, 0);
-		error.getMetadata().getStatus().add(new Status("500", "The server could not complete the request"));
-
-		return error;
+		throw new Exception();
 	}
 
 	/**
@@ -252,6 +249,7 @@ public class AlleleMatrixDAO
 	}
 
 	public BrapiBaseResource<BrapiAlleleMatrix> getFromHdf5ByMatrixId(Request request, Context context, String matrixDbId, GenotypeEncodingParams params, int currentPage, int pageSize)
+		throws Exception
 	{
 		BrapiAlleleMatrix matrix = new BrapiAlleleMatrix();
 
@@ -285,11 +283,7 @@ public class AlleleMatrixDAO
 		catch (IOException e)
 		{
 			e.printStackTrace();
+			throw new Exception();
 		}
-
-		BrapiBaseResource<BrapiAlleleMatrix> error =  new BrapiBaseResource<BrapiAlleleMatrix>(matrix, 0, 0, 0);
-		error.getMetadata().getStatus().add(new Status("500", "The server could not complete the request"));
-
-		return error;
 	}
 }

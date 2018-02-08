@@ -59,10 +59,24 @@ public class ServerAlleleMatrix extends BaseBrapiServerResource
 		}
 
 
-		if (matrixDbId != null)
-			return alleleMatrixDAO.getFromHdf5ByMatrixId(getRequest(), getContext(), matrixDbId, params, currentPage, pageSize);
+		try
+		{
+			if (matrixDbId != null)
+				return alleleMatrixDAO.getFromHdf5ByMatrixId(getRequest(), getContext(), matrixDbId, params, currentPage, pageSize);
 
-		return alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), profileIds, markerIds, format, params, currentPage, pageSize);
+			return alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), profileIds, markerIds, format, params, currentPage, pageSize);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		BrapiBaseResource<BrapiAlleleMatrix> error =  new BrapiBaseResource<BrapiAlleleMatrix>(new BrapiAlleleMatrix(), 0, 0, 0);
+		error.getMetadata().getStatus().add(new Status("500", "The server could not complete the request"));
+
+		setStatus(org.restlet.data.Status.SERVER_ERROR_INTERNAL);
+
+		return error;
 	}
 
 	@Post("json")
@@ -77,9 +91,23 @@ public class ServerAlleleMatrix extends BaseBrapiServerResource
 		if(alleleMatrixSearchPost.getSepUnphased() != null)
 			params.setSepUnphased(alleleMatrixSearchPost.getSepUnphased());
 
-		if (alleleMatrixSearchPost.getMatrixDbId() != null)
-			return alleleMatrixDAO.getFromHdf5ByMatrixId(getRequest(), getContext(), alleleMatrixSearchPost.getMatrixDbId().get(0), params, currentPage, pageSize);
+		try
+		{
+			if (alleleMatrixSearchPost.getMatrixDbId() != null)
+				return alleleMatrixDAO.getFromHdf5ByMatrixId(getRequest(), getContext(), alleleMatrixSearchPost.getMatrixDbId().get(0), params, currentPage, pageSize);
 
-		return alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), alleleMatrixSearchPost.getMarkerprofileDbId(), new ArrayList<String>(), alleleMatrixSearchPost.getFormat(), params, currentPage, pageSize);
+			return alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), alleleMatrixSearchPost.getMarkerprofileDbId(), new ArrayList<String>(), alleleMatrixSearchPost.getFormat(), params, currentPage, pageSize);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		BrapiBaseResource<BrapiAlleleMatrix> error =  new BrapiBaseResource<BrapiAlleleMatrix>(new BrapiAlleleMatrix(), 0, 0, 0);
+		error.getMetadata().getStatus().add(new Status("500", "The server could not complete the request"));
+
+		setStatus(org.restlet.data.Status.SERVER_ERROR_INTERNAL);
+
+		return error;
 	}
 }
