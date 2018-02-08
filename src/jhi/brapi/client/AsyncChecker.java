@@ -13,6 +13,15 @@ public class AsyncChecker
 	public static final String ASYNC_FINISHED = "FINISHED";
 	public static final String ASYNC_FAILED = "FAILED";
 
+	public enum AsyncStatus
+	{
+		PENDING,
+		INPROCESS,
+		FINISHED,
+		FAILED,
+		UNKNOWN
+	}
+
 	public static Status hasAsyncId(List<Status> statuses)
 	{
 		Status status = null;
@@ -27,7 +36,7 @@ public class AsyncChecker
 		return status;
 	}
 
-	public static Status checkAsyncStatus(List<Status> statuses)
+	public static AsyncStatus checkAsyncStatus(List<Status> statuses)
 	{
 		Status status = null;
 
@@ -38,20 +47,36 @@ public class AsyncChecker
 		if (asyncStatus.isPresent())
 			status = asyncStatus.get();
 
-		return status;
+		AsyncStatus found = AsyncStatus.UNKNOWN;
+
+		if (callPending(status))
+			found = AsyncStatus.PENDING;
+		else if (callInProcess(status))
+			found = AsyncStatus.INPROCESS;
+		else if (callFinished(status))
+			found = AsyncStatus.FINISHED;
+		else if (callFailed(status))
+			found = AsyncStatus.FAILED;
+
+		return found;
 	}
 
-	public static boolean callInProcess(Status status)
+	private static boolean callPending(Status status)
 	{
-		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_INPROCESS) || status.getMessage().equalsIgnoreCase(ASYNC_PENDING);
+		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_PENDING);
 	}
 
-	public static boolean callFinished(Status status)
+	private static boolean callInProcess(Status status)
+	{
+		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_INPROCESS);
+	}
+
+	private static boolean callFinished(Status status)
 	{
 		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_FINISHED);
 	}
 
-	public static boolean callFailed(Status status)
+	private static boolean callFailed(Status status)
 	{
 		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_FAILED);
 	}
