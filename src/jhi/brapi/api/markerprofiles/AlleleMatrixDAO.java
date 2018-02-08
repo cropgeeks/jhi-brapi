@@ -32,126 +32,133 @@ public class AlleleMatrixDAO
 		// The lines we want to extract
 		List<Integer> germinatebaseIds = new ArrayList<>();
 
-		String datasetId = null;
-		for (String profileId : profileIds)
+		try
 		{
-			String[] tokens = profileId.split("-");
-			germplasmDbIdToDataset.put(tokens[1], tokens[0]);
-			germinatebaseIds.add(Integer.parseInt(tokens[1]));
-			datasetId = tokens[0];
-		}
-
-		String hdf5File = HDF5Utils.getHdf5File(datasetId);
-
-		String folder = context.getParameters().getFirstValue("hdf5-folder");
-
-		// Get the bidirectional mapping between germplasm/marker id and name
-		LinkedHashMap<String, String> germplasmIdToName = getGermplasmMapping(germinatebaseIds);
-		LinkedHashMap<String, String> markerIdToName;
-
-		try(Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File)))
-		{
-			if(markerDbIds == null || markerDbIds.isEmpty())
+			String datasetId = null;
+			for (String profileId : profileIds)
 			{
-				// If the user didn't request specific markers, get all of the ones from the file
-				markerIdToName = getMarkerMappingForNames(extractor.getMarkers());
-			}
-			else
-			{
-				// If the user requested specific markers, get them from the database
-				markerIdToName = getMarkerMappingForIds(markerDbIds);
+				String[] tokens = profileId.split("-");
+				germplasmDbIdToDataset.put(tokens[1], tokens[0]);
+				germinatebaseIds.add(Integer.parseInt(tokens[1]));
+				datasetId = tokens[0];
 			}
 
-			List<String> internalGermplasmIds = new ArrayList<>(germplasmIdToName.keySet());
-			List<String> internalMarkerIds = new ArrayList<>(markerIdToName.keySet());
+			String hdf5File = HDF5Utils.getHdf5File(datasetId);
 
-			int nrOfMarkers = internalMarkerIds.size();
-			int nrOfLines = internalGermplasmIds.size();
+			String folder = context.getParameters().getFirstValue("hdf5-folder");
 
-			if(format != null)
+			// Get the bidirectional mapping between germplasm/marker id and name
+			LinkedHashMap<String, String> germplasmIdToName = getGermplasmMapping(germinatebaseIds);
+			LinkedHashMap<String, String> markerIdToName;
+
+			try (Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File)))
 			{
-				if(format.equals("tsv")) // TODO: TSV result should be transposed
+				if (markerDbIds == null || markerDbIds.isEmpty())
 				{
-					File file = File.createTempFile("allelematrix", ".tsv");
-
-					Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName, params, datasetId);
-					converter.readInput();
-					converter.extractData(file.getAbsolutePath(), "");
-
-					BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
-
-					result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
-
-					return result;
-				}
-				else if (format.equals("flapjack"))
-				{
-					File file = File.createTempFile("allelematrix", ".dat");
-
-					Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName, params, datasetId);
-					converter.readInput();
-					converter.extractDataFJ(file.getAbsolutePath(), Collections.singletonList("# fjFile = genotype"));
-
-					BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
-
-					result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
-					return result;
+					// If the user didn't request specific markers, get all of the ones from the file
+					markerIdToName = getMarkerMappingForNames(extractor.getMarkers());
 				}
 				else
 				{
-					throw new ResourceException(400); // TODO: check if correct code
+					// If the user requested specific markers, get them from the database
+					markerIdToName = getMarkerMappingForIds(markerDbIds);
 				}
-			}
-			else
-			{
-				// Get the total number of data points
-				int maxData = Math.min(nrOfLines * nrOfMarkers, extractor.getLines().size() * extractor.getMarkers().size());
 
-				List<List<String>> data = new ArrayList<>();
-				int lower = DatabaseUtils.getLimitStart(currentPage, pageSize);
+				List<String> internalGermplasmIds = new ArrayList<>(germplasmIdToName.keySet());
+				List<String> internalMarkerIds = new ArrayList<>(markerIdToName.keySet());
 
-				if(nrOfLines > 0 && nrOfMarkers > 0)
+				int nrOfMarkers = internalMarkerIds.size();
+				int nrOfLines = internalGermplasmIds.size();
+
+				if (format != null)
 				{
-					// Loop over the chunk of data that is required
-					for (int i = lower; i < lower + pageSize; i++)
+					if (format.equals("tsv")) // TODO: TSV result should be transposed
 					{
-						// Get the x and y coordinates
-						int lineIndex = i / nrOfMarkers;
-						int markerIndex = i - ((i / nrOfMarkers) * nrOfMarkers);
+						File file = File.createTempFile("allelematrix", ".tsv");
 
-						if (lineIndex >= internalGermplasmIds.size())
-							break;
+						Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName, params, datasetId);
+						converter.readInput();
+						converter.extractData(file.getAbsolutePath(), "");
 
-						// Get the names from the database, this is required to pass it to the HDF5 converter
-						String lineName = germplasmIdToName.get(internalGermplasmIds.get(lineIndex));
-						String markerName = markerIdToName.get(internalMarkerIds.get(markerIndex));
+						BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
 
-						// Skip a combination if the requested data doesn't exist
-						if (lineName == null || markerName == null)
-							continue;
+						result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
 
-						// Get the allele value from the HDF5
-						String alleles = extractor.get(lineName, markerName, params);
+						return result;
+					}
+					else if (format.equals("flapjack"))
+					{
+						File file = File.createTempFile("allelematrix", ".dat");
 
-						String germplasmDbId = internalGermplasmIds.get(lineIndex);
-						// Convert the data back into ids
-						List<String> callData = createArray(internalMarkerIds.get(markerIndex), germplasmDbIdToDataset.get(germplasmDbId) + "-" + germplasmDbId, alleles);
+						Hdf5ToGenotypeConverter converter = new Hdf5ToGenotypeConverter(new File(folder, hdf5File), germplasmIdToName, markerIdToName, params, datasetId);
+						converter.readInput();
+						converter.extractDataFJ(file.getAbsolutePath(), Collections.singletonList("# fjFile = genotype"));
 
-						// Add the data to the array
-						data.add(callData);
+						BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
+
+						result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
+						return result;
 					}
 				}
+				else
+				{
+					// Get the total number of data points
+					int maxData = Math.min(nrOfLines * nrOfMarkers, extractor.getLines().size() * extractor.getMarkers().size());
 
-				matrix.setData(data);
+					List<List<String>> data = new ArrayList<>();
+					int lower = DatabaseUtils.getLimitStart(currentPage, pageSize);
 
-				return new BrapiBaseResource<BrapiAlleleMatrix>(matrix, currentPage, pageSize, maxData);
+					if (nrOfLines > 0 && nrOfMarkers > 0)
+					{
+						// Loop over the chunk of data that is required
+						for (int i = lower; i < lower + pageSize; i++)
+						{
+							// Get the x and y coordinates
+							int lineIndex = i / nrOfMarkers;
+							int markerIndex = i - ((i / nrOfMarkers) * nrOfMarkers);
+
+							if (lineIndex >= internalGermplasmIds.size())
+								break;
+
+							// Get the names from the database, this is required to pass it to the HDF5 converter
+							String lineName = germplasmIdToName.get(internalGermplasmIds.get(lineIndex));
+							String markerName = markerIdToName.get(internalMarkerIds.get(markerIndex));
+
+							// Skip a combination if the requested data doesn't exist
+							if (lineName == null || markerName == null)
+								continue;
+
+							// Get the allele value from the HDF5
+							String alleles = extractor.get(lineName, markerName, params);
+
+							String germplasmDbId = internalGermplasmIds.get(lineIndex);
+							// Convert the data back into ids
+							List<String> callData = createArray(internalMarkerIds.get(markerIndex), germplasmDbIdToDataset.get(germplasmDbId) + "-" + germplasmDbId, alleles);
+
+							// Add the data to the array
+							data.add(callData);
+						}
+					}
+
+					matrix.setData(data);
+
+					return new BrapiBaseResource<BrapiAlleleMatrix>(matrix, currentPage, pageSize, maxData);
+				}
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
-			return new BrapiBaseResource<BrapiAlleleMatrix>(matrix, currentPage, pageSize, 0);
 		}
+
+		BrapiBaseResource<BrapiAlleleMatrix> error =  new BrapiBaseResource<BrapiAlleleMatrix>(matrix, 0, 0, 0);
+		error.getMetadata().getStatus().add(new Status("500", "The server could not complete the request"));
+
+		return error;
 	}
 
 	/**
@@ -278,7 +285,11 @@ public class AlleleMatrixDAO
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			return new BrapiBaseResource<BrapiAlleleMatrix>(matrix, currentPage, pageSize, 0);
 		}
+
+		BrapiBaseResource<BrapiAlleleMatrix> error =  new BrapiBaseResource<BrapiAlleleMatrix>(matrix, 0, 0, 0);
+		error.getMetadata().getStatus().add(new Status("500", "The server could not complete the request"));
+
+		return error;
 	}
 }

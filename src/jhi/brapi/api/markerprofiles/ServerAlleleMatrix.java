@@ -3,6 +3,7 @@ package jhi.brapi.api.markerprofiles;
 import java.util.*;
 
 import jhi.brapi.api.*;
+import jhi.brapi.api.Status;
 import jhi.brapi.util.*;
 
 import org.restlet.data.*;
@@ -28,12 +29,11 @@ public class ServerAlleleMatrix extends BaseBrapiServerResource
 	}
 
 	@Post("application/x-www-form-urlencoded")
-	public JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>> post(Representation rep)
+	public BrapiBaseResource<BrapiAlleleMatrix> post(Form form)
 	{
 		List<String> profileIds = new ArrayList<>();
 		List<String> markerIds = new ArrayList<>();
 
-		Form form = new Form(rep);
 		for (Parameter parameter : form)
 		{
 			if (parameter.getName().equalsIgnoreCase("markerprofileDbId"))
@@ -58,14 +58,15 @@ public class ServerAlleleMatrix extends BaseBrapiServerResource
 				matrixDbId = parameter.getValue();
 		}
 
-		if (matrixDbId != null)
-			return new JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5ByMatrixId(getRequest(), getContext(), matrixDbId, params, currentPage, pageSize));
 
-		return new JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), profileIds, markerIds, format, params, currentPage, pageSize));
+		if (matrixDbId != null)
+			return alleleMatrixDAO.getFromHdf5ByMatrixId(getRequest(), getContext(), matrixDbId, params, currentPage, pageSize);
+
+		return alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), profileIds, markerIds, format, params, currentPage, pageSize);
 	}
 
 	@Post("json")
-	public JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>> post(BrapiAlleleMatrixSearchPost alleleMatrixSearchPost)
+	public BrapiBaseResource<BrapiAlleleMatrix> post(BrapiAlleleMatrixSearchPost alleleMatrixSearchPost)
 	{
 		System.out.println(alleleMatrixSearchPost);
 
@@ -77,8 +78,8 @@ public class ServerAlleleMatrix extends BaseBrapiServerResource
 			params.setSepUnphased(alleleMatrixSearchPost.getSepUnphased());
 
 		if (alleleMatrixSearchPost.getMatrixDbId() != null)
-			return new JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5ByMatrixId(getRequest(), getContext(), alleleMatrixSearchPost.getMatrixDbId().get(0), params, currentPage, pageSize));
+			return alleleMatrixDAO.getFromHdf5ByMatrixId(getRequest(), getContext(), alleleMatrixSearchPost.getMatrixDbId().get(0), params, currentPage, pageSize);
 
-		return new JacksonRepresentation<BrapiBaseResource<BrapiAlleleMatrix>>(alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), alleleMatrixSearchPost.getMarkerprofileDbId(), new ArrayList<String>(), alleleMatrixSearchPost.getFormat(), params, currentPage, pageSize));
+		return alleleMatrixDAO.getFromHdf5(getRequest(), getContext(), alleleMatrixSearchPost.getMarkerprofileDbId(), new ArrayList<String>(), alleleMatrixSearchPost.getFormat(), params, currentPage, pageSize);
 	}
 }
