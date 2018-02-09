@@ -36,7 +36,7 @@ public class AsyncChecker
 		return status;
 	}
 
-	public static AsyncStatus checkAsyncStatus(List<Status> statuses)
+	public static AsyncStatus checkStatus(List<Status> statuses)
 	{
 		Status status = null;
 
@@ -61,22 +61,36 @@ public class AsyncChecker
 		return found;
 	}
 
-	private static boolean callPending(Status status)
+	public static Status checkAsyncStatus(List<Status> statuses)
+	{
+		Status status = null;
+
+		Optional<Status> asyncStatus = statuses.stream()
+			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCSTATUS) || s.getCode().equalsIgnoreCase("asynchstatus"))
+			.findFirst();
+
+		if (asyncStatus.isPresent())
+			status = asyncStatus.get();
+
+		return status;
+	}
+
+	public static boolean callPending(Status status)
 	{
 		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_PENDING);
 	}
 
-	private static boolean callInProcess(Status status)
+	public static boolean callInProcess(Status status)
 	{
 		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_INPROCESS);
 	}
 
-	private static boolean callFinished(Status status)
+	public static boolean callFinished(Status status)
 	{
 		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_FINISHED);
 	}
 
-	private static boolean callFailed(Status status)
+	public static boolean callFailed(Status status)
 	{
 		return status != null && status.getMessage().equalsIgnoreCase(ASYNC_FAILED);
 	}
