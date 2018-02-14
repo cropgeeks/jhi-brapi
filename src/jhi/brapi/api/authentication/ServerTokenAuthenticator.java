@@ -1,11 +1,9 @@
 package jhi.brapi.api.authentication;
 
-import jhi.brapi.*;
 import jhi.brapi.api.*;
-import jhi.brapi.api.Metadata;
 import jhi.brapi.util.*;
 
-import org.restlet.data.*;
+import org.restlet.data.Status;
 import org.restlet.resource.*;
 
 public class ServerTokenAuthenticator extends BaseBrapiServerResource
@@ -52,13 +50,26 @@ public class ServerTokenAuthenticator extends BaseBrapiServerResource
 	@Delete
 	public BrapiBaseResource<Void> logout(BrapiTokenLogoutPost post)
 	{
-		// TODO: implement
-		throw new ResourceException(501);
+		BrapiBaseResource<Void> logoutResponse = new BrapiBaseResource<>();
+
+		setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
+
+		return logoutResponse;
 	}
 
 	@Get("json")
 	public BrapiSessionToken getJson()
 	{
+		BrapiSessionToken sessionToken = new BrapiSessionToken();
+
+		// BrapiSessionToken is a special case and doesn't get metadata by
+		// default, so we need to include it here (even though it isn't used)
+		Metadata md = new Metadata();
+		md.setPagination(Pagination.empty());
+		md.getStatus().add(new jhi.brapi.api.Status("405", "Method not allowed"));
+		sessionToken.setMetadata(md);
+
+		setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 		// GET not supported
 		throw new ResourceException(405);
 	}
@@ -73,14 +84,29 @@ public class ServerTokenAuthenticator extends BaseBrapiServerResource
 
 		BrapiSessionToken sessionToken = GatekeeperUtils.authenticate(username, password);
 
-		if (sessionToken == null)
-			throw new ResourceException(400);
+		if (sessionToken != null)
+		{
+			// BrapiSessionToken is a special case and doesn't get metadata by
+			// default, so we need to include it here (even though it isn't used)
+			Metadata md = new Metadata();
+			md.setPagination(Pagination.empty());
+			sessionToken.setMetadata(md);
 
-		// BrapiSessionToken is a special case and doesn't get metadata by
-		// default, so we need to include it here (even though it isn't used)
-		Metadata md = new Metadata();
-		md.setPagination(Pagination.empty());
-		sessionToken.setMetadata(md);
+			setStatus(Status.SUCCESS_CREATED);
+		}
+		else
+		{
+			sessionToken = new BrapiSessionToken();
+
+			// BrapiSessionToken is a special case and doesn't get metadata by
+			// default, so we need to include it here (even though it isn't used)
+			Metadata md = new Metadata();
+			md.setPagination(Pagination.empty());
+			md.getStatus().add(new jhi.brapi.api.Status("40", "No objects found for given parameters"));
+			sessionToken.setMetadata(md);
+
+			setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+		}
 
 		return sessionToken;
 	}
