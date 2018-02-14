@@ -35,15 +35,15 @@ public class CallDAO
 			.withMethodGet()
 			.withMethodPost());
 
-		CALLS.add(new BrapiCall("germplasm/{id}")
+		CALLS.add(new BrapiCall("germplasm/{germplasmDbId}")
 			.withDatatypeJson()
 			.withMethodGet());
 
-		CALLS.add(new BrapiCall("germplasm/{id}/pedigree")
+		CALLS.add(new BrapiCall("germplasm/{germplasmDbId}/pedigree")
 			.withDatatypeJson()
 			.withMethodGet());
 
-		CALLS.add(new BrapiCall("germplasm/{id}/markerprofiles")
+		CALLS.add(new BrapiCall("germplasm/{germplasmDbId}/markerprofiles")
 			.withDatatypeJson()
 			.withMethodGet());
 
@@ -55,7 +55,7 @@ public class CallDAO
 			.withDatatypeJson()
 			.withMethodGet());
 
-		CALLS.add(new BrapiCall("markerprofiles/{id}")
+		CALLS.add(new BrapiCall("markerprofiles/{markerprofileDbId}")
 			.withDatatypeJson()
 			.withMethodGet());
 
@@ -64,7 +64,7 @@ public class CallDAO
 			.withMethodGet()
 			.withMethodPost());
 
-		CALLS.add(new BrapiCall("studies/{id}")
+		CALLS.add(new BrapiCall("studies/{studyDbId}")
 			.withDatatypeJson()
 			.withMethodGet());
 
@@ -72,11 +72,11 @@ public class CallDAO
 			.withDatatypeJson()
 			.withMethodGet());
 
-		CALLS.add(new BrapiCall("maps/{id}")
+		CALLS.add(new BrapiCall("maps/{mapDbId}")
 			.withDatatypeJson()
 			.withMethodGet());
 
-		CALLS.add(new BrapiCall("maps/{id}/positions")
+		CALLS.add(new BrapiCall("maps/{mapDbId}/positions")
 			.withDatatypeJson()
 			.withMethodGet());
 
@@ -97,7 +97,7 @@ public class CallDAO
 			.withDatatypeJson()
 			.withMethodGet());
 
-		CALLS.add(new BrapiCall("trials/{id}")
+		CALLS.add(new BrapiCall("trials/{trialDbId}")
 			.withDatatypeJson()
 			.withMethodGet());
 
