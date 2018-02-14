@@ -20,7 +20,7 @@ public class BrapiStudies
 	private Date startDate;
 	private Date endDate;
 	private String studyType;
-	private boolean active;
+	private String active;
 	private Object additionalInfo;
 
 	public String getStudyDbId()
@@ -71,10 +71,10 @@ public class BrapiStudies
 	public void setEndDate(Date endDate)
 		{ this.endDate = endDate; }
 
-	public boolean isActive()
+	public String isActive()
 		{ return active; }
 
-	public void setActive(boolean active)
+	public void setActive(String active)
 		{ this.active = active; }
 
 	public Object getAdditionalInfo()

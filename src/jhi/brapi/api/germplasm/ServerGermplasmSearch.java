@@ -4,6 +4,8 @@ import java.util.*;
 
 import jhi.brapi.api.*;
 
+import jhi.brapi.api.Status;
+import jhi.brapi.api.markerprofiles.*;
 import org.restlet.resource.*;
 
 /**
@@ -38,7 +40,26 @@ public class ServerGermplasmSearch extends BaseBrapiServerResource
 		addParameterPost(parameters, "genus", germplasmGenus);
 		addParameterPost(parameters, "species", germplasmSpecies);
 
-		return germplasmDAO.getMcpdForSearch(parameters, currentPage, pageSize);
+		BrapiListResource<BrapiGermplasm> result = new BrapiListResource<BrapiGermplasm>();
+		try
+		{
+			result = germplasmDAO.getMcpdForSearch(parameters, currentPage, pageSize);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			result.getMetadata().getStatus().add(new Status("500", "The server could not complete the request"));
+			setStatus(org.restlet.data.Status.SERVER_ERROR_INTERNAL);
+			return result;
+		}
+
+		if (result.data().isEmpty())
+		{
+			result.getMetadata().getStatus().add(new Status("40", "No objects found for given parameters"));
+			setStatus(org.restlet.data.Status.CLIENT_ERROR_BAD_REQUEST);
+		}
+
+		return result;
 	}
 
 	private void addParameter(Map<String, List<String>> map, String key, String value)
@@ -50,12 +71,18 @@ public class ServerGermplasmSearch extends BaseBrapiServerResource
 	@Post("json")
 	public BrapiListResource<BrapiGermplasm> postJson(BrapiGermplasmPost params)
 	{
-		germplasmPUIs = params.getGermplasmPUIs();
-		germplasmDbIds = params.getGermplasmDbIds();
-		germplasmSpecies = params.getGermplasmSpecies();
-		germplasmGenus = params.getGermplasmGenus();
-		germplasmNames = params.getGermplasmNames();
-		accessionNumbers = params.getAccessionNumbers();
+		if (params.getGermplasmPUIs() != null)
+			germplasmPUIs = params.getGermplasmPUIs();
+		if (params.getGermplasmDbIds() != null)
+			germplasmDbIds = params.getGermplasmDbIds();
+		if (params.getGermplasmSpecies() != null)
+			germplasmSpecies = params.getGermplasmSpecies();
+		if (params.getGermplasmGenus() != null)
+			germplasmGenus = params.getGermplasmGenus();
+		if (params.getGermplasmNames() != null)
+			germplasmNames = params.getGermplasmNames();
+		if (params.getAccessionNumbers() != null)
+			accessionNumbers = params.getAccessionNumbers();
 
 		setPaginationParameters(params);
 

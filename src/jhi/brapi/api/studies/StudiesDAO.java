@@ -78,7 +78,7 @@ public class StudiesDAO
 		studies.setTrialName(resultSet.getString("trial_name"));
 		studies.setStartDate(resultSet.getDate("datasets.date_start"));
 		studies.setEndDate(resultSet.getDate("datasets.date_end"));
-		studies.setActive(false);
+		studies.setActive(""+ false);
 		studies.setLocationDbId(resultSet.getString("location_id"));
 		// Parse out the years
 		String seasonString = resultSet.getString("years");
