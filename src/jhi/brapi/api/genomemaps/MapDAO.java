@@ -42,7 +42,7 @@ public class MapDAO
 	 */
 	public BrapiListResource<BrapiGenomeMap> getAll(int currentPage, int pageSize)
 	{
-		BrapiListResource<BrapiGenomeMap> result = new BrapiListResource<>();
+		BrapiListResource<BrapiGenomeMap> maps = new BrapiListResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, mapsQuery, currentPage, pageSize);
@@ -51,14 +51,21 @@ public class MapDAO
 			List<BrapiGenomeMap> genomeMaps = getMapsFromResultSet(resultSet);
 			long totalCount = DatabaseUtils.getTotalCount(statement);
 
-			result = new BrapiListResource<BrapiGenomeMap>(genomeMaps, currentPage, pageSize, totalCount);
+			if (!genomeMaps.isEmpty())
+				maps = new BrapiListResource<BrapiGenomeMap>(genomeMaps, currentPage, pageSize, totalCount);
+			else
+				maps.getMetadata().getStatus().add(new Status("40", "No objects found for given parameters"));
+
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+
+			maps.getMetadata().getStatus().clear();
+			maps.getMetadata().getStatus().add(new Status("500", "Internal server error"));
 		}
 
-		return result;
+		return maps;
 	}
 
 	// Takes a resultSet and iterates over it adding each map object in turn to a list of BrapiGenomeMap objects, which is then
@@ -92,8 +99,8 @@ public class MapDAO
 	 */
 	public BrapiBaseResource<BrapiMapMetaData> getById(String id)
 	{
-		BrapiBaseResource<BrapiMapMetaData> result = new BrapiBaseResource<>();
 		BrapiMapMetaData mapDetail = new BrapiMapMetaData();
+		BrapiBaseResource<BrapiMapMetaData> result = new BrapiBaseResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
 			 PreparedStatement mapStatement = DatabaseUtils.createByIdStatement(con, detailQuery, id);
@@ -101,7 +108,10 @@ public class MapDAO
 		{
 			mapDetail = getMapDetailFromResultSet(resultSet);
 		}
-		catch (SQLException e) { e.printStackTrace(); }
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 
 		// Quit now if we didn't find a map with the given ID
 		if (mapDetail != null)
@@ -113,13 +123,21 @@ public class MapDAO
 			{
 				List<BrapiLinkageGroup> linkageGroups = getLinkageGroupsFromResultSet(resultSet);
 				mapDetail.setLinkageGroups(linkageGroups);
-
-				result = new BrapiBaseResource<BrapiMapMetaData>(mapDetail);
+				mapDetail.setData(linkageGroups);
+				result = new BrapiBaseResource<>(mapDetail);
 			}
 			catch (SQLException e)
 			{
 				e.printStackTrace();
+
+				result.getMetadata().getStatus().clear();
+				result.getMetadata().getStatus().add(new Status("500", "Internal server error"));
 			}
+		}
+		else
+		{
+			result.getMetadata().getStatus().clear();
+			result.getMetadata().getStatus().add(new Status("404", "Not Found"));
 		}
 
 		return result;
@@ -138,6 +156,7 @@ public class MapDAO
 			if (resultSet.getString("description") != null)
 			{
 				BrapiMapMetaData mapDetail = new BrapiMapMetaData();
+				mapDetail.setMapDbId(resultSet.getString("id"));
 				mapDetail.setName(resultSet.getString("description"));
 
 				return mapDetail;

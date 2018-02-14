@@ -2,6 +2,9 @@ package jhi.brapi.api.genomemaps;
 
 import jhi.brapi.api.*;
 
+import jhi.brapi.client.*;
+import org.restlet.data.*;
+import org.restlet.data.Status;
 import org.restlet.resource.*;
 
 /**
@@ -14,18 +17,41 @@ public class ServerGenomeMaps extends BaseBrapiServerResource
 	private MapDAO mapDAO = new MapDAO();
 
 	private String species;
+	private String type;
 
 	@Override
 	public void doInit()
 	{
 		super.doInit();
 		species = getAttribute("species");
+		type = getAttribute("type");
 	}
 
 	@Get("json")
 	public BrapiListResource<BrapiGenomeMap> getJson()
 	{
 		// TODO: Filter on species? How?
-		return mapDAO.getAll(currentPage, pageSize);
+		// TODO: Filter on type, how?
+		BrapiListResource<BrapiGenomeMap> maps = mapDAO.getAll(currentPage, pageSize);
+
+		if (StatusChecker.isServerError(maps.getMetadata().getStatus()))
+			setStatus(Status.SERVER_ERROR_INTERNAL);
+		else if (StatusChecker.isNoObjectsFound(maps.getMetadata().getStatus()))
+			setStatus(Status.SUCCESS_NO_CONTENT);
+
+		return maps;
+	}
+
+	@Post("json")
+	public BrapiListResource<BrapiGenomeMap> postJson(BrapiGenomeMapSearchPost mapSearchPost)
+	{
+		if (mapSearchPost.getSpecies() != null)
+			species = mapSearchPost.getSpecies();
+		if (mapSearchPost.getType() != null)
+			type = mapSearchPost.getType();
+
+		setPaginationParameters(mapSearchPost);
+
+		return getJson();
 	}
 }

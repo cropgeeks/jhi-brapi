@@ -2,6 +2,9 @@ package jhi.brapi.api.genomemaps;
 
 import jhi.brapi.api.*;
 
+import jhi.brapi.api.Status;
+import jhi.brapi.client.*;
+import org.restlet.data.*;
 import org.restlet.resource.*;
 
 /**
@@ -24,6 +27,13 @@ public class ServerGenomeMapMetaData extends BaseBrapiServerResource
 	@Get("json")
 	public BrapiBaseResource<BrapiMapMetaData> getJson()
 	{
-		return mapDAO.getById(id);
+		BrapiBaseResource<BrapiMapMetaData> result = mapDAO.getById(id);
+
+		if (StatusChecker.isServerError(result.getMetadata().getStatus()))
+			setStatus(org.restlet.data.Status.SERVER_ERROR_INTERNAL);
+		else if (StatusChecker.isNotFound(result.getMetadata().getStatus()))
+			setStatus(org.restlet.data.Status.SUCCESS_NO_CONTENT);
+
+		return result;
 	}
 }

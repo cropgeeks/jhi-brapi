@@ -111,6 +111,9 @@ public interface RetrofitService
 	@GET("maps")
 	Call<BrapiListResource<BrapiGenomeMap>> getMaps(@Query("species") String species, @Query("type") String type, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
+	@POST("maps")
+	Call<BrapiListResource<BrapiGenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
+
 	/**
 	 * Gets the BrapiMapMetaData (Map) specified by {id} from the BrAPI service
 	 * provider.
