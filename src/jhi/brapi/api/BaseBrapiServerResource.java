@@ -2,6 +2,7 @@ package jhi.brapi.api;
 
 import com.fasterxml.jackson.databind.*;
 
+import jhi.brapi.client.*;
 import org.restlet.ext.jackson.*;
 import org.restlet.representation.*;
 import org.restlet.resource.*;
@@ -103,5 +104,15 @@ public abstract class BaseBrapiServerResource<T> extends ServerResource
 		}
 
 		throw new ResourceException(404);
+	}
+
+	protected void setHttpResponseCode(List<Status> statuses)
+	{
+		if (StatusChecker.isServerError(statuses))
+			setStatus(org.restlet.data.Status.SERVER_ERROR_INTERNAL);
+		else if (StatusChecker.isNoObjectsFound(statuses))
+			setStatus(org.restlet.data.Status.SUCCESS_NO_CONTENT);
+		else if (StatusChecker.isNotFound(statuses))
+			setStatus(org.restlet.data.Status.CLIENT_ERROR_NOT_FOUND);
 	}
 }

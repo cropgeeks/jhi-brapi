@@ -34,10 +34,7 @@ public class ServerGenomeMaps extends BaseBrapiServerResource
 		// TODO: Filter on type, how?
 		BrapiListResource<BrapiGenomeMap> maps = mapDAO.getAll(currentPage, pageSize);
 
-		if (StatusChecker.isServerError(maps.getMetadata().getStatus()))
-			setStatus(Status.SERVER_ERROR_INTERNAL);
-		else if (StatusChecker.isNoObjectsFound(maps.getMetadata().getStatus()))
-			setStatus(Status.SUCCESS_NO_CONTENT);
+		setHttpResponseCode(maps.getMetadata().getStatus());
 
 		return maps;
 	}

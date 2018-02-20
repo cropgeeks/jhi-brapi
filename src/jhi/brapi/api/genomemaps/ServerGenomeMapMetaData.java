@@ -29,10 +29,7 @@ public class ServerGenomeMapMetaData extends BaseBrapiServerResource
 	{
 		BrapiBaseResource<BrapiMapMetaData> result = mapDAO.getById(id);
 
-		if (StatusChecker.isServerError(result.getMetadata().getStatus()))
-			setStatus(org.restlet.data.Status.SERVER_ERROR_INTERNAL);
-		else if (StatusChecker.isNotFound(result.getMetadata().getStatus()))
-			setStatus(org.restlet.data.Status.SUCCESS_NO_CONTENT);
+		setHttpResponseCode(result.getMetadata().getStatus());
 
 		return result;
 	}
