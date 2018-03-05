@@ -5,7 +5,7 @@ public class BrapiMarkerPosition
 	private String markerDbId;
 	private String markerName;
 	private String location;
-	private String linkageGroup;
+	private String linkageGroupName;
 
 	public String getMarkerDbId()
 		{ return markerDbId; }
@@ -25,9 +25,9 @@ public class BrapiMarkerPosition
 	public void setLocation(String location)
 		{ this.location = location; }
 
-	public String getLinkageGroup()
-		{ return linkageGroup; }
+	public String getLinkageGroupName()
+		{ return linkageGroupName; }
 
-	public void setLinkageGroup(String linkageGroup)
-		{ this.linkageGroup = linkageGroup; }
+	public void setLinkageGroupName(String linkageGroupName)
+		{ this.linkageGroupName = linkageGroupName; }
 }

@@ -8,7 +8,6 @@ public class BrapiMapMetaData
 	private String name;
 	private String type;
 	private String unit;
-	private List<BrapiLinkageGroup> linkageGroups;
 	private List<BrapiLinkageGroup> data;
 
 	public String getMapDbId()
@@ -34,12 +33,6 @@ public class BrapiMapMetaData
 
 	public void setUnit(String unit)
 		{ this.unit = unit; }
-
-	public List<BrapiLinkageGroup> getLinkageGroups()
-		{ return linkageGroups; }
-
-	public void setLinkageGroups(List<BrapiLinkageGroup> linkageGroups)
-		{ this.linkageGroups = linkageGroups; }
 
 	public List<BrapiLinkageGroup> getData()
 		{ return data; }

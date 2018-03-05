@@ -27,7 +27,7 @@ public class ServerGenomeMapMetaData extends BaseBrapiServerResource
 	@Get("json")
 	public BrapiBaseResource<BrapiMapMetaData> getJson()
 	{
-		BrapiBaseResource<BrapiMapMetaData> result = mapDAO.getById(id);
+		BrapiBaseResource<BrapiMapMetaData> result = mapDAO.getById(id, currentPage, pageSize);
 
 		setHttpResponseCode(result.getMetadata().getStatus());
 
