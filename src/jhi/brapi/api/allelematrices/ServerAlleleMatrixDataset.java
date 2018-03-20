@@ -32,6 +32,6 @@ public class ServerAlleleMatrixDataset extends BaseBrapiServerResource
 		// The user might be subsetting by a given studyId
 		addParameter(parameters, "datasets.id", studyId);
 
-		return alleleMatriceDAO.getAll(parameters, currentPage, pageSize);
+		return alleleMatriceDAO.getAll(getContext(), parameters, currentPage, pageSize);
 	}
 }
