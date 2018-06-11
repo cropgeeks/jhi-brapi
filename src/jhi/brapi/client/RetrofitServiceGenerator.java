@@ -10,6 +10,7 @@ import java.util.concurrent.*;
 
 import okhttp3.*;
 
+import okhttp3.Response;
 import retrofit2.*;
 import retrofit2.converter.jackson.*;
 
@@ -119,16 +120,14 @@ public class RetrofitServiceGenerator
 		return retrofit.create(RetrofitService.class);
 	}
 
-	public InputStream getInputStream(URI uri)
+	public Response getResponse(URI uri)
 		throws Exception
 	{
 		Request request = new Request.Builder()
-				.url(uri.toURL())
-				.build();
+			.url(uri.toURL())
+			.build();
 
-		okhttp3.Response response = httpClient.newCall(request).execute();
-
-		return response.body().byteStream();
+		return httpClient.newCall(request).execute();
 	}
 
 	Retrofit getRetrofit()
