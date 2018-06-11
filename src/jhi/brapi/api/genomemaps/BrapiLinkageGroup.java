@@ -2,15 +2,15 @@ package jhi.brapi.api.genomemaps;
 
 public class BrapiLinkageGroup
 {
-	private String linkageGroupId;
+	private String linkageGroupName;
 	private int markerCount;
 	private double maxPosition;
 
-	public String getLinkageGroupId()
-		{ return linkageGroupId; }
+	public String getLinkageGroupName()
+		{ return linkageGroupName; }
 
-	public void setLinkageGroupId(String linkageGroupId)
-		{ this.linkageGroupId = linkageGroupId; }
+	public void setLinkageGroupName(String linkageGroupName)
+		{ this.linkageGroupName = linkageGroupName; }
 
 	public int getMarkerCount()
 		{ return markerCount; }
