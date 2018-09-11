@@ -10,11 +10,14 @@ public class Metadata
 
 	private List<String> datafiles;
 
+	private AsynchStatus asynchStatus;
+
 	public Metadata()
 	{
 		this.pagination = new Pagination();
 		this.status = new ArrayList<Status>();
 		this.datafiles = new ArrayList<String>();
+		this.asynchStatus = new AsynchStatus();
 	}
 
 	public Pagination getPagination()
@@ -34,4 +37,10 @@ public class Metadata
 
 	public void setDatafiles(List<String> datafiles)
 		{ this.datafiles = datafiles; }
+
+	public AsynchStatus getAsynchStatus()
+		{ return asynchStatus; }
+
+	public void setAsynchStatus(AsynchStatus asynchStatus)
+		{ this.asynchStatus = asynchStatus; }
 }
