@@ -18,7 +18,7 @@ public class BrapiGermplasm
 	private String commonCropName;
 	private String instituteCode;
 	private String instituteName;
-	private String biologicalStatusOfAccessionCode;
+	private int biologicalStatusOfAccessionCode;
 	private String countryOfOriginCode;
 	private List<String> typeOfGermplasmStorageCode;
 	private String genus;
@@ -96,10 +96,10 @@ public class BrapiGermplasm
 	public void setInstituteName(String instituteName)
 		{ this.instituteName = instituteName; }
 
-	public String getBiologicalStatusOfAccessionCode()
+	public int getBiologicalStatusOfAccessionCode()
 		{ return biologicalStatusOfAccessionCode; }
 
-	public void setBiologicalStatusOfAccessionCode(String biologicalStatusOfAccessionCode)
+	public void setBiologicalStatusOfAccessionCode(int biologicalStatusOfAccessionCode)
 		{ this.biologicalStatusOfAccessionCode = biologicalStatusOfAccessionCode; }
 
 	public String getCountryOfOriginCode()
