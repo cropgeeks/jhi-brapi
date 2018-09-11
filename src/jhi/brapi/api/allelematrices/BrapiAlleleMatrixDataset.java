@@ -12,8 +12,6 @@ public class BrapiAlleleMatrixDataset
 	private String description;
 	private Date lastUpdated;
 	private String studyDbId;
-	private int markerCount;
-	private int sampleCount;
 
 	public String getName()
 		{ return name; }
@@ -44,16 +42,4 @@ public class BrapiAlleleMatrixDataset
 
 	public void setStudyDbId(String studyDbId)
 		{ this.studyDbId = studyDbId; }
-
-	public int getMarkerCount()
-		{ return markerCount; }
-
-	public void setMarkerCount(int markerCount)
-		{ this.markerCount = markerCount; }
-
-	public int getSampleCount()
-		{ return sampleCount; }
-
-	public void setSampleCount(int sampleCount)
-		{ this.sampleCount = sampleCount; }
 }
