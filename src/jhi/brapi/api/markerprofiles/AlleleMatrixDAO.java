@@ -275,9 +275,16 @@ public class AlleleMatrixDAO
 			converter.readInput();
 			converter.extractDataFJ(file.getAbsolutePath(), Collections.singletonList("# fjFile = genotype"));
 
+			System.out.println("HDF5 extraction path: " + file.getAbsolutePath());
+
 			BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
 
+			AsynchStatus asynchStatus = new AsynchStatus();
+			asynchStatus.setAsynchId(file.getName());
+			asynchStatus.setStatus("PENDING");
+
 			result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
+			result.getMetadata().setAsynchStatus(asynchStatus);
 			return result;
 		}
 		catch (IOException e)

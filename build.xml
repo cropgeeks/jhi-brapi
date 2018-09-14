@@ -1,6 +1,6 @@
 <project name="BRAPI" default="compile" basedir=".">
 
-	<property file="build.wildcat.properties" />
+	<property file="build.properties" />
 
 	<property name="src" location="src"/>
 	<property name="lib" location="lib"/>

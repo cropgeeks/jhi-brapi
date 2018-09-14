@@ -82,7 +82,7 @@ public class Brapi extends Application
 		CorsFilter corsFilter = new CorsFilter(context, encoder);
 		corsFilter.setAllowedOrigins(new HashSet<>(Collections.singletonList("*")));
 		corsFilter.setAllowedCredentials(true);
-		corsFilter.setSkippingResourceForCorsOptions(false);
+		corsFilter.setSkippingResourceForCorsOptions(true);
 
 		return corsFilter;
 	}
@@ -91,8 +91,8 @@ public class Brapi extends Application
 	{
 		// These routes require an authentication token to access (you can get
 		// this by providing a username and password to the /token resource
-		attachToRouter(router, "/allelematrix-search", ServerAlleleMatrix.class); // FJ
-		attachToRouter(router, "/allelematrix-search/status/{id}", ServerStatus.class);
+		attachToRouter(router, "/allelematrices-search", ServerAlleleMatrix.class); // FJ
+		attachToRouter(router, "/allelematrices-search/{id}", ServerStatus.class);
 		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
 		attachToRouter(router, "/crops", ServerCrop.class);
 		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
