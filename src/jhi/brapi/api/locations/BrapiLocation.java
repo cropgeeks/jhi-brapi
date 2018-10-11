@@ -8,11 +8,11 @@ public class BrapiLocation
 	private String abbreviation;
 	private String countryCode;
 	private String countryName;
-	private double latitude;
-	private double longitude;
-	private double altitude;
+	private String latitude;
+	private String longitude;
+	private String altitude;
 	private String instituteName;
-	private String instituteAdress;
+	private String instituteAddress;
 	private Object additionalInfo = null;
 
 	public String getLocationDbId()
@@ -51,22 +51,22 @@ public class BrapiLocation
 	public void setCountryName(String countryName)
 		{ this.countryName = countryName; }
 
-	public double getLatitude()
+	public String getLatitude()
 		{ return latitude; }
 
-	public void setLatitude(double latitude)
+	public void setLatitude(String latitude)
 		{ this.latitude = latitude; }
 
-	public double getLongitude()
+	public String getLongitude()
 		{ return longitude; }
 
-	public void setLongitude(double longitude)
+	public void setLongitude(String longitude)
 		{ this.longitude = longitude; }
 
-	public double getAltitude()
+	public String getAltitude()
 		{ return altitude; }
 
-	public void setAltitude(double altitude)
+	public void setAltitude(String altitude)
 		{ this.altitude = altitude; }
 
 	public String getInstituteName()
@@ -75,11 +75,11 @@ public class BrapiLocation
 	public void setInstituteName(String instituteName)
 		{ this.instituteName = instituteName; }
 
-	public String getInstituteAdress()
-		{ return instituteAdress; }
+	public String getInstituteAddress()
+		{ return instituteAddress; }
 
-	public void setInstituteAdress(String instituteAdress)
-		{ this.instituteAdress = instituteAdress; }
+	public void setInstituteAddress(String instituteAddress)
+		{ this.instituteAddress = instituteAddress; }
 
 	public Object getAdditionalInfo()
 		{ return additionalInfo; }

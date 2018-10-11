@@ -87,7 +87,7 @@ public class GermplasmDAO
 		mcpd.setCommonCropName(null); // TODO
 		mcpd.setInstituteCode(resultSet.getString("institutions.code"));
 		mcpd.setInstituteName(resultSet.getString("institutions.name"));
-		mcpd.setBiologicalStatusOfAccessionCode(null); // TODO
+		mcpd.setBiologicalStatusOfAccessionCode(0); // TODO
 		mcpd.setCountryOfOriginCode(resultSet.getString("countries.country_code3"));
 		mcpd.setTypeOfGermplasmStorageCode(null); // TODO
 		mcpd.setGenus(resultSet.getString("taxonomies.genus"));
@@ -219,8 +219,8 @@ public class GermplasmDAO
 		pedigree.setGermplasmDbId(resultSet.getString("p1.germinatebase_id"));
 		pedigree.setDefaultDisplayName(resultSet.getString("name"));
 		pedigree.setPedigree(resultSet.getString("definition"));
-		pedigree.setParent1Id(resultSet.getString("left_parent"));
-		pedigree.setParent2Id(resultSet.getString("right_parent"));
+		pedigree.setParent1DbId(resultSet.getString("left_parent"));
+		pedigree.setParent2DbId(resultSet.getString("right_parent"));
 
 		return pedigree;
 	}

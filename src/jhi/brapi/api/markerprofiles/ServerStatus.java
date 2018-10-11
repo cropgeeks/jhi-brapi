@@ -15,7 +15,7 @@ public class ServerStatus extends BaseBrapiServerResource
 	public void doInit()
 	{
 		super.doInit();
-		this.id = (String)getRequestAttributes().get("id");
+		this.id = getRequestAttributes().get("id").toString();
 	}
 
 	@Get("json")
@@ -26,8 +26,13 @@ public class ServerStatus extends BaseBrapiServerResource
 		String url = getRequest().getRootRef().toString();
 		String datafile = url + "/files/" + id;
 
+		AsynchStatus asynchStatus = new AsynchStatus();
+		asynchStatus.setAsynchId(id);
+		asynchStatus.setStatus("FINISHED");
+
 		test.getMetadata().getStatus().add(new Status("asynchstatus", "FINISHED"));
 		test.getMetadata().setDatafiles(Collections.singletonList(datafile));
+		test.getMetadata().setAsynchStatus(asynchStatus);
 
 		return test;
 	}

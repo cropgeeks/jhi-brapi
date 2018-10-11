@@ -25,12 +25,6 @@ public class Files extends ServerResource
 		return getFile(MediaType.TEXT_TSV);
 	}
 
-	@Get("png")
-	public Representation getPng()
-	{
-		return getFile(MediaType.IMAGE_PNG);
-	}
-
 	/**
 	 * Returns the file with the url parameter filename in the given {@link MediaType}.
 	 *
@@ -40,6 +34,7 @@ public class Files extends ServerResource
 	private Representation getFile(MediaType mediaType)
 	{
 		File file = new File(System.getProperty("java.io.tmpdir"), filename);
+		System.out.println(file.getAbsolutePath());
 
 		if (file.exists())
 		{

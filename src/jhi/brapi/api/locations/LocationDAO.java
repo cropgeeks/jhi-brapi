@@ -105,9 +105,9 @@ public class LocationDAO
 		location.setName(resultSet.getString("locations.site_name"));
 		location.setCountryCode(resultSet.getString("countries.country_code3"));
 		location.setCountryName(resultSet.getString("countries.country_name"));
-		location.setAltitude(resultSet.getDouble("locations.elevation"));
-		location.setLatitude(resultSet.getDouble("locations.latitude"));
-		location.setLongitude(resultSet.getDouble("locations.longitude"));
+		location.setAltitude(resultSet.getString("locations.elevation"));
+		location.setLatitude(resultSet.getString("locations.latitude"));
+		location.setLongitude(resultSet.getString("locations.longitude"));
 		location.setLocationDbId(resultSet.getString("locations.id"));
 		location.setAdditionalInfo(null);
 		location.setLocationType(resultSet.getString("locationtypes.name"));
