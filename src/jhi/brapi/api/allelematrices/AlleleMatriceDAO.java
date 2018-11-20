@@ -8,7 +8,7 @@ import jhi.brapi.util.*;
 
 public class AlleleMatriceDAO
 {
-	private final String getMatrices = "SELECT SQL_CALC_FOUND_ROWS * FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id %s LIMIT ?, ?";
+	private final String getMatrices = "SELECT SQL_CALC_FOUND_ROWS * FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id %s AND datasets.source_file IS NOT NULL LIMIT ?, ?";
 
 	public BrapiListResource<BrapiAlleleMatrixDataset> getAll(Map<String, List<String>> parameters, int currentPage, int pageSize)
 	{
