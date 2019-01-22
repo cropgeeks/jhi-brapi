@@ -134,4 +134,9 @@ public class RetrofitServiceGenerator
 	{
 		return retrofit;
 	}
+
+	public void cancelAll()
+	{
+		httpClient.dispatcher().cancelAll();
+	}
 }
