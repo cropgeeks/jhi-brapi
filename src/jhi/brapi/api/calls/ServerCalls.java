@@ -4,14 +4,20 @@ import jhi.brapi.api.*;
 
 public class ServerCalls extends BaseBrapiServerResource
 {
-	private String dataType;
+	private String dataType = null;
 
 	@Override
 	public void doInit()
 	{
 		super.doInit();
 
-		dataType = getQueryValue("datatype");
+		String dt = getQueryValue("datatype");
+		if (dt != null)
+			dataType = dt;
+
+		String dT = getQueryValue("dataType");
+		if (dT != null)
+			dataType = dT;
 	}
 
 	@Override
