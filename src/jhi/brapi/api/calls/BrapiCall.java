@@ -4,19 +4,25 @@ import java.util.*;
 
 public class BrapiCall
 {
-	public static final String DATATYPE_JSON = "json";
-	public static final String DATATYPE_TSV = "tsv";
-	public static final String DATATYPE_FLAPJACK = "flapjack";
+	public static final String DATATYPE_JSON = "application/json";
+	public static final String DATATYPE_TSV = "text/tsv";
+	public static final String DATATYPE_FLAPJACK = "application/flapjack";
 
 	public static final String METHOD_GET = "GET";
 	public static final String METHOD_POST = "POST";
 	public static final String METHOD_PUT = "PUT";
 	public static final String METHOD_DELETE = "DELETE";
 
+	public static final String VERSION_ONE_ZERO = "1.0";
+	public static final String VERSION_ONE_ONE = "1.1";
+	public static final String VERSION_ONE_TWO = "1.2";
+	public static final String VERSION_ONE_THREE = "1.3";
+
 	private String call;
-	private List<String> datatypes = new ArrayList<>();
+	private List<String> dataTypes = new ArrayList<>();
 	// HTTP methods (e.g. POST, GET, etc)
 	private List<String> methods = new ArrayList<>();
+	private List<String> versions = new ArrayList<>();
 
 	public BrapiCall() {}
 
@@ -31,25 +37,31 @@ public class BrapiCall
 		return this;
 	}
 
-	public BrapiCall addDatatype(String dataType)
+	public BrapiCall addDataType(String dataType)
 	{
-		datatypes.add(dataType);
+		dataTypes.add(dataType);
+		return this;
+	}
+
+	public BrapiCall addVersion(String version)
+	{
+		versions.add(version);
 		return this;
 	}
 
 	public BrapiCall withDatatypeJson()
 	{
-		return addDatatype(DATATYPE_JSON);
+		return addDataType(DATATYPE_JSON);
 	}
 
 	public BrapiCall withDatatypeTsv()
 	{
-		return addDatatype(DATATYPE_TSV);
+		return addDataType(DATATYPE_TSV);
 	}
 
 	public BrapiCall withDatatypeFlapjack()
 	{
-		return addDatatype(DATATYPE_FLAPJACK);
+		return addDataType(DATATYPE_FLAPJACK);
 	}
 
 	public BrapiCall withMethodGet()
@@ -72,9 +84,21 @@ public class BrapiCall
 		return addMethod(METHOD_DELETE);
 	}
 
+	public BrapiCall withVersionOneZero()
+		{ return addVersion(VERSION_ONE_ZERO); }
+
+	public BrapiCall withVersionOneOne()
+		{ return addVersion(VERSION_ONE_ONE); }
+
+	public BrapiCall withVersionOneTwo()
+		{ return addVersion(VERSION_ONE_TWO); }
+
+	public BrapiCall withVersionOneThree()
+		{ return addVersion(VERSION_ONE_THREE); }
+
 	public boolean hasDataType(String dataType)
 	{
-		return datatypes.stream()
+		return dataTypes.stream()
 			.filter(d -> d.equalsIgnoreCase(dataType))
 			.count() >= 1;
 	}
@@ -82,7 +106,14 @@ public class BrapiCall
 	public boolean hasMethod(String method)
 	{
 		return methods.stream()
-			.filter(d -> d.equalsIgnoreCase(method))
+			.filter(m -> m.equalsIgnoreCase(method))
+			.count() >= 1;
+	}
+
+	public boolean hasVersion(String version)
+	{
+		return versions.stream()
+			.filter(v -> v.equalsIgnoreCase(version))
 			.count() >= 1;
 	}
 
@@ -92,17 +123,29 @@ public class BrapiCall
 	public void setCall(String call)
 		{ this.call = call; }
 
+	public List<String> getDataTypes()
+		{ return dataTypes; }
+
+	public void setDataTypes(List<String> dataTypes)
+		{ this.dataTypes = dataTypes; }
+
 	public List<String> getDatatypes()
-		{ return datatypes; }
+		{ return dataTypes; }
 
 	public void setDatatypes(List<String> datatypes)
-		{ this.datatypes = datatypes; }
+		{ this.dataTypes = dataTypes; }
 
 	public List<String> getMethods()
 	 { return methods; }
 
 	public void setMethods(List<String> methods)
 		{ this.methods = methods; }
+
+	public List<String> getVersions()
+		{ return versions; }
+
+	public void setVersions(List<String> versions)
+		{ this.versions = versions; }
 
 	@Override
 	public String toString()

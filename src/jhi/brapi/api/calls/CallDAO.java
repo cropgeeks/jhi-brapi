@@ -12,98 +12,154 @@ public class CallDAO
 
 	static
 	{
+		CALLS.add(new BrapiCall("calls")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("crops")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne());
+
+		CALLS.add(new BrapiCall("commoncropnames")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("locations")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
+
+		// TODO: Add /locations/locationDbId
+
+		CALLS.add(new BrapiCall("trials")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("trials/{trialDbId}")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("studies-search")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withMethodPost()
+			.withVersionOneOne());
+
+		// TODO: Add to codebase
+		CALLS.add(new BrapiCall("studies")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("studies/{studyDbId}")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("phenotypes-search")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withMethodPost()
+			.withVersionOneOne());
+
+		CALLS.add(new BrapiCall("germplasm-search")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withMethodPost()
+			.withVersionOneOne());
+
+		// TODO: Add to codebase
+		CALLS.add(new BrapiCall("germplasm")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("germplasm/{germplasmDbId}")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("germplasm/{germplasmDbId}/pedigree")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("germplasm/{germplasmDbId}/markerprofiles")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
+
+		CALLS.add(new BrapiCall("markers")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
+
 		CALLS.add(new BrapiCall("allelematrices")
 			.withDatatypeJson()
-			.withMethodGet());
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
 
 		CALLS.add(new BrapiCall("allelematrix-search")
 			.withDatatypeJson()
 			.withDatatypeTsv()
 			.withDatatypeFlapjack()
-			.withMethodPost());
+			.withMethodPost()
+			.withVersionOneOne()
+			.withVersionOneThree());
 
 		CALLS.add(new BrapiCall("allelematrix-search/status/{id}")
 			.withDatatypeJson()
 			.withMethodGet());
 
-		CALLS.add(new BrapiCall("calls")
-			.withDatatypeJson()
-			.withMethodGet());
-
-		CALLS.add(new BrapiCall("germplasm-search")
-			.withDatatypeJson()
-			.withMethodGet()
-			.withMethodPost());
-
-		CALLS.add(new BrapiCall("germplasm/{germplasmDbId}")
-			.withDatatypeJson()
-			.withMethodGet());
-
-		CALLS.add(new BrapiCall("germplasm/{germplasmDbId}/pedigree")
-			.withDatatypeJson()
-			.withMethodGet());
-
-		CALLS.add(new BrapiCall("germplasm/{germplasmDbId}/markerprofiles")
-			.withDatatypeJson()
-			.withMethodGet());
-
-		CALLS.add(new BrapiCall("markers")
-			.withDatatypeJson()
-			.withMethodGet());
-
 		CALLS.add(new BrapiCall("markerprofiles")
 			.withDatatypeJson()
-			.withMethodGet());
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
 
 		CALLS.add(new BrapiCall("markerprofiles/{markerprofileDbId}")
 			.withDatatypeJson()
-			.withMethodGet());
-
-		CALLS.add(new BrapiCall("studies-search")
-			.withDatatypeJson()
 			.withMethodGet()
-			.withMethodPost());
-
-		CALLS.add(new BrapiCall("studies/{studyDbId}")
-			.withDatatypeJson()
-			.withMethodGet());
+			.withVersionOneOne()
+			.withVersionOneThree());
 
 		CALLS.add(new BrapiCall("maps")
 			.withDatatypeJson()
-			.withMethodGet());
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
 
 		CALLS.add(new BrapiCall("maps/{mapDbId}")
 			.withDatatypeJson()
-			.withMethodGet());
+			.withMethodGet()
+			.withVersionOneOne()
+			.withVersionOneThree());
 
 		CALLS.add(new BrapiCall("maps/{mapDbId}/positions")
 			.withDatatypeJson()
-			.withMethodGet());
-
-		CALLS.add(new BrapiCall("locations")
-			.withDatatypeJson()
-			.withMethodGet());
-
-		CALLS.add(new BrapiCall("phenotypes-search")
-			.withDatatypeJson()
 			.withMethodGet()
-			.withMethodPost());
+			.withVersionOneOne()
+			.withVersionOneThree());
 
 		CALLS.add(new BrapiCall("token")
 			.withDatatypeJson()
-			.withMethodPost());
-
-		CALLS.add(new BrapiCall("trials")
-			.withDatatypeJson()
-			.withMethodGet());
-
-		CALLS.add(new BrapiCall("trials/{trialDbId}")
-			.withDatatypeJson()
-			.withMethodGet());
-
-		CALLS.add(new BrapiCall("crops")
-			.withDatatypeJson()
-			.withMethodGet());
+			.withMethodPost()
+			.withVersionOneOne());
 
 		CALLS.sort(Comparator.comparing(BrapiCall::getCall));
 	}
@@ -115,7 +171,7 @@ public class CallDAO
 		if (dataType != null && !dataType.isEmpty())
 		{
 			calls = calls.stream()
-						 .filter(c -> c.getDatatypes().contains(dataType)) // Get the calls that support the query data type
+						 .filter(c -> c.getDataTypes().contains(dataType)) // Get the calls that support the query data type
 						 .collect(Collectors.toCollection(ArrayList::new));
 		}
 
