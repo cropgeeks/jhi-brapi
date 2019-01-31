@@ -1,0 +1,29 @@
+# Tomcat information for deploying BrAPI
+tomcat.manager.url =
+tomcat.manager.username =
+tomcat.manager.password =
+
+# Name of the web application when deployed
+project.name =
+
+# JNDI name of the database within tomcat
+datasource.germinate =
+
+# Information to access the germinate database BrAPI is deployed against
+database.germinate.username =
+database.germinate.password  =
+database.germinate.url =
+
+# Folder on the server where hdf5 files of genotypic information can be found
+hdf5.folder=
+
+# Whether or not to require authentication for BrAPI
+auth.routes = true
+
+# JNDI name of the germinate gatekeeper if password protecting BrAPI
+datasource.gatekeeper =
+
+# Information to access the germinate gatekeerp database used for authentication
+database.gatekeeper.username =
+database.gatekeeper.password =
+database.gatekeeper.url =
