@@ -23,6 +23,8 @@ public class RetrofitServiceGenerator
 
 	private Retrofit retrofit;
 
+	private Interceptor authHeader;
+
 	public RetrofitServiceGenerator(String baseURL, String certificate)
 	{
 		this.baseURL = baseURL;
@@ -31,13 +33,13 @@ public class RetrofitServiceGenerator
 
 	public RetrofitService generate(String authToken)
 	{
-		Interceptor inter = buildInterceptor(authToken);
+		authHeader = buildInterceptor(authToken);
 
 		// Tweak to make the timeout on Retrofit connections last longer
 		httpClient = new OkHttpClient.Builder()
 				.readTimeout(60, TimeUnit.SECONDS)
 				.connectTimeout(60, TimeUnit.SECONDS)
-				.addNetworkInterceptor(inter)
+				.addNetworkInterceptor(authHeader)
 				.build();
 
 		// If the resource has an associated certificate, ensure it is in the
@@ -47,6 +49,16 @@ public class RetrofitServiceGenerator
 			httpClient = initCertificate(httpClient, certificate);
 		}
 		catch (Exception e) { e.printStackTrace(); }
+
+		return buildService(baseURL, httpClient);
+	}
+
+	public RetrofitService removeAuthHeader()
+	{
+		OkHttpClient.Builder builder = httpClient.newBuilder();
+		builder.networkInterceptors().remove(authHeader);
+
+		httpClient = builder.build();
 
 		return buildService(baseURL, httpClient);
 	}
