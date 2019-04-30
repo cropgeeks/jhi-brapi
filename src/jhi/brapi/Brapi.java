@@ -37,6 +37,11 @@ public class Brapi extends Application
 		setDescription("Test plant breeding API (BRAPI) implementation");
 		setOwner("The James Hutton Institute");
 		setAuthor("Information & Computational Sciences, JHI");
+
+		CorsService corsService = new CorsService();
+		corsService.setAllowedOrigins(new HashSet(Arrays.asList("*")));
+		corsService.setAllowedCredentials(true);
+		getServices().add(corsService);
 	}
 
 	@Override
@@ -79,12 +84,7 @@ public class Brapi extends Application
 		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
 		encoder.setNext(unauthenticated);
 
-		CorsFilter corsFilter = new CorsFilter(context, encoder);
-		corsFilter.setAllowedOrigins(new HashSet<>(Collections.singletonList("*")));
-		corsFilter.setAllowedCredentials(true);
-		corsFilter.setSkippingResourceForCorsOptions(true);
-
-		return corsFilter;
+		return encoder;
 	}
 
 	private void setupAppRoutes(Router router)
