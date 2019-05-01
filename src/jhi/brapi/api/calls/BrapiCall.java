@@ -123,6 +123,12 @@ public class BrapiCall
 	public void setCall(String call)
 		{ this.call = call; }
 
+	public List<String> getDataTypes()
+		{ return datatypes; }
+
+	public void setDataTypes(List<String> dataTypes)
+		{ this.datatypes = dataTypes; }
+
 	public List<String> getDatatypes()
 		{ return datatypes; }
 
