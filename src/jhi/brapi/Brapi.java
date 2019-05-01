@@ -19,6 +19,7 @@ import jhi.brapi.api.trials.*;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
+import org.restlet.data.*;
 import org.restlet.engine.application.*;
 import org.restlet.resource.*;
 import org.restlet.routing.*;
@@ -84,7 +85,12 @@ public class Brapi extends Application
 		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
 		encoder.setNext(unauthenticated);
 
-		return encoder;
+		CorsFilter corsFilter = new CorsFilter(context, encoder);
+		corsFilter.setAllowedOrigins(new HashSet<>(Collections.singletonList("*")));
+		corsFilter.setAllowedCredentials(true);
+		corsFilter.setSkippingResourceForCorsOptions(true);
+
+		return corsFilter;
 	}
 
 	private void setupAppRoutes(Router router)
@@ -93,6 +99,7 @@ public class Brapi extends Application
 		// this by providing a username and password to the /token resource
 		attachToRouter(router, "/allelematrices-search", ServerAlleleMatrix.class); // FJ
 		attachToRouter(router, "/allelematrices-search/{id}", ServerStatus.class);
+		attachToRouter(router, "/allelematrices-search/status/{id}", ServerStatus.class);
 		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
 		attachToRouter(router, "/crops", ServerCrop.class);
 		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI

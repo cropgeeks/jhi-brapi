@@ -19,7 +19,7 @@ public class BrapiCall
 	public static final String VERSION_ONE_THREE = "1.3";
 
 	private String call;
-	private List<String> dataTypes = new ArrayList<>();
+	private List<String> datatypes = new ArrayList<>();
 	// HTTP methods (e.g. POST, GET, etc)
 	private List<String> methods = new ArrayList<>();
 	private List<String> versions = new ArrayList<>();
@@ -37,9 +37,9 @@ public class BrapiCall
 		return this;
 	}
 
-	public BrapiCall addDataType(String dataType)
+	public BrapiCall addDataType(String datatype)
 	{
-		dataTypes.add(dataType);
+		datatypes.add(datatype);
 		return this;
 	}
 
@@ -96,10 +96,10 @@ public class BrapiCall
 	public BrapiCall withVersionOneThree()
 		{ return addVersion(VERSION_ONE_THREE); }
 
-	public boolean hasDataType(String dataType)
+	public boolean hasDataType(String datatype)
 	{
-		return dataTypes.stream()
-			.filter(d -> d.equalsIgnoreCase(dataType))
+		return datatypes.stream()
+			.filter(d -> d.equalsIgnoreCase(datatype))
 			.count() >= 1;
 	}
 
@@ -123,17 +123,11 @@ public class BrapiCall
 	public void setCall(String call)
 		{ this.call = call; }
 
-	public List<String> getDataTypes()
-		{ return dataTypes; }
-
-	public void setDataTypes(List<String> dataTypes)
-		{ this.dataTypes = dataTypes; }
-
 	public List<String> getDatatypes()
-		{ return dataTypes; }
+		{ return datatypes; }
 
 	public void setDatatypes(List<String> datatypes)
-		{ this.dataTypes = dataTypes; }
+		{ this.datatypes = datatypes; }
 
 	public List<String> getMethods()
 	 { return methods; }

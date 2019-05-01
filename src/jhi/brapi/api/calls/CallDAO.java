@@ -114,17 +114,17 @@ public class CallDAO
 			.withVersionOneOne()
 			.withVersionOneThree());
 
-		CALLS.add(new BrapiCall("allelematrix-search")
+		CALLS.add(new BrapiCall("allelematrices-search")
 			.withDatatypeJson()
 			.withDatatypeTsv()
 			.withDatatypeFlapjack()
 			.withMethodPost()
-			.withVersionOneOne()
 			.withVersionOneThree());
 
-		CALLS.add(new BrapiCall("allelematrix-search/status/{id}")
+		CALLS.add(new BrapiCall("allelematrices-search/status/{id}")
 			.withDatatypeJson()
-			.withMethodGet());
+			.withMethodGet()
+			.withVersionOneThree());
 
 		CALLS.add(new BrapiCall("markerprofiles")
 			.withDatatypeJson()
@@ -171,7 +171,7 @@ public class CallDAO
 		if (dataType != null && !dataType.isEmpty())
 		{
 			calls = calls.stream()
-						 .filter(c -> c.getDataTypes().contains(dataType)) // Get the calls that support the query data type
+						 .filter(c -> c.getDatatypes().contains(dataType)) // Get the calls that support the query data type
 						 .collect(Collectors.toCollection(ArrayList::new));
 		}
 
