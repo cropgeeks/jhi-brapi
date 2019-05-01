@@ -101,7 +101,7 @@ public class Brapi extends Application
 		attachToRouter(router, "/allelematrices-search/{id}", ServerStatus.class);
 		attachToRouter(router, "/allelematrices-search/status/{id}", ServerStatus.class);
 		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
-		attachToRouter(router, "/crops", ServerCrop.class);
+		attachToRouter(router, "/commoncropnames", ServerCrop.class);
 		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
 		attachToRouter(router, "/germplasm/{id}", ServerGermplasm.class);
 		attachToRouter(router, "/germplasm/{id}/markerprofiles", ServerGermplasmMarkerProfiles.class);
