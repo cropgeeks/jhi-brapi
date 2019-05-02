@@ -5,8 +5,8 @@ import jhi.brapi.api.*;
 import org.restlet.resource.*;
 
 /**
- * Queries the database for the ServerGermplasmSearch with the given ID then returns a JSON (Jackson)
- * representation of the ServerGermplasmSearch for API clients to consume.
+ * Queries the database for the ServerGermplasm with the given ID then returns a JSON (Jackson)
+ * representation of the ServerGermplasm for API clients to consume.
  */
 public class ServerTraitDetails extends BaseBrapiServerResource
 {

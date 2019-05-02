@@ -19,7 +19,6 @@ import jhi.brapi.api.trials.*;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
-import org.restlet.data.*;
 import org.restlet.engine.application.*;
 import org.restlet.resource.*;
 import org.restlet.routing.*;
@@ -103,8 +102,8 @@ public class Brapi extends Application
 		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
 		attachToRouter(router, "/commoncropnames", ServerCrop.class);
 		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
-		attachToRouter(router, "/germplasm", ServerGermplasmSearch.class);
-		attachToRouter(router, "/germplasm/{id}", ServerGermplasm.class);
+		attachToRouter(router, "/germplasm", ServerGermplasm.class);
+		attachToRouter(router, "/germplasm/{id}", ServerGermplasmDetails.class);
 		attachToRouter(router, "/germplasm/{id}/markerprofiles", ServerGermplasmMarkerProfiles.class);
 		attachToRouter(router, "/germplasm/{id}/pedigree", ServerGermplasmPedigree.class);
 		attachToRouter(router, "/locations", ServerLocations.class);

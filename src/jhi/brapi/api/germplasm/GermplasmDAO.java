@@ -12,7 +12,7 @@ import jhi.brapi.util.*;
 import org.restlet.*;
 
 /**
- * Specifies the public interface which any ServerGermplasmSearch data accessing classes must implement.
+ * Specifies the public interface which any ServerGermplasm data accessing classes must implement.
  */
 public class GermplasmDAO
 {
@@ -44,7 +44,7 @@ public class GermplasmDAO
 		{
 			if (resultSet.first())
 			{
-				// Set the ServerGermplasmSearch bean using the data returned from the database
+				// Set the ServerGermplasm bean using the data returned from the database
 				germplasm = new BrapiBaseResource<BrapiGermplasm>(getBrapiGermplasm(resultSet));
 			}
 		}
@@ -202,7 +202,7 @@ public class GermplasmDAO
 		{
 			if (resultSet.first())
 			{
-				// Set the ServerGermplasmSearch bean using the data returned from the database
+				// Set the ServerGermplasm bean using the data returned from the database
 				wrappedResult = new BrapiBaseResource<>(getBrapiGermplasmPedigree(resultSet));
 			}
 		}

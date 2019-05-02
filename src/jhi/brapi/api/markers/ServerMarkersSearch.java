@@ -6,7 +6,7 @@ import jhi.brapi.api.markers.BrapiMarker.*;
 import org.restlet.resource.*;
 
 /**
- * Queries the database for the ServerGermplasmSearch (germinatebase?) with the given ID then returns a JSON (Jackson) representation of the ServerGermplasmSearch for API
+ * Queries the database for the ServerGermplasm (germinatebase?) with the given ID then returns a JSON (Jackson) representation of the ServerGermplasm for API
  * clients to consume.
  */
 public class ServerMarkersSearch extends BaseBrapiServerResource

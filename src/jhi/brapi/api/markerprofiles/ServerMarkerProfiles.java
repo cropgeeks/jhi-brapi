@@ -8,8 +8,8 @@ import jhi.brapi.api.*;
 import org.restlet.resource.*;
 
 /**
- * Queries the database for the ServerGermplasmSearch (germinatebase?) with the given ID then returns a JSON (Jackson)
- * representation of the ServerGermplasmSearch for API clients to consume.
+ * Queries the database for the ServerGermplasm (germinatebase?) with the given ID then returns a JSON (Jackson)
+ * representation of the ServerGermplasm for API clients to consume.
  */
 public class ServerMarkerProfiles extends BaseBrapiServerResource
 {

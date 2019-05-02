@@ -5,7 +5,7 @@ import jhi.brapi.api.*;
 import org.restlet.resource.*;
 
 /**
- * Queries the database for the ServerGermplasmSearch pedigree with the given ID then returns a JSON (Jackson) representation of the ServerGermplasmSearch pedigree for API
+ * Queries the database for the ServerGermplasm pedigree with the given ID then returns a JSON (Jackson) representation of the ServerGermplasm pedigree for API
  * clients to consume.
  */
 public class ServerGermplasmPedigree extends BaseBrapiServerResource

@@ -9,7 +9,7 @@ import jhi.brapi.api.locations.*;
 import jhi.brapi.util.*;
 
 /**
- * Specifies the public interface which any ServerGermplasmSearch data accessing classes must implement.
+ * Specifies the public interface which any ServerGermplasm data accessing classes must implement.
  */
 public class StudiesDAO
 {
