@@ -27,7 +27,7 @@ public class GermplasmDAO
 	// Simply selects all fields from germinatebase where the given id matches the id from the URI
 	private final String getSpecificLine = "SELECT *, " + queryPartSynonyms + " FROM " + tables + " where germinatebase.id=?";
 
-	private final String pedigreeByIdQuery = "SELECT p1.germinatebase_id, p1.parent_id as 'left_parent', p2.parent_id as 'right_parent', definition , name FROM pedigrees p1 INNER JOIN pedigrees p2 ON p1.germinatebase_id = p2.germinatebase_id and p1.pedigreedescription_id = 1 and p2.pedigreedescription_id = 2 JOIN germinatebase ON p1.germinatebase_id = germinatebase.id JOIN pedigreedefinitions ON p1.germinatebase_id WHERE p1.germinatebase_id = ?";
+	private final String pedigreeByIdQuery = "SELECT p1.germinatebase_id, p1.parent_id as 'left_parent', p2.parent_id as 'right_parent', definition , name, p1.relationship_type, p2.relationship_type FROM pedigrees p1 INNER JOIN pedigrees p2 ON p1.germinatebase_id = p2.germinatebase_id and p1.pedigreedescription_id = 1 and p2.pedigreedescription_id = 2 JOIN germinatebase ON p1.germinatebase_id = germinatebase.id JOIN pedigreedefinitions ON p1.germinatebase_id WHERE p1.germinatebase_id = ?";
 
 	// Used to get the genotpye data sets that are held in HDF5 files
 	private final String genotypeDatasets = "SELECT datasets.id FROM datasets " +
@@ -222,7 +222,11 @@ public class GermplasmDAO
 		pedigree.setDefaultDisplayName(resultSet.getString("name"));
 		pedigree.setPedigree(resultSet.getString("definition"));
 		pedigree.setParent1DbId(resultSet.getString("left_parent"));
+		pedigree.setParent1Id(resultSet.getString("left_parent"));
+		pedigree.setParent1Type(resultSet.getString("p1.relationship_type"));
 		pedigree.setParent2DbId(resultSet.getString("right_parent"));
+		pedigree.setParent2Id(resultSet.getString("right_parent"));
+		pedigree.setParent2Type(resultSet.getString("p2.relationship_type"));
 
 		return pedigree;
 	}

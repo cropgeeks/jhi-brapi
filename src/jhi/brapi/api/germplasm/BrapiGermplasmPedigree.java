@@ -4,49 +4,21 @@ import java.util.*;
 
 public class BrapiGermplasmPedigree
 {
-	private String germplasmDbId;
-	private String defaultDisplayName;
-	private String pedigree;
 	private String crossingPlan;
 	private String crossingYear;
+	private String defaultDisplayName;
 	private String familyCode;
+	private String germplasmDbId;
 	private String parent1DbId;
+	private String parent1Id;
 	private String parent1Name;
 	private String parent1Type;
 	private String parent2DbId;
+	private String parent2Id;
 	private String parent2Name;
 	private String parent2Type;
+	private String pedigree;
 	private List<String> siblings;
-
-	public String getGermplasmDbId()
-		{ return germplasmDbId; }
-
-	public void setGermplasmDbId(String germplasmDbId)
-		{ this.germplasmDbId = germplasmDbId; }
-
-	public String getDefaultDisplayName()
-		{ return defaultDisplayName; }
-
-	public void setDefaultDisplayName(String defaultDisplayName)
-		{ this.defaultDisplayName = defaultDisplayName; }
-
-	public String getPedigree()
-		{ return pedigree; }
-
-	public void setPedigree(String pedigree)
-		{ this.pedigree = pedigree; }
-
-	public String getParent1DbId()
-		{ return parent1DbId; }
-
-	public void setParent1DbId(String parent1DbId)
-		{ this.parent1DbId = parent1DbId; }
-
-	public String getParent2DbId()
-		{ return parent2DbId; }
-
-	public void setParent2DbId(String parent2DbId)
-		{ this.parent2DbId = parent2DbId; }
 
 	public String getCrossingPlan()
 		{ return crossingPlan; }
@@ -60,11 +32,35 @@ public class BrapiGermplasmPedigree
 	public void setCrossingYear(String crossingYear)
 		{ this.crossingYear = crossingYear; }
 
+	public String getDefaultDisplayName()
+		{ return defaultDisplayName; }
+
+	public void setDefaultDisplayName(String defaultDisplayName)
+		{ this.defaultDisplayName = defaultDisplayName; }
+
 	public String getFamilyCode()
 		{ return familyCode; }
 
 	public void setFamilyCode(String familyCode)
 		{ this.familyCode = familyCode; }
+
+	public String getGermplasmDbId()
+		{ return germplasmDbId; }
+
+	public void setGermplasmDbId(String germplasmDbId)
+		{ this.germplasmDbId = germplasmDbId; }
+
+	public String getParent1DbId()
+		{ return parent1DbId; }
+
+	public void setParent1DbId(String parent1DbId)
+		{ this.parent1DbId = parent1DbId; }
+
+	public String getParent1Id()
+		{ return parent1Id; }
+
+	public void setParent1Id(String parent1Id)
+		{ this.parent1Id = parent1Id; }
 
 	public String getParent1Name()
 		{ return parent1Name; }
@@ -78,6 +74,18 @@ public class BrapiGermplasmPedigree
 	public void setParent1Type(String parent1Type)
 		{ this.parent1Type = parent1Type; }
 
+	public String getParent2DbId()
+		{ return parent2DbId; }
+
+	public void setParent2DbId(String parent2DbId)
+		{ this.parent2DbId = parent2DbId; }
+
+	public String getParent2Id()
+		{ return parent2Id; }
+
+	public void setParent2Id(String parent2Id)
+		{ this.parent2Id = parent2Id; }
+
 	public String getParent2Name()
 		{ return parent2Name; }
 
@@ -89,6 +97,12 @@ public class BrapiGermplasmPedigree
 
 	public void setParent2Type(String parent2Type)
 		{ this.parent2Type = parent2Type; }
+
+	public String getPedigree()
+		{ return pedigree; }
+
+	public void setPedigree(String pedigree)
+		{ this.pedigree = pedigree; }
 
 	public List<String> getSiblings()
 		{ return siblings; }
