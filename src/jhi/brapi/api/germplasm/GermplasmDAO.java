@@ -45,7 +45,7 @@ public class GermplasmDAO
 			if (resultSet.first())
 			{
 				// Set the ServerGermplasmSearch bean using the data returned from the database
-				germplasm = new BrapiBaseResource<BrapiGermplasm>(getBrapiGermplasmMcpd(resultSet));
+				germplasm = new BrapiBaseResource<BrapiGermplasm>(getBrapiGermplasm(resultSet));
 			}
 		}
 		catch (SQLException e)
@@ -56,7 +56,7 @@ public class GermplasmDAO
 		return germplasm;
 	}
 
-	public BrapiBaseResource<BrapiGermplasm> getMcpdFor(String id)
+	public BrapiBaseResource<BrapiGermplasm> getGermplasmFor(String id)
 	{
 		BrapiBaseResource<BrapiGermplasm> result = new BrapiBaseResource<>();
 
@@ -65,7 +65,7 @@ public class GermplasmDAO
 			 ResultSet resultSet = statement.executeQuery())
 		{
 			if (resultSet.first())
-				result = new BrapiBaseResource<BrapiGermplasm>(getBrapiGermplasmMcpd(resultSet));
+				result = new BrapiBaseResource<BrapiGermplasm>(getBrapiGermplasm(resultSet));
 		}
 		catch (SQLException e)
 		{
@@ -75,29 +75,29 @@ public class GermplasmDAO
 		return result;
 	}
 
-	private BrapiGermplasm getBrapiGermplasmMcpd(ResultSet resultSet) throws SQLException
+	private BrapiGermplasm getBrapiGermplasm(ResultSet resultSet) throws SQLException
 	{
-		BrapiGermplasm mcpd = new BrapiGermplasm();
+		BrapiGermplasm germplasm = new BrapiGermplasm();
 
-		mcpd.setGermplasmDbId(resultSet.getString("germinatebase.id"));
-		mcpd.setGermplasmPUI(resultSet.getString("germinatebase.general_identifier"));
-		mcpd.setGermplasmName(resultSet.getString("germinatebase.name"));
-		mcpd.setAccessionNumber(resultSet.getString("germinatebase.number"));
-		mcpd.setSynonyms(getSynonyms(resultSet));
-		mcpd.setCommonCropName(null); // TODO
-		mcpd.setInstituteCode(resultSet.getString("institutions.code"));
-		mcpd.setInstituteName(resultSet.getString("institutions.name"));
-		mcpd.setBiologicalStatusOfAccessionCode(0); // TODO
-		mcpd.setCountryOfOriginCode(resultSet.getString("countries.country_code3"));
-		mcpd.setTypeOfGermplasmStorageCode(null); // TODO
-		mcpd.setGenus(resultSet.getString("taxonomies.genus"));
-		mcpd.setSpecies(resultSet.getString("taxonomies.species"));
-		mcpd.setSpeciesAuthority(resultSet.getString("taxonomies.species_author"));
-		mcpd.setSubtaxa(resultSet.getString("subtaxa.taxonomic_identifier"));
-		mcpd.setSubtaxaAuthority(resultSet.getString("subtaxa.subtaxa_author"));
-		mcpd.setPedigree(resultSet.getString("pedigreedefinitions.definition"));
-		mcpd.setDefaultDisplayName(resultSet.getString("germinatebase.name"));
-		mcpd.setSeedSource(null); // TODO
+		germplasm.setGermplasmDbId(resultSet.getString("germinatebase.id"));
+		germplasm.setGermplasmPUI(resultSet.getString("germinatebase.general_identifier"));
+		germplasm.setGermplasmName(resultSet.getString("germinatebase.name"));
+		germplasm.setAccessionNumber(resultSet.getString("germinatebase.number"));
+		germplasm.setSynonyms(getSynonyms(resultSet));
+		germplasm.setCommonCropName(null); // TODO
+		germplasm.setInstituteCode(resultSet.getString("institutions.code"));
+		germplasm.setInstituteName(resultSet.getString("institutions.name"));
+		germplasm.setBiologicalStatusOfAccessionCode(0); // TODO
+		germplasm.setCountryOfOriginCode(resultSet.getString("countries.country_code3"));
+		germplasm.setTypeOfGermplasmStorageCode(null); // TODO
+		germplasm.setGenus(resultSet.getString("taxonomies.genus"));
+		germplasm.setSpecies(resultSet.getString("taxonomies.species"));
+		germplasm.setSpeciesAuthority(resultSet.getString("taxonomies.species_author"));
+		germplasm.setSubtaxa(resultSet.getString("subtaxa.taxonomic_identifier"));
+		germplasm.setSubtaxaAuthority(resultSet.getString("subtaxa.subtaxa_author"));
+		germplasm.setPedigree(resultSet.getString("pedigreedefinitions.definition"));
+		germplasm.setDefaultDisplayName(resultSet.getString("germinatebase.name"));
+		germplasm.setSeedSource(null); // TODO
 
 		String donorCode = resultSet.getString("germinatebase.donor_code");
 		String donorNumber = resultSet.getString("germinatebase.donor_number");
@@ -111,12 +111,14 @@ public class GermplasmDAO
 			donorList.add(donor);
 		}
 
-		mcpd.setDonors(donorList);
+		germplasm.setDonors(donorList);
 		Date acquisitionDate = resultSet.getDate("germinatebase.colldate");
 		if (acquisitionDate != null)
-			mcpd.setAcquisitionDate(FORMAT_OUTPUT.format(resultSet.getDate("germinatebase.colldate")));
+			germplasm.setAcquisitionDate(FORMAT_OUTPUT.format(resultSet.getDate("germinatebase.colldate")));
 
-		return mcpd;
+		germplasm.setTaxonIds(new ArrayList<>());
+
+		return germplasm;
 	}
 
 	private List<String> getDataSetIds()
@@ -141,7 +143,7 @@ public class GermplasmDAO
 
 		// Grab the BrapiGermplasm object with the given id, if there is none
 		// with the given id return
-		BrapiGermplasm mcpd = getMcpdFor(id).getResult();
+		BrapiGermplasm mcpd = getGermplasmFor(id).getResult();
 		if (mcpd != null)
 		{
 			BrapiGermplasmMarkerProfiles profiles = new BrapiGermplasmMarkerProfiles();
@@ -240,7 +242,7 @@ public class GermplasmDAO
 			List<BrapiGermplasm> list = new ArrayList<>();
 
 			while (resultSet.next())
-				list.add(getBrapiGermplasmMcpd(resultSet));
+				list.add(getBrapiGermplasm(resultSet));
 
 			long totalCount = DatabaseUtils.getTotalCount(statement);
 

@@ -23,6 +23,6 @@ public class ServerGermplasm extends BaseBrapiServerResource
 	@Get("json")
 	public BrapiBaseResource<BrapiGermplasm> getJson()
 	{
-		return germplasmDAO.getMcpdFor(id);
+		return germplasmDAO.getGermplasmFor(id);
 	}
 }

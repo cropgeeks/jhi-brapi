@@ -2,28 +2,18 @@ package jhi.brapi.api.germplasm;
 
 public class BrapiTaxon
 {
-	private String source;
-	private String id;
+	private String sourceName;
+	private String taxonId;
 
-	public String getSource()
-	{
-		return source;
-	}
+	public String getSourceName()
+		{ return sourceName; }
 
-	public BrapiTaxon setSource(String source)
-	{
-		this.source = source;
-		return this;
-	}
+	public void setSourceName(String sourceName)
+		{ this.sourceName = sourceName; }
 
-	public String getId()
-	{
-		return id;
-	}
+	public String getTaxonId()
+		{ return taxonId; }
 
-	public BrapiTaxon setId(String id)
-	{
-		this.id = id;
-		return this;
-	}
+	public void setId(String taxonId)
+		{ this.taxonId = taxonId; }
 }

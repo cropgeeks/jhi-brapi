@@ -13,32 +13,35 @@ import org.restlet.resource.*;
  */
 public class ServerGermplasmSearch extends BaseBrapiServerResource
 {
+	private static final String PARAM_COMMON_CROP_NAME = "commonCropName";
+	private static final String PARAM_GERMPLASM_PUI = "germplasmPUI";
+	private static final String PARAM_GERMPLASM_DB_ID= "germplasmDbId";
+	private static final String PARAM_GERMPLASM_NAME = "germplasmName";
+
 	private GermplasmDAO germplasmDAO = new GermplasmDAO();
 
-	private List<String> germplasmPUIs;
-	private List<String> germplasmDbIds;
-	private List<String> germplasmSpecies;
-	private List<String> germplasmGenus;
-	private List<String> germplasmNames;
-	private List<String> accessionNumbers;
+	private String germplasmPUI;
+	private String germplasmDbId;
+	private String germplasmName;
+	private String commonCropName;
 
 	@Override
 	public void doInit()
 	{
 		super.doInit();
-		germplasmDbIds = parseGetParameterList("germplasmDbId");
-		germplasmNames = parseGetParameterList("germplasmName");
-		germplasmPUIs = parseGetParameterList("germplasmPUI");
+		commonCropName = getQueryValue(PARAM_COMMON_CROP_NAME);
+		germplasmDbId = getQueryValue(PARAM_GERMPLASM_DB_ID);
+		germplasmPUI = getQueryValue(PARAM_GERMPLASM_PUI);
+		germplasmName = getQueryValue(PARAM_GERMPLASM_NAME);
+
 	}
 
 	@Get("json")
 	public BrapiListResource<BrapiGermplasm> getJson()
 	{
 		Map<String, List<String>> parameters = new LinkedHashMap<>();
-		addParameterPost(parameters, "germinatebase.id", germplasmDbIds);
-		addParameterPost(parameters, "germinatebase.name", germplasmNames);
-		addParameterPost(parameters, "genus", germplasmGenus);
-		addParameterPost(parameters, "species", germplasmSpecies);
+		addParameter(parameters, "germinatebase.id", germplasmDbId);
+		addParameter(parameters, "germinatebase.name", germplasmName);
 
 		BrapiListResource<BrapiGermplasm> result = new BrapiListResource<BrapiGermplasm>();
 		try
@@ -66,32 +69,5 @@ public class ServerGermplasmSearch extends BaseBrapiServerResource
 	{
 		if (value != null && value.length() != 0)
 			map.put(key, Collections.singletonList(value));
-	}
-
-	@Post("json")
-	public BrapiListResource<BrapiGermplasm> postJson(BrapiGermplasmPost params)
-	{
-		if (params.getGermplasmPUIs() != null)
-			germplasmPUIs = params.getGermplasmPUIs();
-		if (params.getGermplasmDbIds() != null)
-			germplasmDbIds = params.getGermplasmDbIds();
-		if (params.getGermplasmSpecies() != null)
-			germplasmSpecies = params.getGermplasmSpecies();
-		if (params.getGermplasmGenus() != null)
-			germplasmGenus = params.getGermplasmGenus();
-		if (params.getGermplasmNames() != null)
-			germplasmNames = params.getGermplasmNames();
-		if (params.getAccessionNumbers() != null)
-			accessionNumbers = params.getAccessionNumbers();
-
-		setPaginationParameters(params);
-
-		return getJson();
-	}
-
-	private void addParameterPost(Map<String, List<String>> map, String key, List<String> value)
-	{
-		if (value != null && !value.isEmpty())
-			map.put(key, value);
 	}
 }
