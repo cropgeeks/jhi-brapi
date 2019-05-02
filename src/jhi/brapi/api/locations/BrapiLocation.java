@@ -1,5 +1,7 @@
 package jhi.brapi.api.locations;
 
+import java.util.*;
+
 public class BrapiLocation
 {
 	private String locationDbId;
@@ -8,12 +10,12 @@ public class BrapiLocation
 	private String abbreviation;
 	private String countryCode;
 	private String countryName;
-	private String latitude;
-	private String longitude;
-	private String altitude;
+	private double latitude;
+	private double longitude;
+	private int altitude;
 	private String instituteName;
 	private String instituteAddress;
-	private Object additionalInfo = null;
+	private Map<String, Object> additionalInfo;
 
 	public String getLocationDbId()
 		{ return locationDbId; }
@@ -51,22 +53,22 @@ public class BrapiLocation
 	public void setCountryName(String countryName)
 		{ this.countryName = countryName; }
 
-	public String getLatitude()
+	public double getLatitude()
 		{ return latitude; }
 
-	public void setLatitude(String latitude)
+	public void setLatitude(double latitude)
 		{ this.latitude = latitude; }
 
-	public String getLongitude()
+	public double getLongitude()
 		{ return longitude; }
 
-	public void setLongitude(String longitude)
+	public void setLongitude(double longitude)
 		{ this.longitude = longitude; }
 
-	public String getAltitude()
+	public int getAltitude()
 		{ return altitude; }
 
-	public void setAltitude(String altitude)
+	public void setAltitude(int altitude)
 		{ this.altitude = altitude; }
 
 	public String getInstituteName()
@@ -81,10 +83,10 @@ public class BrapiLocation
 	public void setInstituteAddress(String instituteAddress)
 		{ this.instituteAddress = instituteAddress; }
 
-	public Object getAdditionalInfo()
+	public Map<String, Object> getAdditionalInfo()
 		{ return additionalInfo; }
 
-	public void setAdditionalInfo(Object additionalInfo)
+	public void setAdditionalInfo(Map<String, Object> additionalInfo)
 		{ this.additionalInfo = additionalInfo; }
 
 	@Override
