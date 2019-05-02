@@ -15,7 +15,7 @@ public class BrapiLocation
 	private int altitude;
 	private String instituteName;
 	private String instituteAddress;
-	private Map<String, Object> additionalInfo;
+	private Map<String, Object> additionalInfo = new HashMap<>();
 
 	public String getLocationDbId()
 		{ return locationDbId; }
