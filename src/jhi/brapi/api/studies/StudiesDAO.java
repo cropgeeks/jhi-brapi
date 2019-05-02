@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import jhi.brapi.api.*;
+import jhi.brapi.api.Seasons.*;
 import jhi.brapi.api.locations.*;
 import jhi.brapi.util.*;
 
@@ -15,7 +16,7 @@ public class StudiesDAO
 	// Simply selects all fields from germinatebase
 	private final String getStudyDetails = "SELECT datasets.*, experiments.description AS trial_name, experimenttypes.description AS trial_type, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id WHERE datasets.id = ?";
 
-	private final String getStudies = "SELECT SQL_CALC_FOUND_ROWS datasets.*, experiments.description AS trial_name, experimenttypes.description AS trial_type, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id %s GROUP BY datasets.id LIMIT ?, ?";
+	private final String getStudies = "SELECT SQL_CALC_FOUND_ROWS datasets.*, experiments.description AS trial_name, experimenttypes.description AS trial_type, experimenttypes.id, locations.*, (SELECT GROUP_CONCAT(DISTINCT YEAR (recording_date) ORDER BY recording_date ) FROM phenotypedata WHERE phenotypedata.dataset_id = datasets.id) AS years FROM datasets LEFT JOIN experiments ON experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON experimenttypes.id = experiments.experiment_type_id LEFT JOIN locations ON datasets.location_id = locations.id %s GROUP BY datasets.id LIMIT ?, ?";
 
 	private final String studyDetailsTable = "call phenotype_data_complete (?)";
 
@@ -74,19 +75,31 @@ public class StudiesDAO
 		studies.setStudyDbId(resultSet.getString("datasets.id"));
 		studies.setName(resultSet.getString("description"));
 		studies.setStudyType(resultSet.getString("trial_type"));
+		studies.setStudyTypeDbId(resultSet.getString("experimenttypes.id"));
+		studies.setStudyTypeName(resultSet.getString("trial_type"));
 		studies.setTrialDbId(resultSet.getString("datasets.experiment_id"));
 		studies.setTrialName(resultSet.getString("trial_name"));
 		studies.setStartDate(resultSet.getDate("datasets.date_start"));
 		studies.setEndDate(resultSet.getDate("datasets.date_end"));
-		studies.setActive(""+ false);
-		studies.setLocationDbId(resultSet.getString("location_id"));
+		studies.setActive(false);
+		studies.setLocationDbId(resultSet.getString("locations.id"));
+		studies.setLocationName(resultSet.getString("locations.site_name"));
+
+		List<BrapiSeason> seasons = new ArrayList<>();
 		// Parse out the years
 		String seasonString = resultSet.getString("years");
 		if(seasonString != null)
 		{
 			String[] yearArray = seasonString.split(",");
-			studies.setSeasons(Arrays.asList(yearArray));
+			for (String year : yearArray)
+			{
+				BrapiSeason season = new BrapiSeason();
+				season.setYear(year);
+				seasons.add(season);
+			}
 		}
+		studies.setSeasons(seasons);
+		studies.setAdditionalInfo(new HashMap<String, Object>());
 
 		return studies;
 	}

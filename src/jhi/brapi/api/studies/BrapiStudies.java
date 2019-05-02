@@ -4,84 +4,60 @@ import java.sql.Date;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.*;
+import jhi.brapi.api.Seasons.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiStudies
 {
-	private String studyDbId;
-	private String name;
-	private String trialDbId;
-	private String trialName;
-	private List<String> seasons;
+	private boolean active;
+	private Map<String, Object> additionalInfo;
+	private String commonCropName;
+	private String documentationURL;
+	private Date endDate;
 	private String locationDbId;
 	private String locationName;
+	private String name;
 	private String programDbId;
 	private String programName;
+	private List<BrapiSeason> seasons;
 	private Date startDate;
-	private Date endDate;
+	private String studyDbId;
+	private String studyName;
 	private String studyType;
-	private String active;
-	private Object additionalInfo;
+	private String studyTypeDbId;
+	private String studyTypeName;
+	private String trialDbId;
+	private String trialName;
 
-	public String getStudyDbId()
-		{ return studyDbId; }
+	public boolean isActive()
+		{ return active; }
 
-	public void setStudyDbId(String studyDbId)
-		{ this.studyDbId = studyDbId; }
+	public void setActive(boolean active)
+		{ this.active = active; }
 
-	public String getName()
-		{ return name; }
+	public Map<String, Object> getAdditionalInfo()
+		{ return additionalInfo; }
 
-	public void setName(String name)
-		{ this.name = name; }
+	public void setAdditionalInfo(Map<String, Object> additionalInfo)
+		{ this.additionalInfo = additionalInfo; }
 
-	public String getStudyType()
-		{ return studyType; }
+	public String getCommonCropName()
+		{ return commonCropName; }
 
-	public void setStudyType(String studyType)
-		{ this.studyType = studyType; }
+	public void setCommonCropName(String commonCropName)
+		{ this.commonCropName = commonCropName; }
 
-	public List<String> getSeasons()
-		{ return seasons; }
+	public String getDocumentationURL()
+		{ return documentationURL; }
 
-	public void setSeasons(List<String> seasons)
-		{ this.seasons = seasons; }
-
-	public String getTrialDbId()
-		{ return trialDbId; }
-
-	public void setTrialDbId(String trialDbId)
-		{ this.trialDbId = trialDbId; }
-
-	public String getTrialName()
-		{ return trialName; }
-
-	public void setTrialName(String trialName)
-		{ this.trialName = trialName; }
-
-	public Date getStartDate()
-		{ return startDate; }
-
-	public void setStartDate(Date startDate)
-		{ this.startDate = startDate; }
+	public void setDocumentationURL(String documentationURL)
+		{ this.documentationURL = documentationURL; }
 
 	public Date getEndDate()
 		{ return endDate; }
 
 	public void setEndDate(Date endDate)
 		{ this.endDate = endDate; }
-
-	public String isActive()
-		{ return active; }
-
-	public void setActive(String active)
-		{ this.active = active; }
-
-	public Object getAdditionalInfo()
-		{ return additionalInfo; }
-
-	public void setAdditionalInfo(Object additionalInfo)
-		{ this.additionalInfo = additionalInfo; }
 
 	public String getLocationDbId()
 		{ return locationDbId; }
@@ -95,6 +71,12 @@ public class BrapiStudies
 	public void setLocationName(String locationName)
 		{ this.locationName = locationName; }
 
+	public String getName()
+		{ return name; }
+
+	public void setName(String name)
+		{ this.name = name; }
+
 	public String getProgramDbId()
 		{ return programDbId; }
 
@@ -106,4 +88,58 @@ public class BrapiStudies
 
 	public void setProgramName(String programName)
 		{ this.programName = programName; }
+
+	public List<BrapiSeason> getSeasons()
+		{ return seasons; }
+
+	public void setSeasons(List<BrapiSeason> seasons)
+		{ this.seasons = seasons; }
+
+	public Date getStartDate()
+		{ return startDate; }
+
+	public void setStartDate(Date startDate)
+		{ this.startDate = startDate; }
+
+	public String getStudyDbId()
+		{ return studyDbId; }
+
+	public void setStudyDbId(String studyDbId)
+		{ this.studyDbId = studyDbId; }
+
+	public String getStudyName()
+		{ return studyName; }
+
+	public void setStudyName(String studyName)
+		{ this.studyName = studyName; }
+
+	public String getStudyType()
+		{ return studyType; }
+
+	public void setStudyType(String studyType)
+		{ this.studyType = studyType; }
+
+	public String getStudyTypeDbId()
+		{ return studyTypeDbId; }
+
+	public void setStudyTypeDbId(String studyTypeDbId)
+		{ this.studyTypeDbId = studyTypeDbId; }
+
+	public String getStudyTypeName()
+		{ return studyTypeName; }
+
+	public void setStudyTypeName(String studyTypeName)
+		{ this.studyTypeName = studyTypeName; }
+
+	public String getTrialDbId()
+		{ return trialDbId; }
+
+	public void setTrialDbId(String trialDbId)
+		{ this.trialDbId = trialDbId; }
+
+	public String getTrialName()
+		{ return trialName; }
+
+	public void setTrialName(String trialName)
+		{ this.trialName = trialName; }
 }

@@ -117,9 +117,9 @@ public class Brapi extends Application
 		attachToRouter(router, "/markers", ServerMarkersSearch.class);
 		attachToRouter(router, "/markers/{id}", ServerMarkersData.class);
 		attachToRouter(router, "/phenotypes-search", ServerPhenotypesSearch.class);
+		attachToRouter(router, "/studies", ServerStudies.class);
 		attachToRouter(router, "/studies/{id}", ServerStudyDetails.class);
 //		attachToRouter(router, "/studies/{id}/table", ServerStudiesAsTable.class);
-		attachToRouter(router, "/studies-search", ServerStudies.class);  // FJ
 		attachToRouter(router, "/trials", ServerTrialList.class);
 		attachToRouter(router, "/trials/{id}", ServerTrial.class);
 	}
