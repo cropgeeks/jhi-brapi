@@ -19,6 +19,7 @@ import jhi.brapi.api.trials.*;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
+import org.restlet.data.*;
 import org.restlet.engine.application.*;
 import org.restlet.resource.*;
 import org.restlet.routing.*;
@@ -81,10 +82,10 @@ public class Brapi extends Application
 		setupAppRoutes(appRoutes);
 		setupNotImplementedRoutes(appRoutes);
 
-		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
-		encoder.setNext(unauthenticated);
+//		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
+//		encoder.setNext(unauthenticated);
 
-		CorsFilter corsFilter = new CorsFilter(context, encoder);
+		CorsFilter corsFilter = new CorsFilter(context, unauthenticated);
 		corsFilter.setAllowedOrigins(new HashSet<>(Collections.singletonList("*")));
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(true);
@@ -106,11 +107,12 @@ public class Brapi extends Application
 		attachToRouter(router, "/germplasm/{id}", ServerGermplasmDetails.class);
 		attachToRouter(router, "/germplasm/{id}/markerprofiles", ServerGermplasmMarkerProfiles.class);
 		attachToRouter(router, "/germplasm/{id}/pedigree", ServerGermplasmPedigree.class);
+		attachToRouter(router, "/germplasm/{id}/progeny", ServerGermplasmProgeny.class);
 		attachToRouter(router, "/locations", ServerLocations.class);
 		attachToRouter(router, "/maps", ServerGenomeMaps.class); // FJ
 		attachToRouter(router, "/maps/{id}", ServerGenomeMapMetaData.class); // FJ
 		attachToRouter(router, "/maps/{id}/positions", ServerGenomeMapMarkerData.class); // FJ
-		attachToRouter(router, "/maps/{id}/positions/{linkageGroupId}", ServerGenomeMapLinkageGroupMarkers.class);
+//		attachToRouter(router, "/maps/{id}/positions/{linkageGroupId}", ServerGenomeMapLinkageGroupMarkers.class);
 		attachToRouter(router, "/markerprofiles", ServerMarkerProfiles.class); // FJ
 		attachToRouter(router, "/markerprofiles/{id}", ServerMarkerProfileData.class);
 		attachToRouter(router, "/markers", ServerMarkersSearch.class);

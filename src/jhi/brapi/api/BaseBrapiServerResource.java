@@ -1,10 +1,6 @@
 package jhi.brapi.api;
 
-import com.fasterxml.jackson.databind.*;
-
 import jhi.brapi.client.*;
-import org.restlet.ext.jackson.*;
-import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 import java.util.*;
@@ -91,20 +87,20 @@ public abstract class BaseBrapiServerResource<T> extends ServerResource
 	 * @return	JacksonRespresentation<T> of the resource.
 	 * @throws	ResourceException - a restlet 404 if the object isn't found.
 	 */
-	@Get("html")
-	public Representation getHtml()
-	{
-		T result = getJson();
-
-		if (result != null)
-		{
-			JacksonRepresentation<T> rep = new JacksonRepresentation<>(result);
-			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-			return rep;
-		}
-
-		throw new ResourceException(404);
-	}
+//	@Get("html")
+//	public Representation getHtml()
+//	{
+//		T result = getJson();
+//
+//		if (result != null)
+//		{
+//			JacksonRepresentation<T> rep = new JacksonRepresentation<>(result);
+//			rep.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+//			return rep;
+//		}
+//
+//		throw new ResourceException(404);
+//	}
 
 	protected void setHttpResponseCode(List<Status> statuses)
 	{

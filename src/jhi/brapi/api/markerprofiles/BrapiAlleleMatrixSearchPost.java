@@ -2,10 +2,8 @@ package jhi.brapi.api.markerprofiles;
 
 import java.util.*;
 
-import com.fasterxml.jackson.annotation.*;
 import jhi.brapi.api.*;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiAlleleMatrixSearchPost extends BasicPost
 {
 	private List<String> markerprofileDbId;

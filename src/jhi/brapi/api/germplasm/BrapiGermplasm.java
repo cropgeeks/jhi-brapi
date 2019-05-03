@@ -2,9 +2,6 @@ package jhi.brapi.api.germplasm;
 
 import java.util.*;
 
-import com.fasterxml.jackson.annotation.*;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiGermplasm
 {
 	private String accessionNumber;

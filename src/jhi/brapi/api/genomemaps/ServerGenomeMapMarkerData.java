@@ -19,7 +19,7 @@ public class ServerGenomeMapMarkerData extends BaseBrapiServerResource
 	{
 		super.doInit();
 		id = (String)getRequestAttributes().get("id");
-		linkageGroups = parseGetParameterList("linkageGroupId");
+//		linkageGroups = parseGetParameterList("linkageGroupId");
 	}
 
 	@Get("json")

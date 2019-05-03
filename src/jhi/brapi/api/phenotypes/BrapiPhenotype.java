@@ -1,10 +1,7 @@
 package jhi.brapi.api.phenotypes;
 
-import com.fasterxml.jackson.annotation.*;
-
 import java.util.*;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiPhenotype
 {
 	private String observationUnitDbId;

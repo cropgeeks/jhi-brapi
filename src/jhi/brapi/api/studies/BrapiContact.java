@@ -1,8 +1,5 @@
 package jhi.brapi.api.studies;
 
-import com.fasterxml.jackson.annotation.*;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiContact
 {
 	private String contactDbId;

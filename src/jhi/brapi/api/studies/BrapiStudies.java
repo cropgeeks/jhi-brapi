@@ -3,10 +3,8 @@ package jhi.brapi.api.studies;
 import java.sql.Date;
 import java.util.*;
 
-import com.fasterxml.jackson.annotation.*;
 import jhi.brapi.api.Seasons.*;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiStudies
 {
 	private boolean active;

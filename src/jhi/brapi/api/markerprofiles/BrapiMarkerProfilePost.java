@@ -1,9 +1,7 @@
 package jhi.brapi.api.markerprofiles;
 
-import com.fasterxml.jackson.annotation.*;
 import jhi.brapi.api.*;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiMarkerProfilePost extends BasicPost
 {
 	private String germplasmDbId;

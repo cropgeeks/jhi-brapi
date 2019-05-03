@@ -1,8 +1,5 @@
 package jhi.brapi.api.phenotypes;
 
-import com.fasterxml.jackson.annotation.*;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiTreatment
 {
 	private String factor;

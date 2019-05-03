@@ -1,8 +1,5 @@
 package jhi.brapi.api.Seasons;
 
-import com.fasterxml.jackson.annotation.*;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiSeason
 {
 	private String season;

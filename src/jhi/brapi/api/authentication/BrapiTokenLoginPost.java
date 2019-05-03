@@ -1,9 +1,5 @@
 package jhi.brapi.api.authentication;
 
-import com.fasterxml.jackson.annotation.*;
-import jhi.brapi.api.*;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiTokenLoginPost
 {
 	private String username;

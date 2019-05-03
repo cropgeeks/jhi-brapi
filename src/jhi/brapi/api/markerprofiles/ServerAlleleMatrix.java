@@ -7,8 +7,6 @@ import jhi.brapi.api.Status;
 import jhi.brapi.util.*;
 
 import org.restlet.data.*;
-import org.restlet.ext.jackson.*;
-import org.restlet.representation.*;
 import org.restlet.resource.*;
 
 /**

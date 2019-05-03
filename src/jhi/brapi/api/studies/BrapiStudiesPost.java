@@ -1,11 +1,9 @@
 package jhi.brapi.api.studies;
 
-import com.fasterxml.jackson.annotation.*;
 import jhi.brapi.api.*;
 
 import java.util.*;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiStudiesPost extends BasicPost
 {
 	private String studyType;

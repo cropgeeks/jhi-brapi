@@ -1,12 +1,9 @@
 package jhi.brapi.api.phenotypes;
 
-import com.fasterxml.jackson.annotation.*;
-
 import java.util.*;
 
 import jhi.brapi.api.*;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiPhenotypePost extends BasicPost
 {
 	private List<String> germplasmDbIds;

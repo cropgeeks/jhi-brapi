@@ -29,6 +29,8 @@ public class GermplasmDAO
 
 	private final String pedigreeByIdQuery = "SELECT p1.germinatebase_id, p1.parent_id as 'left_parent', p2.parent_id as 'right_parent', definition , name, p1.relationship_type, p2.relationship_type FROM pedigrees p1 INNER JOIN pedigrees p2 ON p1.germinatebase_id = p2.germinatebase_id and p1.pedigreedescription_id = 1 and p2.pedigreedescription_id = 2 JOIN germinatebase ON p1.germinatebase_id = germinatebase.id JOIN pedigreedefinitions ON p1.germinatebase_id WHERE p1.germinatebase_id = ?";
 
+	private final String progenyByIdQuery = "SELECT * FROM pedigrees WHERE parent_id = ?";
+
 	// Used to get the genotpye data sets that are held in HDF5 files
 	private final String genotypeDatasets = "SELECT datasets.id FROM datasets " +
 		"LEFT JOIN experiments ON experiment_id = experiments.id WHERE " +
@@ -230,6 +232,37 @@ public class GermplasmDAO
 
 		return pedigree;
 	}
+
+	BrapiBaseResource<BrapiGermplasmProgeny> getProgenyById(String id)
+	{
+		BrapiBaseResource<BrapiGermplasmProgeny> wrappedResult = new BrapiBaseResource<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, progenyByIdQuery, id);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			BrapiGermplasmProgeny germplasmProgeny = new BrapiGermplasmProgeny();
+			while (resultSet.next())
+			{
+				germplasmProgeny.setDefaultDisplayname(resultSet.getString(""));
+				// Set the ServerGermplasm bean using the data returned from the database
+//				wrappedResult = new BrapiBaseResource<>(getBrapiProgeny(resultSet));
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return wrappedResult;
+	}
+
+//	private BrapiGermplasmProgeny getBrapiProgeny(ResultSet resultSet)
+//		throws SQLException
+//	{
+//		BrapiProgeny progeny = new BrapiProgeny();
+////		progeny.set
+//	}
 
 	public BrapiListResource<BrapiGermplasm> getMcpdForSearch(Map<String, List<String>> parameters, int currentPage, int pageSize)
 	{

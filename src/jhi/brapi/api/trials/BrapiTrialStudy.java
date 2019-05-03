@@ -1,8 +1,5 @@
 package jhi.brapi.api.trials;
 
-import com.fasterxml.jackson.annotation.*;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiTrialStudy
 {
 	private String studyDbId;

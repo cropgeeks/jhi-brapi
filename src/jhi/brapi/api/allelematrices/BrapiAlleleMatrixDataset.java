@@ -2,9 +2,6 @@ package jhi.brapi.api.allelematrices;
 
 import java.sql.*;
 
-import com.fasterxml.jackson.annotation.*;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiAlleleMatrixDataset
 {
 	private String name;

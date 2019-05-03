@@ -2,9 +2,6 @@ package jhi.brapi.api;
 
 import java.util.*;
 
-import com.fasterxml.jackson.annotation.*;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrapiErrorResource
 {
 	private Metadata metadata = new Metadata();
