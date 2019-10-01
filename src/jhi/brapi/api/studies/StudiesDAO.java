@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import jhi.brapi.api.*;
-import jhi.brapi.api.Seasons.*;
+import jhi.brapi.api.seasons.*;
 import jhi.brapi.api.locations.*;
 import jhi.brapi.util.*;
 

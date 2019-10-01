@@ -3,7 +3,7 @@ package jhi.brapi.api.studies;
 import java.sql.Date;
 import java.util.*;
 
-import jhi.brapi.api.Seasons.*;
+import jhi.brapi.api.seasons.*;
 
 public class BrapiStudies
 {
