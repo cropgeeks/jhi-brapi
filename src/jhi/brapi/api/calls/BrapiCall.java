@@ -17,6 +17,7 @@ public class BrapiCall
 	public static final String VERSION_ONE_ONE = "1.1";
 	public static final String VERSION_ONE_TWO = "1.2";
 	public static final String VERSION_ONE_THREE = "1.3";
+	public static final String VERSION_TWO_ZERO = "2.0";
 
 	private String call;
 	private List<String> datatypes = new ArrayList<>();
@@ -95,6 +96,9 @@ public class BrapiCall
 
 	public BrapiCall withVersionOneThree()
 		{ return addVersion(VERSION_ONE_THREE); }
+
+	public BrapiCall withVersionTwoZero()
+		{ return addVersion(VERSION_TWO_ZERO); }
 
 	public boolean hasDataType(String datatype)
 	{

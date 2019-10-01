@@ -18,6 +18,7 @@ public class ServerStudies extends BaseBrapiServerResource
 	private static final String PARAM_ACTIVE = "active";
 	private static final String PARAM_SORT_BY = "sortBy";
 	private static final String PARAM_SORT_ORDER = "sortOrder";
+	private static final String PARAM_STUDY_TYPE = "studyType";
 
 	private StudiesDAO studiesDAO = new StudiesDAO();
 
@@ -28,6 +29,7 @@ public class ServerStudies extends BaseBrapiServerResource
 	private String seasonDbId;
 	private String trialDbId;
 	private String studyDbId;
+	private String studyType;
 	private boolean active;
 	private String sortBy;
 	private String sortOrder;
@@ -44,6 +46,7 @@ public class ServerStudies extends BaseBrapiServerResource
 		this.seasonDbId = getQueryValue(PARAM_SEASON_ID);
 		this.trialDbId = getQueryValue(PARAM_TRIAL_ID);
 		this.studyDbId = getQueryValue(PARAM_STUDY_ID);
+		this.studyType = getQueryValue(PARAM_STUDY_TYPE);
 		this.active = Boolean.parseBoolean(getQueryValue(PARAM_ACTIVE));
 
 		// TODO: implement user sorting
@@ -64,8 +67,18 @@ public class ServerStudies extends BaseBrapiServerResource
 		addParameter(parameters, "experiments.id", trialDbId);
 		addParameter(parameters, "experiments.id", studyDbId);
 		addParameter(parameters, null, ""+active);
+		addParameter(parameters, "experimenttypes.description", studyType);
 
 		return studiesDAO.getAll(parameters, currentPage, pageSize);
+	}
+
+	@Post("json")
+	public BrapiListResource<BrapiStudies> postJson(BrapiStudiesPost params)
+	{
+		studyType = params.getStudyType();
+		setPaginationParameters(params);
+
+		return getJson();
 	}
 
 	private void addParameter(Map<String, List<String>> map, String key, String value)

@@ -27,7 +27,7 @@ public class AsyncChecker
 		Status status = null;
 
 		Optional<Status> asyncStatus = statuses.stream()
-			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCID) || s.getCode().equalsIgnoreCase("asynchid"))
+			.filter(s -> s.getMessageType().equalsIgnoreCase(ASYNCID) || s.getMessageType().equalsIgnoreCase("asynchid"))
 			.findFirst();
 
 		if (asyncStatus.isPresent())
@@ -41,7 +41,7 @@ public class AsyncChecker
 		Status status = null;
 
 		Optional<Status> asyncStatus = statuses.stream()
-			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCSTATUS) || s.getCode().equalsIgnoreCase("asynchstatus"))
+			.filter(s -> s.getMessageType().equalsIgnoreCase(ASYNCSTATUS) || s.getMessageType().equalsIgnoreCase("asynchstatus"))
 			.findFirst();
 
 		if (asyncStatus.isPresent())
@@ -66,7 +66,7 @@ public class AsyncChecker
 		Status status = null;
 
 		Optional<Status> asyncStatus = statuses.stream()
-			.filter(s -> s.getCode().equalsIgnoreCase(ASYNCSTATUS) || s.getCode().equalsIgnoreCase("asynchstatus"))
+			.filter(s -> s.getMessageType().equalsIgnoreCase(ASYNCSTATUS) || s.getMessageType().equalsIgnoreCase("asynchstatus"))
 			.findFirst();
 
 		if (asyncStatus.isPresent())

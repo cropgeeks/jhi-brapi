@@ -31,8 +31,8 @@ public class ServerStatus extends BaseBrapiServerResource
 		asynchStatus.setStatus("FINISHED");
 
 		test.getMetadata().getStatus().add(new Status("asynchstatus", "FINISHED"));
-		test.getMetadata().setDatafiles(Collections.singletonList(datafile));
-		test.getMetadata().setAsynchStatus(asynchStatus);
+//		test.getMetadata().setDatafiles(Collections.singletonList(datafile));
+//		test.getMetadata().setAsynchStatus(asynchStatus);
 
 		return test;
 	}

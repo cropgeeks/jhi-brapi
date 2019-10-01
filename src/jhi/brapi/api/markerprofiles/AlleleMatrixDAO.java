@@ -279,12 +279,12 @@ public class AlleleMatrixDAO
 
 			BrapiBaseResource<BrapiAlleleMatrix> result = new BrapiBaseResource<>(matrix, 0, 1, 1);
 
-			AsynchStatus asynchStatus = new AsynchStatus();
-			asynchStatus.setAsynchId(file.getName());
-			asynchStatus.setStatus("PENDING");
+//			AsynchStatus asynchStatus = new AsynchStatus();
+//			asynchStatus.setAsynchId(file.getName());
+//			asynchStatus.setStatus("PENDING");
 
 			result.getMetadata().getStatus().add(new Status("asynchid", file.getName()));
-			result.getMetadata().setAsynchStatus(asynchStatus);
+//			result.getMetadata().setAsynchStatus(asynchStatus);
 			return result;
 		}
 		catch (IOException e)
