@@ -1,4 +1,4 @@
-package jhi.brapi.api.commoncropnames;
+package jhi.brapi.api.core.commoncropnames;
 
 import org.restlet.resource.*;
 

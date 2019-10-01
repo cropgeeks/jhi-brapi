@@ -5,7 +5,7 @@ import java.util.*;
 import jhi.brapi.api.*;
 import jhi.brapi.api.allelematrices.*;
 import jhi.brapi.api.authentication.*;
-import jhi.brapi.api.calls.*;
+import jhi.brapi.api.core.calls.*;
 import jhi.brapi.api.genomemaps.*;
 import jhi.brapi.api.markerprofiles.*;
 import jhi.brapi.api.studies.*;

@@ -3,8 +3,8 @@ package jhi.brapi;
 import java.util.*;
 
 import jhi.brapi.api.*;
-import jhi.brapi.api.calls.*;
-import jhi.brapi.api.commoncropnames.*;
+import jhi.brapi.api.core.calls.*;
+import jhi.brapi.api.core.commoncropnames.*;
 import jhi.brapi.api.germplasm.*;
 import jhi.brapi.util.*;
 
