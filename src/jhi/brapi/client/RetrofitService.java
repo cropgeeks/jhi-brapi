@@ -8,7 +8,7 @@ import jhi.brapi.api.authentication.*;
 import jhi.brapi.api.core.calls.*;
 import jhi.brapi.api.genomemaps.*;
 import jhi.brapi.api.markerprofiles.*;
-import jhi.brapi.api.studies.*;
+import jhi.brapi.api.core.studies.*;
 
 import retrofit2.*;
 import retrofit2.http.*;
@@ -66,7 +66,7 @@ public interface RetrofitService
 	 * 					matched the search criteria
 	 */
 	@GET("studies-search")
-	Call<BrapiListResource<BrapiStudies>> getStudies(@Query("studyType") String studyType, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	Call<BrapiListResource<Study>> getStudies(@Query("studyType") String studyType, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 	/**
 	 * Searches the BrAPI provider's list of matrices via an HTTP GET.
@@ -94,7 +94,7 @@ public interface RetrofitService
 	 * 						matched the search criteria
 	 */
 	@POST("studies-search")
-	Call<BrapiListResource<BrapiStudies>> getStudiesPost(@Body BrapiStudiesPost studiesPost);
+	Call<BrapiListResource<Study>> getStudiesPost(@Body BrapiStudiesPost studiesPost);
 
 	/**
 	 * Searches the BrAPI provider's list of maps, filtering by the species and

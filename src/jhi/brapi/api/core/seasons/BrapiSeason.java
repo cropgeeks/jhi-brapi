@@ -1,4 +1,4 @@
-package jhi.brapi.api.seasons;
+package jhi.brapi.api.core.seasons;
 
 public class BrapiSeason
 {

@@ -17,6 +17,16 @@ public class CallDAO
 			.withMethodGet()
 			.withVersionTwoZero());
 
+		CALLS.add(new BrapiCall("locations")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionTwoZero());
+
+		CALLS.add(new BrapiCall("studies")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionTwoZero());
+
 		CALLS.sort(Comparator.comparing(BrapiCall::getCall));
 	}
 

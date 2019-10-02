@@ -5,7 +5,9 @@ import java.util.*;
 import jhi.brapi.api.*;
 import jhi.brapi.api.core.calls.*;
 import jhi.brapi.api.core.commoncropnames.*;
+import jhi.brapi.api.core.studies.*;
 import jhi.brapi.api.germplasm.*;
+import jhi.brapi.api.core.locations.*;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
@@ -95,7 +97,7 @@ public class Brapi extends Application
 //		attachToRouter(router, "/germplasm/{id}/markerprofiles", ServerGermplasmMarkerProfiles.class);
 //		attachToRouter(router, "/germplasm/{id}/pedigree", ServerGermplasmPedigree.class);
 //		attachToRouter(router, "/germplasm/{id}/progeny", ServerGermplasmProgeny.class);
-//		attachToRouter(router, "/locations", ServerLocations.class);
+		attachToRouter(router, "/locations", ServerLocations.class);
 //		attachToRouter(router, "/maps", ServerGenomeMaps.class); // FJ
 //		attachToRouter(router, "/maps/{id}", ServerGenomeMapMetaData.class); // FJ
 //		attachToRouter(router, "/maps/{id}/positions", ServerGenomeMapMarkerData.class); // FJ
@@ -105,9 +107,9 @@ public class Brapi extends Application
 //		attachToRouter(router, "/markers", ServerMarkersSearch.class);
 //		attachToRouter(router, "/markers/{id}", ServerMarkersData.class);
 //		attachToRouter(router, "/phenotypes-search", ServerPhenotypesSearch.class);
-//		attachToRouter(router, "/studies", ServerStudies.class);
+		attachToRouter(router, "/studies", ServerStudies.class);
 //		attachToRouter(router, "/studies-search", ServerStudies.class);
-//		attachToRouter(router, "/studies/{id}", ServerStudyDetails.class);
+		attachToRouter(router, "/studies/{id}", ServerStudy.class);
 //		attachToRouter(router, "/studies/{id}/table", ServerStudiesAsTable.class);
 //		attachToRouter(router, "/trials", ServerTrialList.class);
 //		attachToRouter(router, "/trials/{id}", ServerTrial.class);
