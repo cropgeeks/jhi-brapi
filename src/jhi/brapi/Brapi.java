@@ -98,6 +98,7 @@ public class Brapi extends Application
 //		attachToRouter(router, "/germplasm/{id}/pedigree", ServerGermplasmPedigree.class);
 //		attachToRouter(router, "/germplasm/{id}/progeny", ServerGermplasmProgeny.class);
 		attachToRouter(router, "/locations", ServerLocations.class);
+		attachToRouter(router, "/locations/{id}", ServerLocation.class);
 //		attachToRouter(router, "/maps", ServerGenomeMaps.class); // FJ
 //		attachToRouter(router, "/maps/{id}", ServerGenomeMapMetaData.class); // FJ
 //		attachToRouter(router, "/maps/{id}/positions", ServerGenomeMapMarkerData.class); // FJ
