@@ -6,7 +6,7 @@ import jhi.brapi.api.*;
 import jhi.brapi.api.allelematrices.*;
 import jhi.brapi.api.authentication.*;
 import jhi.brapi.api.core.calls.*;
-import jhi.brapi.api.genomemaps.*;
+import jhi.brapi.api.genotyping.genomemaps.*;
 import jhi.brapi.api.markerprofiles.*;
 import jhi.brapi.api.core.studies.*;
 
@@ -109,10 +109,10 @@ public interface RetrofitService
 	 * 					BrapiListResource which contains BrapiGenomeMap objects
 	 */
 	@GET("maps")
-	Call<BrapiListResource<BrapiGenomeMap>> getMaps(@Query("species") String species, @Query("type") String type, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	Call<BrapiListResource<GenomeMap>> getMaps(@Query("species") String species, @Query("type") String type, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 	@POST("maps")
-	Call<BrapiListResource<BrapiGenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
+	Call<BrapiListResource<GenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
 
 	/**
 	 * Gets the BrapiMapMetaData (Map) specified by {id} from the BrAPI service

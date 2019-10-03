@@ -18,12 +18,6 @@ public class ServerAlleleMatrixDataset extends BaseBrapiServerResource
 		studyId = getQueryValue("studyDbId");
 	}
 
-	private void addParameter(Map<String, List<String>> map, String key, String value)
-	{
-		if (value != null && value.length() != 0)
-			map.put(key, Collections.singletonList(value));
-	}
-
 	public BrapiListResource<BrapiAlleleMatrixDataset> getJson()
 	{
 		LinkedHashMap<String, List<String>> parameters = new LinkedHashMap<>();

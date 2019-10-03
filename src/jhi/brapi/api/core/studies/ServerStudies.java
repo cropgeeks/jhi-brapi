@@ -69,10 +69,4 @@ public class ServerStudies extends BaseBrapiServerResource
 
 		return studiesDAO.getAll(parameters, currentPage, pageSize);
 	}
-
-	private void addParameter(Map<String, List<String>> map, String key, String value)
-	{
-		if (key != null && value != null && value.length() != 0)
-			map.put(key, Collections.singletonList(value));
-	}
 }

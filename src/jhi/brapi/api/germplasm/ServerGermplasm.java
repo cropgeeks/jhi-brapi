@@ -64,10 +64,4 @@ public class ServerGermplasm extends BaseBrapiServerResource
 
 		return result;
 	}
-
-	private void addParameter(Map<String, List<String>> map, String key, String value)
-	{
-		if (value != null && value.length() != 0)
-			map.put(key, Collections.singletonList(value));
-	}
 }

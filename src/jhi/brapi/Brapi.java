@@ -6,6 +6,7 @@ import jhi.brapi.api.*;
 import jhi.brapi.api.core.calls.*;
 import jhi.brapi.api.core.commoncropnames.*;
 import jhi.brapi.api.core.studies.*;
+import jhi.brapi.api.genotyping.genomemaps.*;
 import jhi.brapi.api.germplasm.*;
 import jhi.brapi.api.core.locations.*;
 import jhi.brapi.util.*;
@@ -99,7 +100,7 @@ public class Brapi extends Application
 //		attachToRouter(router, "/germplasm/{id}/progeny", ServerGermplasmProgeny.class);
 		attachToRouter(router, "/locations", ServerLocations.class);
 		attachToRouter(router, "/locations/{id}", ServerLocation.class);
-//		attachToRouter(router, "/maps", ServerGenomeMaps.class); // FJ
+		attachToRouter(router, "/maps", ServerGenomeMaps.class); // FJ
 //		attachToRouter(router, "/maps/{id}", ServerGenomeMapMetaData.class); // FJ
 //		attachToRouter(router, "/maps/{id}/positions", ServerGenomeMapMarkerData.class); // FJ
 //		attachToRouter(router, "/maps/{id}/positions/{linkageGroupId}", ServerGenomeMapLinkageGroupMarkers.class);

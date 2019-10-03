@@ -22,6 +22,11 @@ public class CallDAO
 			.withMethodGet()
 			.withVersionTwoZero());
 
+		CALLS.add(new BrapiCall("maps")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionTwoZero());
+
 		CALLS.add(new BrapiCall("studies")
 			.withDatatypeJson()
 			.withMethodGet()

@@ -111,4 +111,10 @@ public abstract class BaseBrapiServerResource<T> extends ServerResource
 		else if (StatusChecker.isNotFound(statuses))
 			setStatus(org.restlet.data.Status.CLIENT_ERROR_NOT_FOUND);
 	}
+
+	protected void addParameter(Map<String, List<String>> map, String key, String value)
+	{
+		if (key != null && value != null && value.length() != 0)
+			map.put(key, Collections.singletonList(value));
+	}
 }

@@ -33,12 +33,6 @@ public class ServerMarkerProfiles extends BaseBrapiServerResource
 		methodId = getQueryValue("methodDbId");
 	}
 
-	private void addParameter(Map<String, String> map, String key, String value)
-	{
-		if (value != null && value.length() != 0)
-			map.put(key, value);
-	}
-
 	@Get("json")
 	public BrapiListResource<BrapiMarkerProfile> getJson()
 	{
