@@ -115,18 +115,6 @@ public interface RetrofitService
 	Call<BrapiListResource<GenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
 
 	/**
-	 * Gets the BrapiMapMetaData (Map) specified by {id} from the BrAPI service
-	 * provider.
-	 *
-	 * @param id	The id of the BrapiMapMetaData (Map) to be retrieved
-	 *
-	 * @return		A Retrofit Call object which contains a BaseBrapiResource
-	 * 				which itself wraps a BrapiMapMetaData object
-	 */
-	@GET("maps/{id}")
-	Call<BrapiBaseResource<BrapiMapMetaData>> getMapMetaData(@Path("id") String id);
-
-	/**
 	 * Gets a list of the BrapiMarkerPosition objects for the BrapiGenomeMap
 	 * (Map) specified by {id}.
 	 *
