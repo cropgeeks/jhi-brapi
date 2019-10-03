@@ -32,6 +32,16 @@ public class CallDAO
 			.withMethodGet()
 			.withVersionTwoZero());
 
+		CALLS.add(new BrapiCall("maps/{id}/linkagegroups")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionTwoZero());
+
+		CALLS.add(new BrapiCall("markerpositions")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionTwoZero());
+
 		CALLS.add(new BrapiCall("studies")
 			.withDatatypeJson()
 			.withMethodGet()

@@ -1,0 +1,88 @@
+package jhi.brapi.api.genotyping.genomemaps;
+
+import java.util.*;
+
+public class MarkerPosition
+{
+	private Map<String, Object> additionalInfo = new HashMap<>();
+	private String linkageGroupName = "";
+	private String mapDbId = "";
+	private String mapName = "";
+	private String markerDbId;
+	private String markerName;
+	private String position;
+
+	public MarkerPosition()
+	{
+	}
+
+	public Map<String, Object> getAdditionalInfo()
+	{
+		return additionalInfo;
+	}
+
+	public void setAdditionalInfo(Map<String, Object> additionalInfo)
+	{
+		this.additionalInfo = additionalInfo;
+	}
+
+	public String getLinkageGroupName()
+	{
+		return linkageGroupName;
+	}
+
+	public void setLinkageGroupName(String linkageGroupName)
+	{
+		this.linkageGroupName = linkageGroupName;
+	}
+
+	public String getMapDbId()
+	{
+		return mapDbId;
+	}
+
+	public void setMapDbId(String mapDbId)
+	{
+		this.mapDbId = mapDbId;
+	}
+
+	public String getMapName()
+	{
+		return mapName;
+	}
+
+	public void setMapName(String mapName)
+	{
+		this.mapName = mapName;
+	}
+
+	public String getMarkerDbId()
+	{
+		return markerDbId;
+	}
+
+	public void setMarkerDbId(String markerDbId)
+	{
+		this.markerDbId = markerDbId;
+	}
+
+	public String getMarkerName()
+	{
+		return markerName;
+	}
+
+	public void setMarkerName(String markerName)
+	{
+		this.markerName = markerName;
+	}
+
+	public String getPosition()
+	{
+		return position;
+	}
+
+	public void setPosition(String position)
+	{
+		this.position = position;
+	}
+}

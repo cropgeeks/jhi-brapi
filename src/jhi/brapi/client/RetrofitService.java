@@ -128,7 +128,7 @@ public interface RetrofitService
 	 * 							objects
 	 */
 	@GET("maps/{id}/positions")
-	Call<BrapiListResource<BrapiMarkerPosition>> getMapMarkerData(@Path("id") String id, @Query("linkageGroupId") List<String> linkageGroupIds, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	Call<BrapiListResource<MarkerPosition>> getMapMarkerData(@Path("id") String id, @Query("linkageGroupId") List<String> linkageGroupIds, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 
 	/**

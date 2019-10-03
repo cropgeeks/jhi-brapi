@@ -1,10 +1,27 @@
 package jhi.brapi.api.genotyping.genomemaps;
 
-public class BrapiLinkageGroup
+import java.util.*;
+
+public class LinkageGroup
 {
-	private String linkageGroupName;
+	private Map<String, Object> additionalInfo = new HashMap<>();
+	private String linkageGroupName = "";
 	private int markerCount;
 	private double maxPosition;
+
+	public LinkageGroup()
+	{
+	}
+
+	public Map<String, Object> getAdditionalInfo()
+	{
+		return additionalInfo;
+	}
+
+	public void setAdditionalInfo(Map<String, Object> additionalInfo)
+	{
+		this.additionalInfo = additionalInfo;
+	}
 
 	public String getLinkageGroupName()
 		{ return linkageGroupName; }
