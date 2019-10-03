@@ -70,15 +70,6 @@ public class ServerStudies extends BaseBrapiServerResource
 		return studiesDAO.getAll(parameters, currentPage, pageSize);
 	}
 
-	@Post("json")
-	public BrapiListResource<Study> postJson(BrapiStudiesPost params)
-	{
-		studyType = params.getStudyType();
-		setPaginationParameters(params);
-
-		return getJson();
-	}
-
 	private void addParameter(Map<String, List<String>> map, String key, String value)
 	{
 		if (key != null && value != null && value.length() != 0)
