@@ -159,7 +159,7 @@ public class GermplasmDAO
 			// Loop over each data set to load the hdf5 file with germplasm data
 			dataSetIds.forEach(dataSetId ->
 			{
-				String hdf5File = HDF5Utils.getHdf5File(dataSetId);
+				String hdf5File = Hdf55Utils.getHdf5File(dataSetId);
 
 				String folder = context.getParameters().getFirstValue("hdf5-folder");
 

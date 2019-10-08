@@ -31,14 +31,14 @@ public class MarkerProfileDAO
 
 		dataSetIds.forEach(id ->
 		{
-			String hdf5File = HDF5Utils.getHdf5File(id);
+			String hdf5File = Hdf55Utils.getHdf5File(id);
 
 			String folder = context.getParameters().getFirstValue("hdf5-folder");
 
 			try(Hdf5DataExtractor extractor = new Hdf5DataExtractor(new File(folder, hdf5File)))
 			{
 				List<String> lineNames = extractor.getLines();
-				LinkedHashMap<String, String> map = HDF5Utils.getGermplasmMappingForNames(lineNames);
+				LinkedHashMap<String, String> map = Hdf55Utils.getGermplasmMappingForNames(lineNames);
 
 				markerProfiles.addAll(getProfiles(id, map));
 			}
@@ -109,7 +109,7 @@ public class MarkerProfileDAO
 		// If the line doesn't exist in the db return a blank result
 		if (!name.isEmpty())
 		{
-			String hdf5File = HDF5Utils.getHdf5File(datasetId);
+			String hdf5File = Hdf55Utils.getHdf5File(datasetId);
 			String folder = context.getParameters().getFirstValue("hdf5-folder");
 
 			List<Map<String, String>> allelesByMarker = new ArrayList<>();

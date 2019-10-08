@@ -9,7 +9,6 @@ import jhi.brapi.api.Status;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
-import org.restlet.resource.*;
 
 public class AlleleMatrixDAO
 {
@@ -44,7 +43,7 @@ public class AlleleMatrixDAO
 				datasetId = tokens[0];
 			}
 
-			String hdf5File = HDF5Utils.getHdf5File(datasetId);
+			String hdf5File = Hdf55Utils.getHdf5File(datasetId);
 
 			String folder = context.getParameters().getFirstValue("hdf5-folder");
 
@@ -255,7 +254,7 @@ public class AlleleMatrixDAO
 
 		String datasetId = matrixDbId;
 
-		String hdf5File = HDF5Utils.getHdf5File(datasetId);
+		String hdf5File = Hdf55Utils.getHdf5File(datasetId);
 
 		String folder = context.getParameters().getFirstValue("hdf5-folder");
 

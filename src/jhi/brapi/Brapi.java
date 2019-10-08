@@ -7,6 +7,7 @@ import jhi.brapi.api.core.calls.*;
 import jhi.brapi.api.core.commoncropnames.*;
 import jhi.brapi.api.core.studies.*;
 import jhi.brapi.api.genotyping.genomemaps.*;
+import jhi.brapi.api.genotyping.variantsets.*;
 import jhi.brapi.api.germplasm.*;
 import jhi.brapi.api.core.locations.*;
 import jhi.brapi.util.*;
@@ -117,6 +118,7 @@ public class Brapi extends Application
 //		attachToRouter(router, "/studies/{id}/table", ServerStudiesAsTable.class);
 //		attachToRouter(router, "/trials", ServerTrialList.class);
 //		attachToRouter(router, "/trials/{id}", ServerTrial.class);
+		attachToRouter(router, "/variantsets", ServerVariantSets.class);
 	}
 
 	private void setupNotImplementedRoutes(Router router)

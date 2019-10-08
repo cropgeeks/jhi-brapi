@@ -47,6 +47,11 @@ public class CallDAO
 			.withMethodGet()
 			.withVersionTwoZero());
 
+		CALLS.add(new BrapiCall("variantsets")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionTwoZero());
+
 		CALLS.sort(Comparator.comparing(BrapiCall::getCall));
 	}
 
