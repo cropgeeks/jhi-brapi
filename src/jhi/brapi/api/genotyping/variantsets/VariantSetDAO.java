@@ -16,6 +16,11 @@ public class VariantSetDAO
 		"experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON " +
 		"experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.id = 1 AND datasets.source_file IS NOT NULL LIMIT ?, ?";
 
+	private final String variantSetsByIdQuery = "SELECT * FROM datasets LEFT JOIN experiments ON " +
+		"experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON " +
+		"experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.id = 1 AND datasets.id = ? AND " +
+		"datasets.source_file IS NOT NULL";
+
 	/**
 	 * Queries the database (using mapQuery defined above) for the complete list of Maps which the database holds.
 	 *
@@ -46,6 +51,26 @@ public class VariantSetDAO
 		}
 
 		return variantSets;
+	}
+
+	public BrapiBaseResource<VariantSet> getById(String dataFolderPath, String id)
+	{
+		BrapiBaseResource<VariantSet> variantSet = new BrapiBaseResource<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, variantSetsByIdQuery, id);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			if (resultSet.next())
+				variantSet = new BrapiBaseResource<>(getVariantSetFrom(dataFolderPath, resultSet));
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return variantSet;
 	}
 
 	private VariantSet getVariantSetFrom(String dataFolderPath, ResultSet resultSet)

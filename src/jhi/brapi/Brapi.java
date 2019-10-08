@@ -119,6 +119,7 @@ public class Brapi extends Application
 //		attachToRouter(router, "/trials", ServerTrialList.class);
 //		attachToRouter(router, "/trials/{id}", ServerTrial.class);
 		attachToRouter(router, "/variantsets", ServerVariantSets.class);
+		attachToRouter(router, "/variantsets/{id}", ServerVariantSet.class);
 	}
 
 	private void setupNotImplementedRoutes(Router router)
