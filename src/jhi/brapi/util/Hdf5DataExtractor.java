@@ -54,6 +54,11 @@ public class Hdf5DataExtractor implements AutoCloseable
 		return alleleValue;
 	}
 
+	public String getLine(int lineIndex)
+	{
+		return hdf5Lines.get(lineIndex);
+	}
+
 	/**
 	 * Return the a list of the alleles for the line specified by the parameter
 	 * line, encoded using the parameters provided in params.
@@ -111,4 +116,14 @@ public class Hdf5DataExtractor implements AutoCloseable
 
 	public List<String> getMarkers()
 	{ return hdf5Markers; }
+
+	public int getLineCount()
+	{
+		return hdf5Lines.size();
+	}
+
+	public int getMarkerCount()
+	{
+		return hdf5Lines.size();
+	}
 }

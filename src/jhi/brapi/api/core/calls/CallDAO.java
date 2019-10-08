@@ -12,6 +12,16 @@ public class CallDAO
 
 	static
 	{
+		CALLS.add(new BrapiCall("callsets")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionTwoZero());
+
+		CALLS.add(new BrapiCall("callsets/{id}")
+			.withDatatypeJson()
+			.withMethodGet()
+			.withVersionTwoZero());
+
 		CALLS.add(new BrapiCall("commoncropnames")
 			.withDatatypeJson()
 			.withMethodGet()

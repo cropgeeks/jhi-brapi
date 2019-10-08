@@ -6,6 +6,7 @@ import jhi.brapi.api.*;
 import jhi.brapi.api.core.calls.*;
 import jhi.brapi.api.core.commoncropnames.*;
 import jhi.brapi.api.core.studies.*;
+import jhi.brapi.api.genotyping.callsets.*;
 import jhi.brapi.api.genotyping.genomemaps.*;
 import jhi.brapi.api.genotyping.variantsets.*;
 import jhi.brapi.api.germplasm.*;
@@ -92,6 +93,8 @@ public class Brapi extends Application
 //		attachToRouter(router, "/allelematrices-search/{id}", ServerStatus.class);
 //		attachToRouter(router, "/allelematrices-search/status/{id}", ServerStatus.class);
 //		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
+		attachToRouter(router, "/callsets", ServerCallSets.class);
+		attachToRouter(router, "/callsets/{id}", ServerCallSet.class);
 		attachToRouter(router, "/commoncropnames", ServerCommonCropNames.class);
 //		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
 		attachToRouter(router, "/germplasm", ServerGermplasm.class);

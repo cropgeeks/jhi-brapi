@@ -85,8 +85,8 @@ public class VariantSetDAO
 		String filename = Hdf55Utils.getHdf5File(variantSet.getVariantSetDbId());
 		Hdf5DataExtractor hdf5 = new Hdf5DataExtractor(new File(dataFolderPath, filename));
 
-		variantSet.setCallSetCount(hdf5.getLines().size());
-		variantSet.setVariantCount(hdf5.getMarkers().size());
+		variantSet.setCallSetCount(hdf5.getLineCount());
+		variantSet.setVariantCount(hdf5.getMarkerCount());
 
 		return variantSet;
 	}
