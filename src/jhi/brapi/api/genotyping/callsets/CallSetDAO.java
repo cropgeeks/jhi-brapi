@@ -109,6 +109,31 @@ public class CallSetDAO
 		return result;
 	}
 
+	public BrapiMasterDetailResource<CallSetCalls> getCallSetCallsById(String dataFolderPath, String id, int currentPage, int pageSize)
+	{
+		BrapiMasterDetailResource<CallSetCalls> result = new BrapiMasterDetailResource<>();
+
+		String[] ids = id.split("-");
+		if (ids.length == 2)
+		{
+			String datasetId = ids[0];
+			String callSetId = ids[1];
+
+			String filename = Hdf55Utils.getHdf5File(datasetId);
+			Hdf5DataExtractor hdf5 = new Hdf5DataExtractor(new File(dataFolderPath, filename));
+
+			CallSetCalls calls = getCallSetCalls(hdf5, Integer.parseInt(callSetId), currentPage, pageSize);
+
+			result = new BrapiMasterDetailResource<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount());
+		}
+		else
+		{
+			throw new ResourceException(404);
+		}
+
+		return result;
+	}
+
 	private CallSet getCallSet(Hdf5DataExtractor hdf5, String datasetId, int internalId)
 	{
 		CallSet callSet = new CallSet();
@@ -118,6 +143,37 @@ public class CallSetDAO
 		callSet.setVariantSetIds(Collections.singletonList(datasetId));
 
 		return callSet;
+	}
+
+	private CallSetCalls getCallSetCalls(Hdf5DataExtractor hdf5, int lineId, int currentPage, int pageSize)
+	{
+		String lineName = hdf5.getLine(lineId);
+
+		List<String> markers = hdf5.getMarkers();
+
+		int pageStart = DatabaseUtils.getLimitStart(currentPage, pageSize);
+
+		CallSetCalls c = new CallSetCalls();
+
+		List<CallSetCallsDetail> details = new ArrayList<>();
+
+		for (int markerIndex=pageStart; markerIndex < pageStart + pageSize && markerIndex < markers.size(); markerIndex++)
+		{
+			String geno = hdf5.get(lineId, markerIndex, new GenotypeEncodingParams());
+			Genotype genotype = new Genotype();
+			genotype.setValues(Collections.singletonList(geno));
+
+			CallSetCallsDetail calls = new CallSetCallsDetail();
+			calls.setCallSetName(lineName);
+			calls.setGenotype(genotype);
+			details.add(calls);
+//			calls.setVariantDbId("" + datasetId);
+//			calls.set
+		}
+
+		c.setData(details);
+
+		return c;
 	}
 
 	private TreeMap<Long, String> getCallsetIdMap(List<VariantSet> list)

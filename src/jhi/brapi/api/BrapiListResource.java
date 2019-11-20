@@ -17,7 +17,7 @@ public class BrapiListResource<T>
 	public BrapiListResource(List<T> list, int currentPage, int pageSize, long totalCount)
 	{
 		this.result = new Result<T>(list);
-		metadata.setPagination(new Pagination(pageSize, currentPage, totalCount-1, pageSize));
+		metadata.setPagination(new Pagination(pageSize, currentPage, totalCount, pageSize));
 	}
 
 	public Metadata getMetadata()
