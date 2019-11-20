@@ -11,7 +11,7 @@ import jhi.brapi.util.*;
  */
 public class CommonCropNamesDAO
 {
-	private final String getCrops = "SELECT DISTINCT cropname FROM taxonomies LIMIT ?, ?";
+	private final String getCrops = "SELECT SQL_CALC_FOUND_ROWS DISTINCT cropname FROM taxonomies LIMIT ?, ?";
 
 	public BrapiListResource<String> getAll(int currentPage, int pageSize)
 	{
