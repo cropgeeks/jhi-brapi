@@ -25,6 +25,9 @@ public class CallSetDAO
 		"experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.id = 1 AND datasets.id = ? AND " +
 		"datasets.source_file IS NOT NULL";
 
+	private final String markerNameIdQuery = "SELECT marker_name, markers.id FROM datasetmembers LEFT JOIN markers ON " +
+		"datasetmembers.foreign_id = markers.id WHERE datasetmembers.datasetmembertype_id = 1 AND dataset_id = ?";
+
 	// This code is dense because the mapping between lines and datasets exists in the hdf5 file not the database so
 	// there's a fair amount of manipulation to reconstruct that mapping here, particularly with respect to getting
 	// pagination across datasets correct
@@ -78,28 +81,10 @@ public class CallSetDAO
 			String datasetId = ids[0];
 			String callSetId = ids[1];
 
-			try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-				 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, variantSetsByIdQuery, datasetId);
-				 ResultSet resultSet = statement.executeQuery())
-			{
-				if (resultSet.next())
-				{
-					VariantSet variantSet = getVariantSetFrom(dataFolderPath, resultSet);
+			String filename = Hdf55Utils.getHdf5File(datasetId);
+			Hdf5DataExtractor hdf5 = new Hdf5DataExtractor(new File(dataFolderPath, filename));
 
-					String filename = Hdf55Utils.getHdf5File(datasetId);
-					Hdf5DataExtractor hdf5 = new Hdf5DataExtractor(new File(dataFolderPath, filename));
-
-					result = new BrapiBaseResource<CallSet>(getCallSet(hdf5, datasetId, Integer.parseInt(callSetId)));
-				}
-				else
-				{
-					throw new ResourceException(404);
-				}
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
+			result = new BrapiBaseResource<CallSet>(getCallSet(hdf5, datasetId, Integer.parseInt(callSetId)));
 		}
 		else
 		{
@@ -122,7 +107,7 @@ public class CallSetDAO
 			String filename = Hdf55Utils.getHdf5File(datasetId);
 			Hdf5DataExtractor hdf5 = new Hdf5DataExtractor(new File(dataFolderPath, filename));
 
-			CallSetCalls calls = getCallSetCalls(hdf5, Integer.parseInt(callSetId), currentPage, pageSize);
+			CallSetCalls calls = getCallSetCalls(hdf5, Integer.parseInt(callSetId), datasetId, currentPage, pageSize);
 
 			result = new BrapiMasterDetailResource<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount());
 		}
@@ -145,13 +130,15 @@ public class CallSetDAO
 		return callSet;
 	}
 
-	private CallSetCalls getCallSetCalls(Hdf5DataExtractor hdf5, int lineId, int currentPage, int pageSize)
+	private CallSetCalls getCallSetCalls(Hdf5DataExtractor hdf5, int lineId, String datasetId, int currentPage, int pageSize)
 	{
 		String lineName = hdf5.getLine(lineId);
 
 		List<String> markers = hdf5.getMarkers();
 
 		int pageStart = DatabaseUtils.getLimitStart(currentPage, pageSize);
+
+		Map<String, Integer> markerIdsByName = getMarkerIdsByNameMap(datasetId);
 
 		CallSetCalls c = new CallSetCalls();
 
@@ -164,16 +151,45 @@ public class CallSetDAO
 			genotype.setValues(Collections.singletonList(geno));
 
 			CallSetCallsDetail calls = new CallSetCallsDetail();
+			calls.setCallSetDbId(datasetId + "-" + lineId);
 			calls.setCallSetName(lineName);
 			calls.setGenotype(genotype);
 			details.add(calls);
-//			calls.setVariantDbId("" + datasetId);
-//			calls.set
+
+			String markerName = markers.get(markerIndex);
+			calls.setVariantName(markerName);
+
+			int markerId = markerIdsByName.get(markerName);
+			if (markerId != -1)
+				calls.setVariantDbId("" + markerId);
 		}
 
 		c.setData(details);
 
 		return c;
+	}
+
+	private Map<String, Integer> getMarkerIdsByNameMap(String datasetId)
+	{
+		Map<String, Integer> markerIdsByName = new HashMap<>();
+
+		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
+			 PreparedStatement statement = DatabaseUtils.createByIdStatement(con, markerNameIdQuery, datasetId);
+			 ResultSet resultSet = statement.executeQuery())
+		{
+			while (resultSet.next())
+			{
+				String markerName = resultSet.getString("marker_name");
+				int id = resultSet.getInt("id");
+
+				markerIdsByName.put(markerName, id);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return markerIdsByName;
 	}
 
 	private TreeMap<Long, String> getCallsetIdMap(List<VariantSet> list)

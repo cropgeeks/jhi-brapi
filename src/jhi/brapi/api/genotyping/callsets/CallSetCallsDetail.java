@@ -9,9 +9,9 @@ public class CallSetCallsDetail
 	private String callSetName = "";
 	private Genotype genotype = new Genotype();
 	private List<Double> genotype_likelihood = new ArrayList<>();
-	private String phaseset;
-	private String variantDbId;
-	private String variantName;
+	private String phaseset = "";
+	private String variantDbId = "";
+	private String variantName = "";
 
 	public Map<String, Object> getAdditionalInfo()
 	{
