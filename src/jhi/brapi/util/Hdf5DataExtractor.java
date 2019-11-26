@@ -124,6 +124,6 @@ public class Hdf5DataExtractor implements AutoCloseable
 
 	public int getMarkerCount()
 	{
-		return hdf5Lines.size();
+		return hdf5Markers.size();
 	}
 }
