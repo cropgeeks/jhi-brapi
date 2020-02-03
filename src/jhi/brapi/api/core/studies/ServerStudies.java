@@ -8,6 +8,7 @@ import org.restlet.resource.*;
 
 public class ServerStudies extends BaseBrapiServerResource
 {
+	// TODO: Add all the new query parameters
 	private static final String PARAM_COMMON_CROP_NAME = "commonCropName";
 	private static final String PARAM_PROGRAM_ID = "programDbId";
 	private static final String PARAM_LOCATION_ID = "locationDbId";
