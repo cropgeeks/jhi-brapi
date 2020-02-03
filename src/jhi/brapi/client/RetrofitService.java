@@ -120,4 +120,18 @@ public interface RetrofitService
 	 */
 	@GET("maps/{mapDbId}")
 	Call<BrapiBaseResource<GenomeMap>> getMapById(@Path("mapdDbId") String mapDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+
+	/**
+	 * Gets a list of the MarkerPosition objects
+	 *
+	 * TODO: update comments here
+	 * @param pageSize			The desired size of the returned page
+	 * @param page				The desired page of data
+	 *
+	 * @return					A Retrofit Call object which contains a
+	 * 							BrapiListResource which contains BrapiMarkerPositon
+	 * 							objects
+	 */
+	@GET("markerpositions")
+	Call<BrapiListResource<MarkerPosition>> getMarkerPositions(@Path("mapDbId") String mapDbId, @Query("linkageGroupName") String linkageGroupName, @Query("markerDbId") String markerDbId, @Query("minPosition") String minPositon, @Query("maxPosition") String maxPosition, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 }
