@@ -16,6 +16,7 @@ public class ServerGenomeMaps extends BaseBrapiServerResource
 	private MapDAO mapDAO = new MapDAO();
 
 	private String commonCropName;
+	private String mapPUI;
 	private String scientificName;
 	private String type;
 	private String programDbId;
@@ -28,6 +29,7 @@ public class ServerGenomeMaps extends BaseBrapiServerResource
 		super.doInit();
 
 		commonCropName = getQueryValue("commonCropName");
+		mapPUI = getQueryValue("mapPUI");
 		scientificName = getQueryValue("scientificName");
 		type = getQueryValue("type");
 		programDbId = getQueryValue("programDbId");
@@ -40,6 +42,7 @@ public class ServerGenomeMaps extends BaseBrapiServerResource
 	{
 		LinkedHashMap<String, List<String>> parameters = new LinkedHashMap<>();
 		addParameter(parameters, null, commonCropName);
+		addParameter(parameters, null, mapPUI);
 		addParameter(parameters, null, scientificName);
 		addParameter(parameters, null, type);
 		addParameter(parameters, null, programDbId);

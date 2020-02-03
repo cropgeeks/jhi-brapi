@@ -98,16 +98,21 @@ public interface RetrofitService
 	 * Searches the BrAPI provider's list of maps, filtering by the species and
 	 * type parameters provided.
 	 *
-	 * @param species	A String representing the species of the map
-	 * @param type		A String representing the type of the map (e.g. Genetic)
-	 * @param pageSize	The desired size of the returned page
-	 * @param page		The desired page of data
+	 * @param commonCropName	A String representing the common name of the crop
+	 * @param mapPUI			A string representing the DOI or other permanent identifier for this genomic map
+	 * @param scientificName    A string representing the full scientific binomial format name.
+	 * @param type				A String representing the type of the map (e.g. Genetic)
+	 * @param programDbId		A String representing the unique id of a program
+	 * @param trialDbId			A String representing the unique id of of a trial
+	 * @param studyDbId			A string representing the uinque id of a study
+	 * @param pageSize			The desired size of the returned page
+	 * @param page				The desired page of data
 	 *
-	 * @return			A Retrofit Call object which contains a
-	 * 					BrapiListResource which contains BrapiGenomeMap objects
+	 * @return					A Retrofit Call object which contains a BrapiListResource which contains BrapiGenomeMap
+	 * 							objects
 	 */
 	@GET("maps")
-	Call<BrapiListResource<GenomeMap>> getMaps(@Query("species") String species, @Query("type") String type, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	Call<BrapiListResource<GenomeMap>> getMaps(@Query("commonCropName") String commonCropName, @Query("mapPUI") String mapPUI, @Query("scientificName") String scientificName, @Query("type") String type, @Query("programDbId") String programDbId, @Query("trialDbId") String trialDbId, @Query("studyDbId") String studyDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 	@POST("maps")
 	Call<BrapiListResource<GenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
