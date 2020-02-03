@@ -36,7 +36,7 @@ public interface RetrofitService
 	 * 					this BrAPI provider
 	 */
 	@GET("serverinfo")
-	Call<BrapiListResource<BrapiCall>> getServerInfo(@Query("dataType") String dataType);
+	Call<BrapiBaseResource<BrapiServerInfo>> getServerInfo(@Query("dataType") String dataType);
 
 	/**
 	 * Queries the BrAPI provider to attempt to retrieve an authentication token
