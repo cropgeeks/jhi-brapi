@@ -30,14 +30,12 @@ public interface RetrofitService
 	 * in. Supports paging.
 	 *
 	 * @param dataType	The datatype of the call return. e.g. JSON, TSV
-	 * @param pageSize	The desired size of the returned page
-	 * @param page		The desired page of data
 	 * @return			A Retrofit Call object which contains a
 	 * 					BrapiListResource which wraps a List of BrapiCall
 	 * 					objects which contain details of the calls supported by
 	 * 					this BrAPI provider
 	 */
-	@GET("calls")
+	@GET("serverinfo")
 	Call<BrapiListResource<BrapiCall>> getServerInfo(@Query("dataType") String dataType);
 
 	/**
