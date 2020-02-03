@@ -114,15 +114,13 @@ public interface RetrofitService
 	@GET("maps")
 	Call<BrapiListResource<GenomeMap>> getMaps(@Query("commonCropName") String commonCropName, @Query("mapPUI") String mapPUI, @Query("scientificName") String scientificName, @Query("type") String type, @Query("programDbId") String programDbId, @Query("trialDbId") String trialDbId, @Query("studyDbId") String studyDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
-	@POST("maps")
-	Call<BrapiListResource<GenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
+//	@POST("maps")
+//	Call<BrapiListResource<GenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
 
 	/**
-	 * Gets a list of the BrapiMarkerPosition objects for the BrapiGenomeMap
-	 * (Map) specified by {id}.
+	 * Gets a list of the MarkerPosition objects
 	 *
-	 * @param id				The id of the BrapiGenomeMap the marker positions are for
-	 * @param linkageGroupIds	A list of linkage group ids to filter the results by
+	 * TODO: update comments here
 	 * @param pageSize			The desired size of the returned page
 	 * @param page				The desired page of data
 	 *
@@ -130,8 +128,8 @@ public interface RetrofitService
 	 * 							BrapiListResource which contains BrapiMarkerPositon
 	 * 							objects
 	 */
-	@GET("maps/{id}/positions")
-	Call<BrapiListResource<MarkerPosition>> getMapMarkerData(@Path("id") String id, @Query("linkageGroupId") List<String> linkageGroupIds, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	@GET("markerpositions")
+	Call<BrapiListResource<MarkerPosition>> getMarkerPositions(@Path("mapDbId") String mapDbId, @Query("linkageGroupName") String linkageGroupName, @Query("markerDbId") String markerDbId, @Query("minPosition") String minPositon, @Query("maxPosition") String maxPosition, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 
 	/**
