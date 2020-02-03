@@ -84,7 +84,7 @@ public class ServerInfoDAO
 		BrapiServerInfo serverInfo = new BrapiServerInfo();
 		serverInfo.setCalls(calls);
 		serverInfo.setOrganizationName("The James Hutton Institute");
-		serverInfo.setOrganizationURL("http://hutton.ac.uk");
+		serverInfo.setOrganizationURL("https://www.hutton.ac.uk");
 
 		return new BrapiBaseResource<BrapiServerInfo>(serverInfo, 0, calls.size(), calls.size());
 	}
