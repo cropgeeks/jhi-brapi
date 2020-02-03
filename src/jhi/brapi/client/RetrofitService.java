@@ -71,7 +71,7 @@ public interface RetrofitService
 	 * @return
 	 */
 	@GET("studies")
-	Call<BrapiListResource<Study>> getStudies(@Query("commonCropName") String commonCropName, @Query("studyType") String studyType, @Query("programDbId") String programDbId, @Query("locationDbId") String locationDbId, @Query("seasonDbId") String seasonDbId, @Query("trialDbId") String trialDbId, @Query("studyDbId") String studyDbId, @Query("studyPUI") String sutdyPUI, @Query("germplasmDbId") String germplasmDbId, @Query("observationVariableDbId") String observationVariableId, @Query("active") String active, @Query("sortBy") String sortBy, @Query("sortOrder") String sortOrder, @Query("externalReferenceId") String externalReferenceId, @Query("externalReferenceSource") String externalReferenceSource);
+	Call<BrapiListResource<Study>> getStudies(@Query("commonCropName") String commonCropName, @Query("studyType") String studyType, @Query("programDbId") String programDbId, @Query("locationDbId") String locationDbId, @Query("seasonDbId") String seasonDbId, @Query("trialDbId") String trialDbId, @Query("studyDbId") String studyDbId, @Query("studyPUI") String sutdyPUI, @Query("germplasmDbId") String germplasmDbId, @Query("observationVariableDbId") String observationVariableId, @Query("active") String active, @Query("sortBy") String sortBy, @Query("sortOrder") String sortOrder, @Query("externalReferenceId") String externalReferenceId, @Query("externalReferenceSource") String externalReferenceSource, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 	/**
 	 * Searches the BrAPI provider's list of studies, filtering by the
