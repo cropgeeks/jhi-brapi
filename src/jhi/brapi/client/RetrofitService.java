@@ -129,7 +129,7 @@ public interface RetrofitService
 	 * 							objects
 	 */
 	@GET("markerpositions")
-	Call<BrapiListResource<MarkerPosition>> getMarkerPositions(@Path("mapDbId") String mapDbId, @Query("linkageGroupName") String linkageGroupName, @Query("markerDbId") String markerDbId, @Query("minPosition") String minPositon, @Query("maxPosition") String maxPosition, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	Call<BrapiListResource<MarkerPosition>> getMarkerPositions(@Query("mapDbId") String mapDbId, @Query("linkageGroupName") String linkageGroupName, @Query("markerDbId") String markerDbId, @Query("minPosition") String minPositon, @Query("maxPosition") String maxPosition, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 
 	/**
