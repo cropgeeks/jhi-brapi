@@ -8,7 +8,7 @@
 	<property name="web" location="web"/>
 
 	<property name="jar" value="${lib}/brapi.jar"/>
-	<property name="war" value="${project.name}.war"/>
+	<property name="war" value="brapi.war"/>
 
 	<target name="init">
 	</target>
@@ -23,7 +23,6 @@
         <classpath>
         	<fileset dir="${lib}">
         		<exclude name="**/lib-devel/**"/>
-				<exclude name="**/lib/sis-jhdf5-batteries_included.jar"/>
         	</fileset>
         </classpath>
     </manifestclasspath>
@@ -100,8 +99,8 @@
 
 		<war destfile="${war}" update="false">
 			<webinf dir="web/WEB-INF"/>
-			<lib dir="${lib}"/>
-
+			<lib dir="${lib}"
+				excludes="sis-jhdf5-batteries_included.jar"/>
 			<metainf file="web/context.xml" />
 		</war>
 
@@ -114,7 +113,7 @@
 				  path="/${project.name}" failOnError="false"/>
 
 		<deploy url="${tomcat.manager.url}"	username="${tomcat.manager.username}" password="${tomcat.manager.password}"
-				path="/${project.name}" war="${project.name}.war"/>
+				path="/${project.name}" war="${war}"/>
 	</target>
 
 </project>
