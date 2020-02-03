@@ -118,6 +118,17 @@ public interface RetrofitService
 //	Call<BrapiListResource<GenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
 
 	/**
+	 * Gets the information on an individual genome map
+	 *
+	 * @param mapDbId
+	 * @param pageSize
+	 * @param page
+	 * @return
+	 */
+	@GET("maps/{mapDbId}")
+	Call<BrapiBaseResource<GenomeMap>> getMapById(@Path("mapdDbId") String mapDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+
+	/**
 	 * Gets a list of the MarkerPosition objects
 	 *
 	 * TODO: update comments here
