@@ -5,7 +5,7 @@ import java.util.*;
 import jhi.brapi.api.*;
 import jhi.brapi.api.allelematrices.*;
 import jhi.brapi.api.authentication.*;
-import jhi.brapi.api.core.calls.*;
+import jhi.brapi.api.core.serverinfo.*;
 import jhi.brapi.api.genotyping.genomemaps.*;
 import jhi.brapi.api.markerprofiles.*;
 import jhi.brapi.api.core.studies.*;
@@ -38,7 +38,7 @@ public interface RetrofitService
 	 * 					this BrAPI provider
 	 */
 	@GET("calls")
-	Call<BrapiListResource<BrapiCall>> getCalls(@Query("dataType") String dataType, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	Call<BrapiListResource<BrapiCall>> getServerInfo(@Query("dataType") String dataType);
 
 	/**
 	 * Queries the BrAPI provider to attempt to retrieve an authentication token

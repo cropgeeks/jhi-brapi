@@ -1,4 +1,4 @@
-package jhi.brapi.api.core.calls;
+package jhi.brapi.api.core.serverinfo;
 
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class BrapiCall
 	public static final String VERSION_ONE_THREE = "1.3";
 	public static final String VERSION_TWO_ZERO = "2.0";
 
-	private String call;
+	private String service;
 	private List<String> datatypes = new ArrayList<>();
 	// HTTP methods (e.g. POST, GET, etc)
 	private List<String> methods = new ArrayList<>();
@@ -27,9 +27,9 @@ public class BrapiCall
 
 	public BrapiCall() {}
 
-	public BrapiCall(String call)
+	public BrapiCall(String service)
 	{
-		this.call = call;
+		this.service = service;
 	}
 
 	public BrapiCall addMethod(String method)
@@ -121,11 +121,11 @@ public class BrapiCall
 			.count() >= 1;
 	}
 
-	public String getCall()
-		{ return call; }
+	public String getService()
+		{ return service; }
 
-	public void setCall(String call)
-		{ this.call = call; }
+	public void setService(String service)
+		{ this.service = service; }
 
 	public List<String> getDataTypes()
 		{ return datatypes; }
@@ -155,7 +155,7 @@ public class BrapiCall
 	public String toString()
 	{
 		return "BrapiCall{" +
-				"call='" + call + '\'' +
+				"call='" + service + '\'' +
 				'}';
 	}
 }

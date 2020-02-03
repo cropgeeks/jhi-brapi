@@ -23,6 +23,7 @@
         <classpath>
         	<fileset dir="${lib}">
         		<exclude name="**/lib-devel/**"/>
+				<exclude name="**/lib/sis-jhdf5-batteries_included.jar"/>
         	</fileset>
         </classpath>
     </manifestclasspath>

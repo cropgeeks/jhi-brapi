@@ -1,4 +1,4 @@
-package jhi.brapi.api.core.calls;
+package jhi.brapi.api.core.serverinfo;
 
 import java.util.*;
 import java.util.stream.*;
@@ -6,7 +6,7 @@ import java.util.stream.*;
 import jhi.brapi.api.*;
 import jhi.brapi.util.*;
 
-public class CallDAO
+public class ServerInfoDAO
 {
 	private static final List<BrapiCall> CALLS = new ArrayList<>();
 
@@ -67,10 +67,10 @@ public class CallDAO
 			.withMethodGet()
 			.withVersionTwoZero());
 
-		CALLS.sort(Comparator.comparing(BrapiCall::getCall));
+		CALLS.sort(Comparator.comparing(BrapiCall::getService));
 	}
 
-	public static BrapiListResource<BrapiCall> getAll(String dataType, int currentPage, int pageSize)
+	public static BrapiBaseResource<BrapiServerInfo> getAll(String dataType)
 	{
 		List<BrapiCall> calls = CALLS;
 
@@ -81,11 +81,11 @@ public class CallDAO
 						 .collect(Collectors.toCollection(ArrayList::new));
 		}
 
-		int start = DatabaseUtils.getLimitStart(currentPage, pageSize);
-		int end = Math.min(start + pageSize, calls.size());
+		BrapiServerInfo serverInfo = new BrapiServerInfo();
+		serverInfo.setCalls(calls);
+		serverInfo.setOrganizationName("The James Hutton Institute");
+		serverInfo.setOrganizationURL("http://hutton.ac.uk");
 
-		calls = calls.subList(start, end);
-
-		return new BrapiListResource<BrapiCall>(calls, currentPage, pageSize, calls.size());
+		return new BrapiBaseResource<BrapiServerInfo>(serverInfo, 0, calls.size(), calls.size());
 	}
 }

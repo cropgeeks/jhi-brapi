@@ -1,8 +1,8 @@
-package jhi.brapi.api.core.calls;
+package jhi.brapi.api.core.serverinfo;
 
 import jhi.brapi.api.*;
 
-public class ServerCalls extends BaseBrapiServerResource
+public class ServerServerInfo extends BaseBrapiServerResource
 {
 	private String dataType = null;
 
@@ -21,10 +21,10 @@ public class ServerCalls extends BaseBrapiServerResource
 	}
 
 	@Override
-	public BrapiListResource<BrapiCall> getJson()
+	public BrapiBaseResource<BrapiServerInfo> getJson()
 	{
-		BrapiListResource<BrapiCall> callResponse = CallDAO.getAll(dataType, currentPage, pageSize);
+		BrapiBaseResource<BrapiServerInfo> serverInfoResponse = ServerInfoDAO.getAll(dataType);
 
-		return callResponse;
+		return serverInfoResponse;
 	}
 }

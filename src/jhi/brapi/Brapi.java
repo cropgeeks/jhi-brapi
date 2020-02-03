@@ -3,7 +3,7 @@ package jhi.brapi;
 import java.util.*;
 
 import jhi.brapi.api.*;
-import jhi.brapi.api.core.calls.*;
+import jhi.brapi.api.core.serverinfo.*;
 import jhi.brapi.api.core.commoncropnames.*;
 import jhi.brapi.api.core.studies.*;
 import jhi.brapi.api.genotyping.callsets.*;
@@ -47,7 +47,7 @@ public class Brapi extends Application
 		// the available calls and access the login URI without requiring
 		// authentication
 		Router unauthenticated = new Router(context);
-		attachToRouter(unauthenticated, "/calls", ServerCalls.class);  // FJ
+		attachToRouter(unauthenticated, "/serverinfo", ServerServerInfo.class);  // FJ
 //		attachToRouter(unauthenticated, "/token", ServerTokenAuthenticator.class);
 
 		Router appRoutes = unauthenticated;
