@@ -1,6 +1,7 @@
 package jhi.brapi.api.core.studies;
 
 import java.sql.Date;
+import java.time.*;
 import java.util.*;
 
 import jhi.brapi.api.core.locations.*;
@@ -14,7 +15,7 @@ public class Study
 	private String culturalPractices = "";
 	private List<BrapiDataLinks> dataLinks;
 	private String documentationURL = "";
-	private Date endDate;
+	private String endDate;
 	private List<EnvironmentParameter> environmentParameters;
 	private ExperimentalDesign experimentalDesign;
 	private GrowthFacility growthFacility;
@@ -23,7 +24,7 @@ public class Study
 	private Location location;
 	private String observationUnitDescritpion = "";
 	private List<String> seasons;
-	private Date startDate;
+	private String startDate;
 	private String studyDescription = "";
 	private String studyName = "";
 	private String studyType = "";
@@ -105,14 +106,14 @@ public class Study
 		this.documentationURL = documentationURL;
 	}
 
-	public Date getEndDate()
+	public String getEndDate()
 	{
 		return endDate;
 	}
 
 	public void setEndDate(Date endDate)
 	{
-		this.endDate = endDate;
+		this.endDate = Instant.ofEpochMilli(endDate.getTime()).toString();;
 	}
 
 	public List<EnvironmentParameter> getEnvironmentParameters()
@@ -195,14 +196,14 @@ public class Study
 		this.seasons = seasons;
 	}
 
-	public Date getStartDate()
+	public String getStartDate()
 	{
 		return startDate;
 	}
 
 	public void setStartDate(Date startDate)
 	{
-		this.startDate = startDate;
+		this.startDate = Instant.ofEpochMilli(startDate.getTime()).toString();
 	}
 
 	public String getStudyDescription()

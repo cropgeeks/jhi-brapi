@@ -1,5 +1,6 @@
 package jhi.brapi.api.trials;
 
+import java.time.*;
 import java.util.*;
 
 public class BrapiTrial
@@ -8,8 +9,8 @@ public class BrapiTrial
 	private String trialName;
 	private String programDbId;
 	private String programName;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	private String active;
 	private List<BrapiTrialStudy> studies;
 	private Map<String, String> additionalInfo;
@@ -54,24 +55,24 @@ public class BrapiTrial
 		this.programName = programName;
 	}
 
-	public Date getStartDate()
+	public String getStartDate()
 	{
 		return startDate;
 	}
 
 	public void setStartDate(Date startDate)
 	{
-		this.startDate = startDate;
+		this.startDate = Instant.ofEpochMilli(startDate.getTime()).toString();;
 	}
 
-	public Date getEndDate()
+	public String getEndDate()
 	{
 		return endDate;
 	}
 
 	public void setEndDate(Date endDate)
 	{
-		this.endDate = endDate;
+		this.endDate = Instant.ofEpochMilli(endDate.getTime()).toString();;
 	}
 
 	public String getActive()
