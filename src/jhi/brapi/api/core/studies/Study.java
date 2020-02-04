@@ -111,9 +111,9 @@ public class Study
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate)
+	public void setEndDate(String endDate)
 	{
-		this.endDate = Instant.ofEpochMilli(endDate.getTime()).toString();;
+		this.endDate = endDate;
 	}
 
 	public List<EnvironmentParameter> getEnvironmentParameters()
@@ -201,9 +201,9 @@ public class Study
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate)
+	public void setStartDate(String startDate)
 	{
-		this.startDate = Instant.ofEpochMilli(startDate.getTime()).toString();
+		this.startDate = startDate;
 	}
 
 	public String getStudyDescription()

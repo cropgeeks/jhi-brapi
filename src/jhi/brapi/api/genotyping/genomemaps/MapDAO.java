@@ -1,6 +1,7 @@
 package jhi.brapi.api.genotyping.genomemaps;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 
 import jhi.brapi.api.*;
@@ -63,7 +64,10 @@ public class MapDAO
 		GenomeMap map = new GenomeMap();
 		map.setMapDbId(resultSet.getString("id"));
 		map.setMapName(resultSet.getString("description"));
-		map.setPublishedDate(resultSet.getDate("created_on"));
+		java.sql.Date createdDate = resultSet.getDate("created_on");
+		if (createdDate != null)
+			map.setPublishedDate(Instant.ofEpochMilli(createdDate.getTime()).toString());
+
 		map.setLinkageGroupCount(resultSet.getInt("chromosomeCount"));
 		map.setMarkerCount(resultSet.getInt("markerCount"));
 		// TODO: Germinate doesn't store map types, for now default to genetic

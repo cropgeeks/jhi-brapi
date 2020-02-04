@@ -1,6 +1,5 @@
 package jhi.brapi.api.trials;
 
-import java.time.*;
 import java.util.*;
 
 public class BrapiTrial
@@ -60,9 +59,9 @@ public class BrapiTrial
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate)
+	public void setStartDate(String startDate)
 	{
-		this.startDate = Instant.ofEpochMilli(startDate.getTime()).toString();;
+		this.startDate = startDate;
 	}
 
 	public String getEndDate()
@@ -70,9 +69,9 @@ public class BrapiTrial
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate)
+	public void setEndDate(String endDate)
 	{
-		this.endDate = Instant.ofEpochMilli(endDate.getTime()).toString();;
+		this.endDate = endDate;
 	}
 
 	public String getActive()

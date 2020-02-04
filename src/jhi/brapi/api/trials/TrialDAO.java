@@ -1,6 +1,7 @@
 package jhi.brapi.api.trials;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 
 import jhi.brapi.api.*;
@@ -63,8 +64,12 @@ public class TrialDAO
 		trial.setActive("true");
 		trial.setProgramDbId(resultSet.getString("experiments.id"));
 		trial.setProgramName(resultSet.getString("experiments.description"));
-		trial.setStartDate(resultSet.getDate("datasets.date_start"));
-		trial.setEndDate(resultSet.getDate("datasets.date_end"));
+		java.sql.Date startDate = resultSet.getDate("datasets.date_start");
+		if (startDate != null)
+			trial.setStartDate(Instant.ofEpochMilli(startDate.getTime()).toString());
+		java.sql.Date endDate = resultSet.getDate("datasets.date_end");
+		if (endDate != null)
+			trial.setEndDate(Instant.ofEpochMilli(endDate.getTime()).toString());
 		trial.setStudies(getBrapiTrialStudies(resultSet));
 
 		return trial;

@@ -1,7 +1,5 @@
 package jhi.brapi.api.genotyping.genomemaps;
 
-import java.sql.Date;
-import java.time.*;
 import java.util.*;
 
 public class GenomeMap
@@ -97,9 +95,9 @@ public class GenomeMap
 		return publishedDate;
 	}
 
-	public void setPublishedDate(Date publishedDate)
+	public void setPublishedDate(String publishedDate)
 	{
-		this.publishedDate = Instant.ofEpochMilli(publishedDate.getTime()).toString();;
+		this.publishedDate = publishedDate;
 	}
 
 	public String getScientificName()
