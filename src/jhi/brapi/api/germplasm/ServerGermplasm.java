@@ -5,7 +5,6 @@ import java.util.*;
 import jhi.brapi.api.*;
 
 import jhi.brapi.api.Status;
-import jhi.brapi.api.markerprofiles.*;
 import org.restlet.resource.*;
 
 /**

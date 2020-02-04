@@ -1,13 +1,9 @@
 package jhi.brapi.client;
 
-import java.util.*;
-
 import jhi.brapi.api.*;
-import jhi.brapi.api.allelematrices.*;
 import jhi.brapi.api.authentication.*;
 import jhi.brapi.api.core.serverinfo.*;
 import jhi.brapi.api.genotyping.genomemaps.*;
-import jhi.brapi.api.markerprofiles.*;
 import jhi.brapi.api.core.studies.*;
 
 import retrofit2.*;
