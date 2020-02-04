@@ -6,7 +6,7 @@ public class Metadata
 {
 	private List<DataFile> datafiles;
 
-	private PageNumberPagination pagination;
+	private Pagination pagination;
 
 	private List<Status> status;
 
@@ -17,10 +17,10 @@ public class Metadata
 		this.datafiles = new ArrayList<DataFile>();
 	}
 
-	public PageNumberPagination getPagination()
+	public Pagination getPagination()
 		{ return pagination; }
 
-	public void setPagination(PageNumberPagination pagination)
+	public void setPagination(Pagination pagination)
 		{ this.pagination = pagination; }
 
 	public List<Status> getStatus()

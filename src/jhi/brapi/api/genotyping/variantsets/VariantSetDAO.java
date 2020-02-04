@@ -107,7 +107,7 @@ public class VariantSetDAO
 
 		CallSetCalls calls = getVariantSetCalls(hdf5, dataSetId, currentPage, pageSize);
 
-		result = new BrapiMasterDetailResource<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount() * hdf5.getLineCount());
+		result = new BrapiMasterDetailResource<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount() * hdf5.getLineCount(), true);
 
 		return result;
 	}

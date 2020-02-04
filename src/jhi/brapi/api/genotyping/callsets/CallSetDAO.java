@@ -109,7 +109,7 @@ public class CallSetDAO
 
 			CallSetCalls calls = getCallSetCalls(hdf5, Integer.parseInt(callSetId), datasetId, currentPage, pageSize);
 
-			result = new BrapiMasterDetailResource<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount());
+			result = new BrapiMasterDetailResource<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount(), false);
 		}
 		else
 		{

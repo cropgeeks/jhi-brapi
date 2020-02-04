@@ -23,6 +23,9 @@ public class ServerVariantSetCalls extends BaseBrapiServerResource
 	{
 		String folder = getContext().getParameters().getFirstValue("hdf5-folder");
 
+		if (pageToken != null)
+			currentPage = Integer.parseInt(pageToken);
+
 		return variantSetDAO.getVariantSetCallsById(folder, id, currentPage, pageSize);
 	}
 }
