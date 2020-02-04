@@ -8,14 +8,14 @@ public class BrapiMasterDetailResource<T extends BrapiDetailResource>
 
 	public BrapiMasterDetailResource()
 	{
-		metadata.setPagination(Pagination.empty());
+		metadata.setPagination(PageNumberPagination.empty());
 	}
 
 	// Should be our default choice for Brapi calls which "paginate" over a single result
 	public BrapiMasterDetailResource(T detail, int currentPage, int pageSize, long totalCount)
 	{
 		this.result = detail;
-		metadata.setPagination(new Pagination(pageSize, currentPage, totalCount, pageSize));
+		metadata.setPagination(new PageNumberPagination(pageSize, currentPage, totalCount, pageSize));
 	}
 
 	public Metadata getMetadata()

@@ -9,7 +9,7 @@ public class BrapiErrorResource
 
 	public BrapiErrorResource()
 	{
-		metadata.setPagination(Pagination.empty());
+		metadata.setPagination(PageNumberPagination.empty());
 	}
 
 	public Metadata getMetadata()

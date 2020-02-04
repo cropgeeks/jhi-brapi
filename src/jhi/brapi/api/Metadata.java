@@ -6,21 +6,21 @@ public class Metadata
 {
 	private List<DataFile> datafiles;
 
-	private Pagination pagination;
+	private PageNumberPagination pagination;
 
 	private List<Status> status;
 
 	public Metadata()
 	{
-		this.pagination = new Pagination();
+		this.pagination = new PageNumberPagination();
 		this.status = new ArrayList<Status>();
 		this.datafiles = new ArrayList<DataFile>();
 	}
 
-	public Pagination getPagination()
+	public PageNumberPagination getPagination()
 		{ return pagination; }
 
-	public void setPagination(Pagination pagination)
+	public void setPagination(PageNumberPagination pagination)
 		{ this.pagination = pagination; }
 
 	public List<Status> getStatus()

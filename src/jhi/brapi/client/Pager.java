@@ -42,7 +42,7 @@ public class Pager
 	 */
 	public void paginate(Metadata metadata)
 	{
-		Pagination p = metadata.getPagination();
+		PageNumberPagination p = metadata.getPagination();
 
 		if (p.getTotalPages() == 0 || p.getCurrentPage() == p.getTotalPages()-1)
 			isPaging = false;
