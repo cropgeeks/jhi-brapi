@@ -99,8 +99,7 @@
 
 		<war destfile="${war}" update="false">
 			<webinf dir="web/WEB-INF"/>
-			<lib dir="${lib}"
-				excludes="sis-jhdf5-batteries_included.jar"/>
+			<lib dir="${lib}"/>
 			<metainf file="web/context.xml" />
 		</war>
 
