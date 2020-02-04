@@ -31,7 +31,7 @@ public class Brapi extends Application
 		setAuthor("Information & Computational Sciences, JHI");
 
 		CorsService corsService = new CorsService();
-		corsService.setAllowedOrigins(new HashSet(Arrays.asList("*")));
+		corsService.setAllowedOrigins(new HashSet<String>(Arrays.asList("*")));
 		corsService.setAllowedCredentials(true);
 		corsService.setSkippingResourceForCorsOptions(true);
 		getServices().add(corsService);
