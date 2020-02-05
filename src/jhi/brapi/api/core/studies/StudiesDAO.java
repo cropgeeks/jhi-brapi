@@ -1,6 +1,7 @@
 package jhi.brapi.api.core.studies;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 
 import jhi.brapi.api.*;
@@ -73,8 +74,13 @@ public class StudiesDAO
 		study.setStudyDescription(resultSet.getString("description"));
 		study.setStudyType(resultSet.getString("trial_type"));
 		study.setTrialName(resultSet.getString("trial_name"));
-		study.setStartDate(resultSet.getDate("datasets.date_start"));
-		study.setEndDate(resultSet.getDate("datasets.date_end"));
+		study.setStudyName(resultSet.getString("trial_name"));
+		java.sql.Date startDate = resultSet.getDate("datasets.date_start");
+		if (startDate != null)
+			study.setStartDate(Instant.ofEpochMilli(startDate.getTime()).toString());
+		java.sql.Date endDate = resultSet.getDate("datasets.date_end");
+		if (endDate != null)
+			study.setEndDate(Instant.ofEpochMilli(endDate.getTime()).toString());
 		study.setActive(false);
 
 		Location location = locationDAO.getBrapiLocation(resultSet);

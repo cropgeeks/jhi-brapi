@@ -1,6 +1,5 @@
 package jhi.brapi.api.genotyping.genomemaps;
 
-import java.sql.Date;
 import java.util.*;
 
 public class GenomeMap
@@ -12,7 +11,7 @@ public class GenomeMap
 	private String mapDbId = "";
 	private String mapName = "";
 	private int markerCount;
-	private Date publishedDate;
+	private String publishedDate;
 	private String scientificName = "";
 	private String type = "";
 	private String unit = "";
@@ -91,12 +90,12 @@ public class GenomeMap
 		this.markerCount = markerCount;
 	}
 
-	public Date getPublishedDate()
+	public String getPublishedDate()
 	{
 		return publishedDate;
 	}
 
-	public void setPublishedDate(Date publishedDate)
+	public void setPublishedDate(String publishedDate)
 	{
 		this.publishedDate = publishedDate;
 	}
