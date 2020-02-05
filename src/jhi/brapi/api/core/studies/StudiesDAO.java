@@ -74,6 +74,7 @@ public class StudiesDAO
 		study.setStudyDescription(resultSet.getString("description"));
 		study.setStudyType(resultSet.getString("trial_type"));
 		study.setTrialName(resultSet.getString("trial_name"));
+		study.setStudyName(resultSet.getString("trial_name"));
 		java.sql.Date startDate = resultSet.getDate("datasets.date_start");
 		if (startDate != null)
 			study.setStartDate(Instant.ofEpochMilli(startDate.getTime()).toString());
