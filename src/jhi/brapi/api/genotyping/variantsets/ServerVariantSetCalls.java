@@ -19,7 +19,7 @@ public class ServerVariantSetCalls extends BaseBrapiServerResource
 	}
 
 	@Get("json")
-	public BrapiMasterDetailResource<CallSetCalls> getJson()
+	public BrapiMasterDetailResourcePageToken<CallSetCalls> getJson()
 	{
 		String folder = getContext().getParameters().getFirstValue("hdf5-folder");
 

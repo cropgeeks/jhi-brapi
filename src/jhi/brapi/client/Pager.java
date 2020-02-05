@@ -44,32 +44,29 @@ public class Pager
 	{
 		Pagination p = metadata.getPagination();
 
-		if (p instanceof PageNumberPagination)
+		if (p.getTotalPages() == 0 || p.getCurrentPage() == p.getTotalPages() - 1)
+			isPaging = false;
+
+		// Update the pageSize and page variables as we haven't yet reached the
+		// end of the data
+		else
 		{
-			PageNumberPagination pageData = (PageNumberPagination)p;
-			if (p.getTotalPages() == 0 || pageData.getCurrentPage() == p.getTotalPages() - 1)
-				isPaging = false;
-
-				// Update the pageSize and page variables as we haven't yet reached the
-				// end of the data
-			else
-			{
-				pageSize = p.getPageSize();
-				page = (pageData.getCurrentPage() + 1);
-			}
+			pageSize = p.getPageSize();
+			page = (p.getCurrentPage() + 1);
 		}
-
-		// TODO: this will work for our own implementation, but needs to be update to handle situations where page tokens
-		// are genuinely strings
-		else if (p instanceof PageTokenPagination)
-		{
-			PageTokenPagination pageData = (PageTokenPagination)p;
-			if (pageData.getNextPageToken() == null || pageData.getNextPageToken().isEmpty())
-				isPaging = false;
-
-			pageSize = pageData.getPageSize();
-			page = Integer.parseInt(pageData.getNextPageToken());
-		}
+//		}
+//
+//		// TODO: this will work for our own implementation, but needs to be update to handle situations where page tokens
+//		// are genuinely strings
+//		else if (p instanceof PageTokenPagination)
+//		{
+//			PageTokenPagination pageData = (PageTokenPagination)p;
+//			if (pageData.getNextPageToken() == null || pageData.getNextPageToken().isEmpty())
+//				isPaging = false;
+//
+//			pageSize = pageData.getPageSize();
+//			page = Integer.parseInt(pageData.getNextPageToken());
+//		}
 	}
 
 	public boolean isPaging()

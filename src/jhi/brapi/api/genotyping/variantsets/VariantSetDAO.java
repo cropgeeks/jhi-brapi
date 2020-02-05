@@ -96,9 +96,9 @@ public class VariantSetDAO
 		return variantSet;
 	}
 
-	public BrapiMasterDetailResource<CallSetCalls> getVariantSetCallsById(String dataFolderPath, String id, int currentPage, int pageSize)
+	public BrapiMasterDetailResourcePageToken<CallSetCalls> getVariantSetCallsById(String dataFolderPath, String id, int currentPage, int pageSize)
 	{
-		BrapiMasterDetailResource<CallSetCalls> result = new BrapiMasterDetailResource<>();
+		BrapiMasterDetailResourcePageToken<CallSetCalls> result = new BrapiMasterDetailResourcePageToken<>();
 
 		String dataSetId = id;
 
@@ -107,7 +107,7 @@ public class VariantSetDAO
 
 		CallSetCalls calls = getVariantSetCalls(hdf5, dataSetId, currentPage, pageSize);
 
-		result = new BrapiMasterDetailResource<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount() * hdf5.getLineCount(), true);
+		result = new BrapiMasterDetailResourcePageToken<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount() * hdf5.getLineCount());
 
 		return result;
 	}

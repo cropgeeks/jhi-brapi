@@ -1,10 +1,13 @@
 package jhi.brapi.api;
 
-public class PageTokenPagination extends Pagination
+public class PageTokenPagination
 {
 	private String currentPageToken;
 	private String nextPageToken;
 	private String prevPageToken;
+	protected int pageSize;
+	protected long totalCount;
+	protected int totalPages;
 
 	public PageTokenPagination()
 	{
@@ -56,4 +59,22 @@ public class PageTokenPagination extends Pagination
 	{
 		this.prevPageToken = prevPageToken;
 	}
+
+	public int getPageSize()
+		{ return pageSize; }
+
+	public void setPageSize(int pageSize)
+		{ this.pageSize = pageSize; }
+
+	public long getTotalCount()
+		{ return totalCount; }
+
+	public void setTotalCount(long totalCount)
+		{ this.totalCount = totalCount; }
+
+	public int getTotalPages()
+		{ return totalPages; }
+
+	public void setTotalPages(int totalPages)
+		{ this.totalPages = totalPages; }
 }

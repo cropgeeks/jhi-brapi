@@ -8,21 +8,21 @@ public class BrapiBaseResource<T>
 
 	public BrapiBaseResource()
 	{
-		metadata.setPagination(PageNumberPagination.empty());
+		metadata.setPagination(Pagination.empty());
 	}
 
 	// Should be our default choice for Brapi calls which "paginate" over a single result
 	public BrapiBaseResource(T result)
 	{
 		this.result = result;
-		metadata.setPagination(PageNumberPagination.forSingleResult());
+		metadata.setPagination(Pagination.forSingleResult());
 	}
 
 	// Should be our default choice for Brapi calls which paginate over a subset of a resource
 	public BrapiBaseResource(T result, int currentPage, int pageSize, long totalCount)
 	{
 		this.result = result;
-		metadata.setPagination(new PageNumberPagination(pageSize, currentPage, totalCount, pageSize));
+		metadata.setPagination(new Pagination(pageSize, currentPage, totalCount, pageSize));
 	}
 
 	public Metadata getMetadata()

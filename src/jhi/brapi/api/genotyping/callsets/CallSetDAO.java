@@ -94,9 +94,9 @@ public class CallSetDAO
 		return result;
 	}
 
-	public BrapiMasterDetailResource<CallSetCalls> getCallSetCallsById(String dataFolderPath, String id, int currentPage, int pageSize)
+	public BrapiMasterDetailResourcePageToken<CallSetCalls> getCallSetCallsById(String dataFolderPath, String id, int currentPage, int pageSize)
 	{
-		BrapiMasterDetailResource<CallSetCalls> result = new BrapiMasterDetailResource<>();
+		BrapiMasterDetailResourcePageToken<CallSetCalls> result = new BrapiMasterDetailResourcePageToken<>();
 
 		String[] ids = id.split("-");
 		if (ids.length == 2)
@@ -109,7 +109,7 @@ public class CallSetDAO
 
 			CallSetCalls calls = getCallSetCalls(hdf5, Integer.parseInt(callSetId), datasetId, currentPage, pageSize);
 
-			result = new BrapiMasterDetailResource<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount(), false);
+			result = new BrapiMasterDetailResourcePageToken<CallSetCalls>(calls, currentPage, pageSize, hdf5.getMarkerCount());
 		}
 		else
 		{

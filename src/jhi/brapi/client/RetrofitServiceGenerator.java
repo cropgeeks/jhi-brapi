@@ -9,8 +9,8 @@ import java.security.cert.Certificate;
 import java.util.concurrent.*;
 
 import okhttp3.*;
-
 import okhttp3.Response;
+
 import retrofit2.*;
 import retrofit2.converter.jackson.*;
 

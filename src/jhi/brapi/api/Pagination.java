@@ -1,20 +1,33 @@
 package jhi.brapi.api;
 
-import com.fasterxml.jackson.annotation.*;
-
-@JsonTypeInfo(
-	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.PROPERTY,
-	property = "type")
-@JsonSubTypes({
-	@JsonSubTypes.Type(value = PageTokenPagination.class, name = "pagetokenpagination"),
-	@JsonSubTypes.Type(value = PageNumberPagination.class, name = "pagenumberpagination")
-})
-public abstract class Pagination
+public class Pagination
 {
+	private int currentPage;
 	protected int pageSize;
 	protected long totalCount;
 	protected int totalPages;
+
+	public Pagination()
+	{
+	}
+
+	public Pagination(int pageSize, int currentPage, long totalCount, int desiredPageSize)
+	{
+		this.pageSize = pageSize;
+		this.currentPage = currentPage;
+		this.totalCount = totalCount;
+		this.totalPages = (int)Math.ceil(totalCount/(float) desiredPageSize);
+	}
+
+	public static Pagination empty()
+	{
+		return new Pagination(0, 0, 0, 0);
+	}
+
+	public static Pagination forSingleResult()
+	{
+		return new Pagination(1, 0, 1, 1);
+	}
 
 	public int getPageSize()
 		{ return pageSize; }
@@ -33,4 +46,10 @@ public abstract class Pagination
 
 	public void setTotalPages(int totalPages)
 		{ this.totalPages = totalPages; }
+
+	public int getCurrentPage()
+		{ return currentPage; }
+
+	public void setCurrentPage(int currentPage)
+		{ this.currentPage = currentPage; }
 }

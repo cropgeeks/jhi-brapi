@@ -12,7 +12,7 @@ public class Metadata
 
 	public Metadata()
 	{
-		this.pagination = new PageNumberPagination();
+		this.pagination = new Pagination();
 		this.status = new ArrayList<Status>();
 		this.datafiles = new ArrayList<DataFile>();
 	}

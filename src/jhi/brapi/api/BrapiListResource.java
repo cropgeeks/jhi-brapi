@@ -10,14 +10,14 @@ public class BrapiListResource<T>
 
 	public BrapiListResource()
 	{
-		metadata.setPagination(PageNumberPagination.empty());
+		metadata.setPagination(Pagination.empty());
 	}
 
 	// Should be our default choice for Brapi calls which "paginate" over a single result
 	public BrapiListResource(List<T> list, int currentPage, int pageSize, long totalCount)
 	{
 		this.result = new Result<T>(list);
-		metadata.setPagination(new PageNumberPagination(Math.min(pageSize, list.size()), currentPage, totalCount, pageSize));
+		metadata.setPagination(new Pagination(Math.min(pageSize, list.size()), currentPage, totalCount, pageSize));
 	}
 
 	public Metadata getMetadata()
