@@ -3,6 +3,7 @@ package jhi.brapi.client;
 import jhi.brapi.api.*;
 import jhi.brapi.api.authentication.*;
 import jhi.brapi.api.core.serverinfo.*;
+import jhi.brapi.api.genotyping.callsets.*;
 import jhi.brapi.api.genotyping.genomemaps.*;
 import jhi.brapi.api.core.studies.*;
 
@@ -130,4 +131,19 @@ public interface RetrofitService
 	 */
 	@GET("markerpositions")
 	Call<BrapiListResource<MarkerPosition>> getMarkerPositions(@Query("mapDbId") String mapDbId, @Query("linkageGroupName") String linkageGroupName, @Query("markerDbId") String markerDbId, @Query("minPosition") String minPositon, @Query("maxPosition") String maxPosition, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+
+	/**
+	 * Gets a list of CallSet objects
+	 *
+	 * @param callSetDbId
+	 * @param callSetName
+	 * @param variantSetDbId
+	 * @param sampleDbId
+	 * @param germplasmDbId
+	 * @param pageSize
+	 * @param page
+	 * @return
+	 */
+	@GET("callsets")
+	Call<BrapiListResource<CallSet>> getCallSets(@Query("callSetDbId") String callSetDbId, @Query("callSetName") String callSetName, @Query("variantSetDbId") String variantSetDbId, @Query("sampleDbId") String sampleDbId, @Query("germplasmDbId") String germplasmDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 }

@@ -8,6 +8,7 @@ import org.restlet.resource.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.*;
 
 import static jhi.brapi.util.DatabaseUtils.getLimitStart;
 
@@ -31,9 +32,15 @@ public class CallSetDAO
 	// This code is dense because the mapping between lines and datasets exists in the hdf5 file not the database so
 	// there's a fair amount of manipulation to reconstruct that mapping here, particularly with respect to getting
 	// pagination across datasets correct
-	public BrapiListResource<CallSet> getAll(String dataFolderPath, int currentPage, int pageSize)
+	public BrapiListResource<CallSet> getAll(String dataFolderPath, String variantSetDbId, int currentPage, int pageSize)
 	{
 		List<VariantSet> list = getVariantSets(dataFolderPath);
+
+		// Optionally filter on the variantSetDbId
+		// TODO: think about a better way of doing this
+		if (variantSetDbId != null)
+			list.removeIf(variantSet -> variantSet.getVariantSetDbId().equals(variantSetDbId) == false);
+
 		TreeMap<Long, String> variantSetIdsByLimitStart = getCallsetIdMap(list);
 
 		long pageStart = DatabaseUtils.getLimitStart(currentPage, pageSize);
