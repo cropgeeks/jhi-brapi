@@ -1,6 +1,16 @@
 package jhi.brapi.api;
 
-public class Pagination
+import com.fasterxml.jackson.annotation.*;
+
+@JsonTypeInfo(
+	use = JsonTypeInfo.Id.NAME,
+	include = JsonTypeInfo.As.PROPERTY,
+	property = "type")
+@JsonSubTypes({
+	@JsonSubTypes.Type(value = PageTokenPagination.class, name = "pagetokenpagination"),
+	@JsonSubTypes.Type(value = PageNumberPagination.class, name = "pagenumberpagination")
+})
+public abstract class Pagination
 {
 	protected int pageSize;
 	protected long totalCount;

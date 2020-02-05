@@ -3,6 +3,7 @@ package jhi.brapi;
 import java.util.*;
 
 import jhi.brapi.api.*;
+import jhi.brapi.api.authentication.*;
 import jhi.brapi.api.core.serverinfo.*;
 import jhi.brapi.api.core.commoncropnames.*;
 import jhi.brapi.api.core.studies.*;
@@ -17,7 +18,10 @@ import org.restlet.*;
 import org.restlet.engine.application.*;
 import org.restlet.resource.*;
 import org.restlet.routing.*;
+import org.restlet.security.*;
 import org.restlet.service.*;
+
+import static org.restlet.data.ChallengeScheme.HTTP_OAUTH_BEARER;
 
 public class Brapi extends Application
 {
@@ -48,36 +52,36 @@ public class Brapi extends Application
 		// authentication
 		Router unauthenticated = new Router(context);
 		attachToRouter(unauthenticated, "/serverinfo", ServerServerInfo.class);  // FJ
-//		attachToRouter(unauthenticated, "/token", ServerTokenAuthenticator.class);
+		attachToRouter(unauthenticated, "/token", ServerTokenAuthenticator.class);
 
 		Router appRoutes = unauthenticated;
-//		boolean authenticate = Boolean.parseBoolean(context.getParameters().getFirstValue("auth-routes"));
+		boolean authenticate = Boolean.parseBoolean(context.getParameters().getFirstValue("auth-routes"));
 
 		// If we are using authentication setup a new router which can has
 		// authentication utilities added and is added as a sub-router of our
 		// unauthenticated router
-//		if (authenticate)
-//		{
-//			appRoutes = new Router(context);
-//			// Sets up the token checking mechanism which automatically checks
-//			// authentication tokens for any request which is trying to access a URL
-//			// protected by the ChallengeAuthenticator
-//			ChallengeAuthenticator guard = new ChallengeAuthenticator(context, HTTP_OAUTH_BEARER, "JHI-BrAPI");
-//			TokenBasedVerifier verifier = new TokenBasedVerifier();
-//			guard.setVerifier(verifier);
-//			guard.setRechallenging(false);
-//			guard.setNext(appRoutes);
-//
-//			unauthenticated.attachDefault(guard);
-//		}
+		if (authenticate)
+		{
+			appRoutes = new Router(context);
+			// Sets up the token checking mechanism which automatically checks
+			// authentication tokens for any request which is trying to access a URL
+			// protected by the ChallengeAuthenticator
+			ChallengeAuthenticator guard = new ChallengeAuthenticator(context, HTTP_OAUTH_BEARER, "JHI-BrAPI");
+			TokenBasedVerifier verifier = new TokenBasedVerifier();
+			guard.setVerifier(verifier);
+			guard.setRechallenging(false);
+			guard.setNext(appRoutes);
+
+			unauthenticated.attachDefault(guard);
+		}
 
 		setupAppRoutes(appRoutes);
 		setupNotImplementedRoutes(appRoutes);
 
-//		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
-//		encoder.setNext(unauthenticated);
+		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
+		encoder.setNext(unauthenticated);
 
-		CorsFilter corsFilter = new CorsFilter(context, unauthenticated);
+		CorsFilter corsFilter = new CorsFilter(context, encoder);
 		corsFilter.setAllowedOrigins(new HashSet<>(Collections.singletonList("*")));
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(true);

@@ -119,11 +119,16 @@ public class VariantSetDAO
 		int pageStart = DatabaseUtils.getLimitStart(currentPage, pageSize);
 		int pageEnd = pageStart + pageSize;
 
+		System.out.println("Page start: " + pageStart + " pageEnd: " + pageEnd);
+
 		Map<String, Integer> markerIdsByName = getMarkerIdsByNameMap(dataSetId);
 
 		CallSetCalls c = new CallSetCalls();
 
 		int markerCount = hdf5.getMarkerCount();
+		int finalLine = hdf5.getLineCount();
+
+		System.out.println("markerCount: " + markerCount + " lineCount: " + finalLine + " M x L: " + markerCount * finalLine);
 
 		int lineStart = (int)Math.floor(pageStart / (double)markerCount);
 		int lineEnd = (int)Math.ceil((pageStart + pageSize) / (double)markerCount);
@@ -135,7 +140,7 @@ public class VariantSetDAO
 
 		// TODO: tidy up this logic, there has to be a better way of finding the line and markers for the current page
 		// of data
-		for (int lineId=lineStart; lineId < lineEnd; lineId++)
+		for (int lineId=lineStart; lineId < lineEnd && lineId < finalLine; lineId++)
 		{
 			int markerStart = lineId * markerCount;
 			for (int markerIndex = 0; markerIndex < markerCount; markerIndex++)

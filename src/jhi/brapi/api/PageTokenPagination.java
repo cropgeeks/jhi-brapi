@@ -17,11 +17,13 @@ public class PageTokenPagination extends Pagination
 		this.totalCount = totalCount;
 		this.totalPages = (int)Math.ceil(totalCount/(float) desiredPageSize);
 
+		System.out.println("currentPageToken: " + currentPageToken + " totalPages: " + totalPages + " pageSize: " + pageSize + " desiredPageSize: " + desiredPageSize);
+
 		// If we can, generate valeus for prevPageToken and nextPageToken
 		int currentPage = Integer.parseInt(currentPageToken);
 		if (currentPage >=1)
 			prevPageToken = String.valueOf(currentPage-1);
-		if (currentPage < totalPages)
+		if (currentPage < totalPages-1)
 			nextPageToken = String.valueOf(currentPage+1);
 	}
 

@@ -26,6 +26,8 @@ public class ServerVariantSetCalls extends BaseBrapiServerResource
 		if (pageToken != null)
 			currentPage = Integer.parseInt(pageToken);
 
+		System.out.println("pageSize: " + pageSize);
+
 		return variantSetDAO.getVariantSetCallsById(folder, id, currentPage, pageSize);
 	}
 }
