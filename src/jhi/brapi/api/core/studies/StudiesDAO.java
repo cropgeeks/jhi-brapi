@@ -70,7 +70,7 @@ public class StudiesDAO
 		throws SQLException
 	{
 		Study study = new Study();
-		study.setStudyDbId(resultSet.getString("datasets.id"));
+		study.setStudyDbId(resultSet.getString("experiment_id"));
 		study.setStudyDescription(resultSet.getString("description"));
 		study.setStudyType(resultSet.getString("trial_type"));
 		study.setTrialName(resultSet.getString("trial_name"));
