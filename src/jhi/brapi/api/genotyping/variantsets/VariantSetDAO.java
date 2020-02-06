@@ -93,6 +93,15 @@ public class VariantSetDAO
 		variantSet.setCallSetCount(hdf5.getLineCount());
 		variantSet.setVariantCount(hdf5.getMarkerCount());
 
+		if (variantSet.getVariantSetDbId().equals("3"))
+		{
+			Format format = new Format();
+			format.setDataFormat("Flapjack");
+			format.setFileFormat("text/tab-separated-values");
+			format.setFileUrl("https://ics.hutton.ac.uk/resources/brapi/data/cactuar-demo.txt");
+			variantSet.setAvailableFormats(Collections.singletonList(format));
+		}
+
 		return variantSet;
 	}
 

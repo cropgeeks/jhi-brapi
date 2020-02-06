@@ -7,6 +7,8 @@ import jhi.brapi.api.genotyping.callsets.*;
 import jhi.brapi.api.genotyping.genomemaps.*;
 import jhi.brapi.api.core.studies.*;
 
+import jhi.brapi.api.genotyping.variantsets.*;
+import org.restlet.resource.*;
 import retrofit2.*;
 import retrofit2.http.*;
 
@@ -146,4 +148,7 @@ public interface RetrofitService
 	 */
 	@GET("callsets")
 	Call<BrapiListResource<CallSet>> getCallSets(@Query("callSetDbId") String callSetDbId, @Query("callSetName") String callSetName, @Query("variantSetDbId") String variantSetDbId, @Query("sampleDbId") String sampleDbId, @Query("germplasmDbId") String germplasmDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+
+	@Get("variantsets/{variantSetDbId}")
+	Call<BrapiListResource<VariantSet>> getVariantSetById(@Path("variantSetDbId") String variantSetDbId);
 }
