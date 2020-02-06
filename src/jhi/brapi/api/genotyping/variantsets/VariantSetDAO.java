@@ -8,6 +8,7 @@ import org.restlet.resource.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * Specifies the public interface which any BrapiGenomeMap data accessing classes must implement.
@@ -16,7 +17,7 @@ public class VariantSetDAO
 {
 	private final String variantSetsQuery = "SELECT SQL_CALC_FOUND_ROWS * FROM datasets LEFT JOIN experiments ON " +
 		"experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON " +
-		"experimenttypes.id = experiments.experiment_type_id WHERE experimenttypes.id = 1 AND datasets.source_file IS NOT NULL LIMIT ?, ?";
+		"experimenttypes.id = experiments.experiment_type_id %s AND datasets.source_file IS NOT NULL LIMIT ?, ?";
 
 	private final String variantSetsByIdQuery = "SELECT * FROM datasets LEFT JOIN experiments ON " +
 		"experiments.id = datasets.experiment_id LEFT JOIN experimenttypes ON " +
@@ -31,12 +32,12 @@ public class VariantSetDAO
 	 *
 	 * @return A MapList object which is a wrapper around a List of BrapiGenomeMap objects.
 	 */
-	public BrapiListResource<VariantSet> getAll(String dataFolderPath, int currentPage, int pageSize)
+	public BrapiListResource<VariantSet> getAll(String dataFolderPath, Map<String, List<String>> parameters, int currentPage, int pageSize)
 	{
 		BrapiListResource<VariantSet> variantSets = new BrapiListResource<>();
 
 		try (Connection con = Database.INSTANCE.getDataSourceGerminate().getConnection();
-			 PreparedStatement statement = DatabaseUtils.createLimitStatement(con, variantSetsQuery, currentPage, pageSize);
+			 PreparedStatement statement = DatabaseUtils.createParameterizedLimitStatement(con, variantSetsQuery, parameters, currentPage, pageSize);
 			 ResultSet resultSet = statement.executeQuery())
 		{
 			List<VariantSet> list = new ArrayList<>();
@@ -84,7 +85,7 @@ public class VariantSetDAO
 		VariantSet variantSet = new VariantSet();
 
 		variantSet.setVariantSetDbId(resultSet.getString("datasets.id"));
-		variantSet.setStudyDbId(resultSet.getString("datasets.id"));
+		variantSet.setStudyDbId(resultSet.getString("experiments.id"));
 		variantSet.setVariantSetName(resultSet.getString("description"));
 
 		String filename = Hdf55Utils.getHdf5File(variantSet.getVariantSetDbId());

@@ -149,6 +149,9 @@ public interface RetrofitService
 	@GET("callsets")
 	Call<BrapiListResource<CallSet>> getCallSets(@Query("callSetDbId") String callSetDbId, @Query("callSetName") String callSetName, @Query("variantSetDbId") String variantSetDbId, @Query("sampleDbId") String sampleDbId, @Query("germplasmDbId") String germplasmDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
+	@Get("variantsets")
+	Call<BrapiListResource<VariantSet>> getVariantSets(@Query("callSetDbId") String callSetDbId, @Query("studyName") String studyName, @Query("studyDbId") String studyDbId, @Query("variantDbId") String variantDbId, @Query("variantSetDbId") String variantSetDbId);
+
 	@Get("variantsets/{variantSetDbId}")
-	Call<BrapiListResource<VariantSet>> getVariantSetById(@Path("variantSetDbId") String variantSetDbId);
+	Call<BrapiBaseResource<VariantSet>> getVariantSetById(@Path("variantSetDbId") String variantSetDbId);
 }
