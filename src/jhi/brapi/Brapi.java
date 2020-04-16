@@ -3,23 +3,18 @@ package jhi.brapi;
 import java.util.*;
 
 import jhi.brapi.api.*;
-import jhi.brapi.api.allelematrices.ServerAlleleMatrixDataset;
-import jhi.brapi.api.calls.*;
-import jhi.brapi.api.crops.*;
-import jhi.brapi.api.files.*;
-import jhi.brapi.api.genomemaps.*;
-import jhi.brapi.api.germplasm.*;
-import jhi.brapi.api.locations.*;
-import jhi.brapi.api.markerprofiles.*;
-import jhi.brapi.api.markers.*;
 import jhi.brapi.api.authentication.*;
-import jhi.brapi.api.studies.*;
-import jhi.brapi.api.phenotypes.*;
-import jhi.brapi.api.trials.*;
+import jhi.brapi.api.core.serverinfo.*;
+import jhi.brapi.api.core.commoncropnames.*;
+import jhi.brapi.api.core.studies.*;
+import jhi.brapi.api.genotyping.callsets.*;
+import jhi.brapi.api.genotyping.genomemaps.*;
+import jhi.brapi.api.genotyping.variantsets.*;
+import jhi.brapi.api.germplasm.*;
+import jhi.brapi.api.core.locations.*;
 import jhi.brapi.util.*;
 
 import org.restlet.*;
-import org.restlet.data.*;
 import org.restlet.engine.application.*;
 import org.restlet.resource.*;
 import org.restlet.routing.*;
@@ -35,13 +30,14 @@ public class Brapi extends Application
 	public Brapi()
 	{
 		setName("Germinate 3 API");
-		setDescription("Test plant breeding API (BRAPI) implementation");
+		setDescription("Test plant breeding API (BrAPI) implementation");
 		setOwner("The James Hutton Institute");
 		setAuthor("Information & Computational Sciences, JHI");
 
 		CorsService corsService = new CorsService();
-		corsService.setAllowedOrigins(new HashSet(Arrays.asList("*")));
+		corsService.setAllowedOrigins(new HashSet<String>(Arrays.asList("*")));
 		corsService.setAllowedCredentials(true);
+		corsService.setSkippingResourceForCorsOptions(true);
 		getServices().add(corsService);
 	}
 
@@ -55,7 +51,7 @@ public class Brapi extends Application
 		// the available calls and access the login URI without requiring
 		// authentication
 		Router unauthenticated = new Router(context);
-		attachToRouter(unauthenticated, "/calls", ServerCalls.class);  // FJ
+		attachToRouter(unauthenticated, "/serverinfo", ServerServerInfo.class);  // FJ
 		attachToRouter(unauthenticated, "/token", ServerTokenAuthenticator.class);
 
 		Router appRoutes = unauthenticated;
@@ -82,10 +78,10 @@ public class Brapi extends Application
 		setupAppRoutes(appRoutes);
 		setupNotImplementedRoutes(appRoutes);
 
-//		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
-//		encoder.setNext(unauthenticated);
+		Filter encoder = new Encoder(context, false, true, new EncoderService(true));
+		encoder.setNext(unauthenticated);
 
-		CorsFilter corsFilter = new CorsFilter(context, unauthenticated);
+		CorsFilter corsFilter = new CorsFilter(context, encoder);
 		corsFilter.setAllowedOrigins(new HashSet<>(Collections.singletonList("*")));
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setSkippingResourceForCorsOptions(true);
@@ -97,60 +93,48 @@ public class Brapi extends Application
 	{
 		// These routes require an authentication token to access (you can get
 		// this by providing a username and password to the /token resource
-		attachToRouter(router, "/allelematrices-search", ServerAlleleMatrix.class); // FJ
-		attachToRouter(router, "/allelematrices-search/{id}", ServerStatus.class);
-		attachToRouter(router, "/allelematrices-search/status/{id}", ServerStatus.class);
-		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
-		attachToRouter(router, "/commoncropnames", ServerCrop.class);
-		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
+//		attachToRouter(router, "/allelematrices-search", ServerAlleleMatrix.class); // FJ
+//		attachToRouter(router, "/allelematrices-search/{id}", ServerStatus.class);
+//		attachToRouter(router, "/allelematrices-search/status/{id}", ServerStatus.class);
+//		attachToRouter(router, "/allelematrices", ServerAlleleMatrixDataset.class);
+		attachToRouter(router, "/callsets", ServerCallSets.class);
+		attachToRouter(router, "/callsets/{id}", ServerCallSet.class);
+		attachToRouter(router, "/callsets/{id}/calls", ServerCallSetCalls.class);
+		attachToRouter(router, "/commoncropnames", ServerCommonCropNames.class);
+//		attachToRouter(router, "/files/{filename}", Files.class); // NON-BrAPI
 		attachToRouter(router, "/germplasm", ServerGermplasm.class);
-		attachToRouter(router, "/germplasm/{id}", ServerGermplasmDetails.class);
-		attachToRouter(router, "/germplasm/{id}/markerprofiles", ServerGermplasmMarkerProfiles.class);
-		attachToRouter(router, "/germplasm/{id}/pedigree", ServerGermplasmPedigree.class);
-		attachToRouter(router, "/germplasm/{id}/progeny", ServerGermplasmProgeny.class);
+//		attachToRouter(router, "/germplasm/{id}", ServerGermplasmDetails.class);
+//		attachToRouter(router, "/germplasm/{id}/markerprofiles", ServerGermplasmMarkerProfiles.class);
+//		attachToRouter(router, "/germplasm/{id}/pedigree", ServerGermplasmPedigree.class);
+//		attachToRouter(router, "/germplasm/{id}/progeny", ServerGermplasmProgeny.class);
 		attachToRouter(router, "/locations", ServerLocations.class);
-		attachToRouter(router, "/maps", ServerGenomeMaps.class); // FJ
-		attachToRouter(router, "/maps/{id}", ServerGenomeMapMetaData.class); // FJ
-		attachToRouter(router, "/maps/{id}/positions", ServerGenomeMapMarkerData.class); // FJ
+		attachToRouter(router, "/locations/{id}", ServerLocation.class);
+		attachToRouter(router, "/maps", ServerGenomeMaps.class);
+		attachToRouter(router, "/maps/{id}", ServerGenomeMap.class);
+		attachToRouter(router, "/maps/{id}/linkagegroups", ServerGenomeMapLinkageGroups.class);
+		attachToRouter(router, "/markerpositions", ServerMarkerpositions.class);
+//		attachToRouter(router, "/maps/{id}/positions", ServerGenomeMapMarkerData.class); // FJ
 //		attachToRouter(router, "/maps/{id}/positions/{linkageGroupId}", ServerGenomeMapLinkageGroupMarkers.class);
-		attachToRouter(router, "/markerprofiles", ServerMarkerProfiles.class); // FJ
-		attachToRouter(router, "/markerprofiles/{id}", ServerMarkerProfileData.class);
-		attachToRouter(router, "/markers", ServerMarkersSearch.class);
-		attachToRouter(router, "/markers/{id}", ServerMarkersData.class);
-		attachToRouter(router, "/phenotypes-search", ServerPhenotypesSearch.class);
+//		attachToRouter(router, "/markerprofiles", ServerMarkerProfiles.class); // FJ
+//		attachToRouter(router, "/markerprofiles/{id}", ServerMarkerProfileData.class);
+//		attachToRouter(router, "/markers", ServerMarkersSearch.class);
+//		attachToRouter(router, "/markers/{id}", ServerMarkersData.class);
+//		attachToRouter(router, "/phenotypes-search", ServerPhenotypesSearch.class);
 		attachToRouter(router, "/studies", ServerStudies.class);
-		attachToRouter(router, "/studies/{id}", ServerStudyDetails.class);
+//		attachToRouter(router, "/studies-search", ServerStudies.class);
+		attachToRouter(router, "/studies/{id}", ServerStudy.class);
 //		attachToRouter(router, "/studies/{id}/table", ServerStudiesAsTable.class);
-		attachToRouter(router, "/trials", ServerTrialList.class);
-		attachToRouter(router, "/trials/{id}", ServerTrial.class);
+//		attachToRouter(router, "/trials", ServerTrialList.class);
+//		attachToRouter(router, "/trials/{id}", ServerTrial.class);
+		attachToRouter(router, "/variantsets", ServerVariantSets.class);
+		attachToRouter(router, "/variantsets/{id}", ServerVariantSet.class);
+		attachToRouter(router, "/variantsets/{id}/calls", ServerVariantSetCalls.class);
 	}
 
 	private void setupNotImplementedRoutes(Router router)
 	{
 		List<String> notImplemented = new ArrayList<String>();
-		notImplemented.add("/attributes/categories");
-		notImplemented.add("/germplasm/{id}/attributes");
-		notImplemented.add("/attributes?attributeCategoryDbId={attributeCategoryDbId}");
-		notImplemented.add("/locations/{id}");
-		notImplemented.add("/variables");
-		notImplemented.add("/variables/{id}");
-		notImplemented.add("/variables/datatypes");
-		notImplemented.add("/variables-search");
-		notImplemented.add("/ontologies");
-		notImplemented.add("/phenotypes");
-		notImplemented.add("/programs");
-		notImplemented.add("/programs-search");
-		notImplemented.add("/samples");
-		notImplemented.add("/samples/{id}");
-		notImplemented.add("/studies/{id}/observations");
-		notImplemented.add("/studies/{id}/observationsunits");
-		notImplemented.add("/studies/{id}/observationvariables");
-		notImplemented.add("/studies/{id}/layout");
-		notImplemented.add("/studies/{id}/germplasm");
-		notImplemented.add("/studies/{id}/table");
-		notImplemented.add("/observationsLevels");
-		notImplemented.add("/seasons");
-		notImplemented.add("/studyTypes");
+//		notImplemented.add("/attributes/categories");
 
 		notImplemented.forEach(url ->
 		{

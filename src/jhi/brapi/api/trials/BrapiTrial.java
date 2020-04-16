@@ -8,8 +8,8 @@ public class BrapiTrial
 	private String trialName;
 	private String programDbId;
 	private String programName;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	private String active;
 	private List<BrapiTrialStudy> studies;
 	private Map<String, String> additionalInfo;
@@ -54,22 +54,22 @@ public class BrapiTrial
 		this.programName = programName;
 	}
 
-	public Date getStartDate()
+	public String getStartDate()
 	{
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate)
+	public void setStartDate(String startDate)
 	{
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate()
+	public String getEndDate()
 	{
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate)
+	public void setEndDate(String endDate)
 	{
 		this.endDate = endDate;
 	}

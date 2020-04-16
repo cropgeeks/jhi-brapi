@@ -5,7 +5,6 @@ import java.util.*;
 import jhi.brapi.api.*;
 
 import jhi.brapi.api.Status;
-import jhi.brapi.api.markerprofiles.*;
 import org.restlet.resource.*;
 
 /**
@@ -63,11 +62,5 @@ public class ServerGermplasm extends BaseBrapiServerResource
 		}
 
 		return result;
-	}
-
-	private void addParameter(Map<String, List<String>> map, String key, String value)
-	{
-		if (value != null && value.length() != 0)
-			map.put(key, Collections.singletonList(value));
 	}
 }

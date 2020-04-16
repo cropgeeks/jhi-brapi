@@ -44,7 +44,7 @@ public class Pager
 	{
 		Pagination p = metadata.getPagination();
 
-		if (p.getTotalPages() == 0 || p.getCurrentPage() == p.getTotalPages()-1)
+		if (p.getTotalPages() == 0 || p.getCurrentPage() == p.getTotalPages() - 1)
 			isPaging = false;
 
 		// Update the pageSize and page variables as we haven't yet reached the
@@ -54,6 +54,19 @@ public class Pager
 			pageSize = p.getPageSize();
 			page = (p.getCurrentPage() + 1);
 		}
+//		}
+//
+//		// TODO: this will work for our own implementation, but needs to be update to handle situations where page tokens
+//		// are genuinely strings
+//		else if (p instanceof PageTokenPagination)
+//		{
+//			PageTokenPagination pageData = (PageTokenPagination)p;
+//			if (pageData.getNextPageToken() == null || pageData.getNextPageToken().isEmpty())
+//				isPaging = false;
+//
+//			pageSize = pageData.getPageSize();
+//			page = Integer.parseInt(pageData.getNextPageToken());
+//		}
 	}
 
 	public boolean isPaging()

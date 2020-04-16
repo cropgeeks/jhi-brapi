@@ -13,18 +13,18 @@ public class StatusChecker
 	public static boolean isServerError(List<Status> statuses)
 	{
 		return statuses.stream()
-			.anyMatch(s -> s.getCode().equals(HTTP_500));
+			.anyMatch(s -> s.getMessageType().equals(HTTP_500));
 	}
 
 	public static boolean isNoObjectsFound(List<Status> statuses)
 	{
 		return statuses.stream()
-			.anyMatch(s -> s.getCode().equals(NO_OBJECTS_FOUND));
+			.anyMatch(s -> s.getMessageType().equals(NO_OBJECTS_FOUND));
 	}
 
 	public static boolean isNotFound(List<Status> statuses)
 	{
 		return statuses.stream()
-			.anyMatch(s -> s.getCode().equals(HTTP_404));
+			.anyMatch(s -> s.getMessageType().equals(HTTP_404));
 	}
 }

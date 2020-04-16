@@ -4,20 +4,17 @@ import java.util.*;
 
 public class Metadata
 {
+	private List<DataFile> datafiles;
+
 	private Pagination pagination;
 
 	private List<Status> status;
-
-	private List<String> datafiles;
-
-	private AsynchStatus asynchStatus;
 
 	public Metadata()
 	{
 		this.pagination = new Pagination();
 		this.status = new ArrayList<Status>();
-		this.datafiles = new ArrayList<String>();
-		this.asynchStatus = new AsynchStatus();
+		this.datafiles = new ArrayList<DataFile>();
 	}
 
 	public Pagination getPagination()
@@ -32,15 +29,9 @@ public class Metadata
 	public void setStatus(List<Status> status)
 		{ this.status = status; }
 
-	public List<String> getDatafiles()
+	public List<DataFile> getDatafiles()
 		{ return datafiles; }
 
-	public void setDatafiles(List<String> datafiles)
+	public void setDatafiles(List<DataFile> datafiles)
 		{ this.datafiles = datafiles; }
-
-	public AsynchStatus getAsynchStatus()
-		{ return asynchStatus; }
-
-	public void setAsynchStatus(AsynchStatus asynchStatus)
-		{ this.asynchStatus = asynchStatus; }
 }

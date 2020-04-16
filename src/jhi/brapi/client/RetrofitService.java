@@ -1,15 +1,14 @@
 package jhi.brapi.client;
 
-import java.util.*;
-
 import jhi.brapi.api.*;
-import jhi.brapi.api.allelematrices.*;
 import jhi.brapi.api.authentication.*;
-import jhi.brapi.api.calls.*;
-import jhi.brapi.api.genomemaps.*;
-import jhi.brapi.api.markerprofiles.*;
-import jhi.brapi.api.studies.*;
+import jhi.brapi.api.core.serverinfo.*;
+import jhi.brapi.api.genotyping.callsets.*;
+import jhi.brapi.api.genotyping.genomemaps.*;
+import jhi.brapi.api.core.studies.*;
 
+import jhi.brapi.api.genotyping.variantsets.*;
+import org.restlet.resource.*;
 import retrofit2.*;
 import retrofit2.http.*;
 
@@ -30,15 +29,13 @@ public interface RetrofitService
 	 * in. Supports paging.
 	 *
 	 * @param dataType	The datatype of the call return. e.g. JSON, TSV
-	 * @param pageSize	The desired size of the returned page
-	 * @param page		The desired page of data
 	 * @return			A Retrofit Call object which contains a
 	 * 					BrapiListResource which wraps a List of BrapiCall
 	 * 					objects which contain details of the calls supported by
 	 * 					this BrAPI provider
 	 */
-	@GET("calls")
-	Call<BrapiListResource<BrapiCall>> getCalls(@Query("dataType") String dataType, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	@GET("serverinfo")
+	Call<BrapiBaseResource<BrapiServerInfo>> getServerInfo(@Query("dataType") String dataType);
 
 	/**
 	 * Queries the BrAPI provider to attempt to retrieve an authentication token
@@ -53,34 +50,27 @@ public interface RetrofitService
 	Call<BrapiSessionToken> getAuthToken(@Body BrapiTokenLoginPost tokenPost);
 
 	/**
-	 * Searches the BrAPI provider's list of studies, filtering by the studyType
-	 * and via an HTTP GET.
+	 * Get a study, optionally filtered by the query parameters outlined below
 	 *
-	 * @param studyType	A String defining the type of study to filter by
-	 * @param pageSize	The desired size of the returned page
-	 * @param page		The desired page of data
-	 *
-	 * @return			A Retrofit Call object which contains a
-	 * 					BrapiListResource which wraps a List of BrapiStudies
-	 * 					objects which contain details of the studies which
-	 * 					matched the search criteria
+	 * @param commonCropName
+	 * @param studyType
+	 * @param programDbId
+	 * @param locationDbId
+	 * @param seasonDbId
+	 * @param trialDbId
+	 * @param studyDbId
+	 * @param sutdyPUI
+	 * @param germplasmDbId
+	 * @param observationVariableId
+	 * @param active
+	 * @param sortBy
+	 * @param sortOrder
+	 * @param externalReferenceId
+	 * @param externalReferenceSource
+	 * @return
 	 */
-	@GET("studies-search")
-	Call<BrapiListResource<BrapiStudies>> getStudies(@Query("studyType") String studyType, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
-
-	/**
-	 * Searches the BrAPI provider's list of matrices via an HTTP GET.
-	 *
-	 * @param pageSize	The desired size of the returned page
-	 * @param page		The desired page of data
-	 *
-	 * @return			A Retrofit Call object which contains a
-	 * 					BrapiListResource which wraps a List of BrapiAlleleMatrixDataset
-	 * 					objects which contain details of the matrices which
-	 * 					matched the search criteria
-	 */
-	@GET("allelematrices")
-	Call<BrapiListResource<BrapiAlleleMatrixDataset>> getMatrices(@Query("studyDbId") String studyDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	@GET("studies")
+	Call<BrapiListResource<Study>> getStudies(@Query("commonCropName") String commonCropName, @Query("studyType") String studyType, @Query("programDbId") String programDbId, @Query("locationDbId") String locationDbId, @Query("seasonDbId") String seasonDbId, @Query("trialDbId") String trialDbId, @Query("studyDbId") String studyDbId, @Query("studyPUI") String sutdyPUI, @Query("germplasmDbId") String germplasmDbId, @Query("observationVariableDbId") String observationVariableId, @Query("active") String active, @Query("sortBy") String sortBy, @Query("sortOrder") String sortOrder, @Query("externalReferenceId") String externalReferenceId, @Query("externalReferenceSource") String externalReferenceSource, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 	/**
 	 * Searches the BrAPI provider's list of studies, filtering by the
@@ -93,45 +83,47 @@ public interface RetrofitService
 	 * 						objects which contain details of the studies which
 	 * 						matched the search criteria
 	 */
-	@POST("studies-search")
-	Call<BrapiListResource<BrapiStudies>> getStudiesPost(@Body BrapiStudiesPost studiesPost);
+	@POST("search/studies")
+	Call<BrapiListResource<Study>> getStudiesPost(@Body BrapiStudiesPost studiesPost);
 
 	/**
 	 * Searches the BrAPI provider's list of maps, filtering by the species and
 	 * type parameters provided.
 	 *
-	 * @param species	A String representing the species of the map
-	 * @param type		A String representing the type of the map (e.g. Genetic)
-	 * @param pageSize	The desired size of the returned page
-	 * @param page		The desired page of data
+	 * @param commonCropName	A String representing the common name of the crop
+	 * @param mapPUI			A string representing the DOI or other permanent identifier for this genomic map
+	 * @param scientificName    A string representing the full scientific binomial format name.
+	 * @param type				A String representing the type of the map (e.g. Genetic)
+	 * @param programDbId		A String representing the unique id of a program
+	 * @param trialDbId			A String representing the unique id of of a trial
+	 * @param studyDbId			A string representing the uinque id of a study
+	 * @param pageSize			The desired size of the returned page
+	 * @param page				The desired page of data
 	 *
-	 * @return			A Retrofit Call object which contains a
-	 * 					BrapiListResource which contains BrapiGenomeMap objects
+	 * @return					A Retrofit Call object which contains a BrapiListResource which contains BrapiGenomeMap
+	 * 							objects
 	 */
 	@GET("maps")
-	Call<BrapiListResource<BrapiGenomeMap>> getMaps(@Query("species") String species, @Query("type") String type, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	Call<BrapiListResource<GenomeMap>> getMaps(@Query("commonCropName") String commonCropName, @Query("mapPUI") String mapPUI, @Query("scientificName") String scientificName, @Query("type") String type, @Query("programDbId") String programDbId, @Query("trialDbId") String trialDbId, @Query("studyDbId") String studyDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
-	@POST("maps")
-	Call<BrapiListResource<BrapiGenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
+//	@POST("maps")
+//	Call<BrapiListResource<GenomeMap>> getMaps(@Body BrapiGenomeMapSearchPost mapSearchPost);
 
 	/**
-	 * Gets the BrapiMapMetaData (Map) specified by {id} from the BrAPI service
-	 * provider.
+	 * Gets the information on an individual genome map
 	 *
-	 * @param id	The id of the BrapiMapMetaData (Map) to be retrieved
-	 *
-	 * @return		A Retrofit Call object which contains a BaseBrapiResource
-	 * 				which itself wraps a BrapiMapMetaData object
+	 * @param mapDbId
+	 * @param pageSize
+	 * @param page
+	 * @return
 	 */
-	@GET("maps/{id}")
-	Call<BrapiBaseResource<BrapiMapMetaData>> getMapMetaData(@Path("id") String id);
+	@GET("maps/{mapDbId}")
+	Call<BrapiBaseResource<GenomeMap>> getMapById(@Path("mapdDbId") String mapDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 	/**
-	 * Gets a list of the BrapiMarkerPosition objects for the BrapiGenomeMap
-	 * (Map) specified by {id}.
+	 * Gets a list of the MarkerPosition objects
 	 *
-	 * @param id				The id of the BrapiGenomeMap the marker positions are for
-	 * @param linkageGroupIds	A list of linkage group ids to filter the results by
+	 * TODO: update comments here
 	 * @param pageSize			The desired size of the returned page
 	 * @param page				The desired page of data
 	 *
@@ -139,76 +131,27 @@ public interface RetrofitService
 	 * 							BrapiListResource which contains BrapiMarkerPositon
 	 * 							objects
 	 */
-	@GET("maps/{id}/positions")
-	Call<BrapiListResource<BrapiMarkerPosition>> getMapMarkerData(@Path("id") String id, @Query("linkageGroupId") List<String> linkageGroupIds, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
-
-
-	/**
-	 * Gets a list of BrapiMarkerProfile objects filtered by the parameters
-	 * specified.
-	 *
-	 * @param markerprofileDbId	The markerprofileDbId to filter by
-	 * @param studyDbId			The studyDbId to filter by
-	 * @param sampleDbId		The sampleDbId to filter by
-	 * @param extractDbId		The extractDbId to filter by
-	 * @param pageSize			The desired size of the returned page
-	 * @param page				The desired page of data
-	 *
-	 * @return					A Retrofit Call object which contains a
-	 * 							BrapiListResource which wraps BrapiMarkerProfile
-	 * 							objects
-	 */
-	@GET("markerprofiles")
-	Call<BrapiListResource<BrapiMarkerProfile>> getMarkerProfiles(@Query("markerprofileDbId") String markerprofileDbId, @Query("studyDbId") String studyDbId, @Query("sampleDbId") String sampleDbId, @Query("extractDbId") String extractDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+	@GET("markerpositions")
+	Call<BrapiListResource<MarkerPosition>> getMarkerPositions(@Query("mapDbId") String mapDbId, @Query("linkageGroupName") String linkageGroupName, @Query("markerDbId") String markerDbId, @Query("minPosition") String minPositon, @Query("maxPosition") String maxPosition, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
 
 	/**
-	 * Gets a list of BrapiMarkerProfile objects filtered by the parameters
-	 * specified in the BrapiMarkerProfilePost object.
+	 * Gets a list of CallSet objects
 	 *
-	 * @param markerProfilePost	A BrapiMarkerProfilePost object specifying
-	 *                          filtering parameters
-	 * @return					A Retrofit Call object which contains a
-	 * 							BrapiListResource which wraps BrapiMarkerProfile
-	 * 							objects
-	 */
-	@POST("makrerprofiles-search")
-	Call<BrapiListResource<BrapiMarkerProfile>> getMarkerProfiles(@Body BrapiMarkerProfilePost markerProfilePost);
-
-	/**
-	 * Gets a matrix of allele calls for markers and markerprofiles in the
-	 * specified format, for the specified markerprofiles an other parameters.
-	 *
-	 * @param markerProfileDbIds	A list of markerprofiles to filter by
-	 * @param markerDbId			A list of markers to filter by
-	 * @param format				The format of the return (e.g. TSV)
-	 * @param expandHomoozygotes	Represent homozygotes as A or AA
-	 * @param unknownString			The string to use for unknown data
-	 * @param sepPhased				The heterozygote separator for phased data
-	 * @param sepUnphased			The heterozygote separtor for unphased data
-	 * @param pageSize				The desired size of the returned page
-	 * @param page					The desired page of data
-	 *
-	 * @return						A matrix of allele data in the specified
-	 * 								format
-	 */
-	@FormUrlEncoded
-	@POST("allelematrix-search")
-	Call<BrapiBaseResource<BrapiAlleleMatrix>> getAlleleMatrix(@Field("markerprofileDbId") List<String> markerProfileDbIds, @Field("markerDbId") List<String> markerDbId, @Field("format") String format, @Field("expandHomozygotes") Boolean expandHomoozygotes, @Field("unknownString") String unknownString, @Field("sepPhased") String sepPhased, @Field("sepUnphased") String sepUnphased, @Field("pageSize") Integer pageSize, @Field("page") Integer page);
-
-	@FormUrlEncoded
-	@POST("allelematrix-search")
-	Call<BrapiBaseResource<BrapiAlleleMatrix>> getAlleleMatrix(@Field("matrixDbId") String matrixDbId, @Field("format") String format, @Field("expandHomozygotes") Boolean expandHomoozygotes, @Field("unknownString") String unknownString, @Field("sepPhased") String sepPhased, @Field("sepUnphased") String sepUnphased, @Field("pageSize") Integer pageSize, @Field("page") Integer page);
-
-
-	@POST("allelematrix-search")
-	Call<BrapiBaseResource<BrapiAlleleMatrix>> getAlleleMatrix(@Body BrapiAlleleMatrixSearchPost alleleMatrixSearchPost);
-
-	/**
-	 *
-	 *
-	 * @param id
+	 * @param callSetDbId
+	 * @param callSetName
+	 * @param variantSetDbId
+	 * @param sampleDbId
+	 * @param germplasmDbId
+	 * @param pageSize
+	 * @param page
 	 * @return
 	 */
-	@GET("allelematrix-search/status/{id}")
-	Call<BrapiListResource<Object>> getAlleleMatrixStatus(@Path("id") String id);
+	@GET("callsets")
+	Call<BrapiListResource<CallSet>> getCallSets(@Query("callSetDbId") String callSetDbId, @Query("callSetName") String callSetName, @Query("variantSetDbId") String variantSetDbId, @Query("sampleDbId") String sampleDbId, @Query("germplasmDbId") String germplasmDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+
+	@GET("variantsets")
+	Call<BrapiListResource<VariantSet>> getVariantSets(@Query("callSetDbId") String callSetDbId, @Query("studyName") String studyName, @Query("studyDbId") String studyDbId, @Query("variantDbId") String variantDbId, @Query("variantSetDbId") String variantSetDbId, @Query("pageSize") Integer pageSize, @Query("page") Integer page);
+
+	@GET("variantsets/{variantSetDbId}")
+	Call<BrapiBaseResource<VariantSet>> getVariantSetById(@Path("variantSetDbId") String variantSetDbId);
 }

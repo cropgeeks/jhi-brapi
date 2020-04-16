@@ -30,3 +30,7 @@ web/context.xml
 # IntelliJ IDEA specific settings
 .idea
 *.iml
+out/*
+
+# Deployment related things
+docker/*

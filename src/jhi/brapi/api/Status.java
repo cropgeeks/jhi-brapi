@@ -2,7 +2,7 @@ package jhi.brapi.api;
 
 public class Status
 {
-	private String code;
+	private String messageType;
 
 	private String message;
 
@@ -10,9 +10,9 @@ public class Status
 	{
 	}
 
-	public Status(String code, String message)
+	public Status(String messageType, String message)
 	{
-		this.code = code;
+		this.messageType = messageType;
 		this.message = message;
 	}
 
@@ -22,15 +22,15 @@ public class Status
 	public void setMessage(String message)
 		{ this.message = message; }
 
-	public String getCode()
-		{ return code; }
+	public String getMessageType()
+		{ return messageType; }
 
-	public void setCode(String code)
-		{ this.code = code; }
+	public void setMessageType(String messageType)
+		{ this.messageType = messageType; }
 
 	@Override
 	public String toString()
 	{
-		return code + " : " + message;
+		return messageType + " : " + message;
 	}
 }
