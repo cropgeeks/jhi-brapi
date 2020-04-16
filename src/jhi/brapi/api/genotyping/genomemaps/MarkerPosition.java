@@ -8,8 +8,8 @@ public class MarkerPosition
 	private String linkageGroupName = "";
 	private String mapDbId = "";
 	private String mapName = "";
-	private String markerDbId;
-	private String markerName;
+	private String variantDbId;
+	private String variantName;
 	private String position;
 
 	public MarkerPosition()
@@ -56,24 +56,24 @@ public class MarkerPosition
 		this.mapName = mapName;
 	}
 
-	public String getMarkerDbId()
+	public String getVariantDbId()
 	{
-		return markerDbId;
+		return variantDbId;
 	}
 
-	public void setMarkerDbId(String markerDbId)
+	public void setVariantDbId(String variantDbId)
 	{
-		this.markerDbId = markerDbId;
+		this.variantDbId = variantDbId;
 	}
 
-	public String getMarkerName()
+	public String getVariantName()
 	{
-		return markerName;
+		return variantName;
 	}
 
-	public void setMarkerName(String markerName)
+	public void setVariantName(String variantName)
 	{
-		this.markerName = markerName;
+		this.variantName = variantName;
 	}
 
 	public String getPosition()

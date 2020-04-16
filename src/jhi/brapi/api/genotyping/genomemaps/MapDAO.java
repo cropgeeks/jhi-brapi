@@ -164,8 +164,8 @@ public class MapDAO
 		while (resultSet.next())
 		{
 			MarkerPosition mapMarker = new MarkerPosition();
-			mapMarker.setMarkerDbId(resultSet.getString("marker_id"));
-			mapMarker.setMarkerName(resultSet.getString("marker_name"));
+			mapMarker.setVariantDbId(resultSet.getString("marker_id"));
+			mapMarker.setVariantName(resultSet.getString("marker_name"));
 			mapMarker.setPosition(resultSet.getString("definition_start"));
 			mapMarker.setLinkageGroupName(resultSet.getString("chromosome"));
 			mapMarker.setMapDbId(resultSet.getString("map_id"));
