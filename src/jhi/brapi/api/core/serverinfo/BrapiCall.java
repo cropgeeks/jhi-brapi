@@ -20,7 +20,7 @@ public class BrapiCall
 	public static final String VERSION_TWO_ZERO = "2.0";
 
 	private String service;
-	private List<String> datatypes = new ArrayList<>();
+	private List<String> dataTypes = new ArrayList<>();
 	// HTTP methods (e.g. POST, GET, etc)
 	private List<String> methods = new ArrayList<>();
 	private List<String> versions = new ArrayList<>();
@@ -40,7 +40,7 @@ public class BrapiCall
 
 	public BrapiCall addDataType(String datatype)
 	{
-		datatypes.add(datatype);
+		dataTypes.add(datatype);
 		return this;
 	}
 
@@ -102,7 +102,7 @@ public class BrapiCall
 
 	public boolean hasDataType(String datatype)
 	{
-		return datatypes.stream()
+		return dataTypes.stream()
 			.filter(d -> d.equalsIgnoreCase(datatype))
 			.count() >= 1;
 	}
@@ -128,16 +128,10 @@ public class BrapiCall
 		{ this.service = service; }
 
 	public List<String> getDataTypes()
-		{ return datatypes; }
+		{ return dataTypes; }
 
 	public void setDataTypes(List<String> dataTypes)
-		{ this.datatypes = dataTypes; }
-
-	public List<String> getDatatypes()
-		{ return datatypes; }
-
-	public void setDatatypes(List<String> datatypes)
-		{ this.datatypes = datatypes; }
+		{ this.dataTypes = dataTypes; }
 
 	public List<String> getMethods()
 	 { return methods; }
@@ -155,7 +149,10 @@ public class BrapiCall
 	public String toString()
 	{
 		return "BrapiCall{" +
-				"call='" + service + '\'' +
-				'}';
+			"service='" + service + '\'' +
+			", dataTypes=" + dataTypes +
+			", methods=" + methods +
+			", versions=" + versions +
+			'}';
 	}
 }

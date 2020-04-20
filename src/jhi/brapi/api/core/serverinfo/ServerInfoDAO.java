@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.*;
 
 import jhi.brapi.api.*;
-import jhi.brapi.util.*;
 
 public class ServerInfoDAO
 {
@@ -77,7 +76,7 @@ public class ServerInfoDAO
 		if (dataType != null && !dataType.isEmpty())
 		{
 			calls = calls.stream()
-						 .filter(c -> c.getDatatypes().contains(dataType)) // Get the calls that support the query data type
+						 .filter(c -> c.getDataTypes().contains(dataType)) // Get the calls that support the query data type
 						 .collect(Collectors.toCollection(ArrayList::new));
 		}
 
