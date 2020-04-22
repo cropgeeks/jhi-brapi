@@ -4,7 +4,7 @@ public class Format
 {
 	private String dataFormat = "";
 	private String fileFormat = "";
-	private String fileUrl = "";
+	private String fileURL = "";
 
 	public Format()
 	{
@@ -30,13 +30,13 @@ public class Format
 		this.fileFormat = fileFormat;
 	}
 
-	public String getFileUrl()
+	public String getFileURL()
 	{
-		return fileUrl;
+		return fileURL;
 	}
 
-	public void setFileUrl(String fileUrl)
+	public void setFileURL(String fileURL)
 	{
-		this.fileUrl = fileUrl;
+		this.fileURL = fileURL;
 	}
 }

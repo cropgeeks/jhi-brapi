@@ -2,6 +2,9 @@ package jhi.brapi.api.genotyping.variantsets;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VariantSet
 {
 	private Map<String, Object> additionalInfo = new HashMap<>();

@@ -3,12 +3,10 @@ package jhi.brapi.api.genotyping.variantsets;
 import jhi.brapi.api.*;
 import jhi.brapi.api.genotyping.callsets.*;
 import jhi.brapi.util.*;
-import org.restlet.resource.*;
 
 import java.io.*;
 import java.sql.*;
 import java.util.*;
-import java.util.stream.*;
 
 /**
  * Specifies the public interface which any BrapiGenomeMap data accessing classes must implement.
@@ -99,7 +97,7 @@ public class VariantSetDAO
 			Format format = new Format();
 			format.setDataFormat("Flapjack");
 			format.setFileFormat("text/tab-separated-values");
-			format.setFileUrl("https://ics.hutton.ac.uk/resources/brapi/data/cactuar-demo.txt");
+			format.setFileURL("https://ics.hutton.ac.uk/resources/brapi/data/cactuar-demo.txt");
 			variantSet.setAvailableFormats(Collections.singletonList(format));
 		}
 
