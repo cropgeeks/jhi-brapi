@@ -18,19 +18,23 @@ public class Study
 	private String endDate;
 	private List<EnvironmentParameter> environmentParameters;
 	private ExperimentalDesign experimentalDesign;
+	private List<ExternalReference> externalReferences;
 	private GrowthFacility growthFacility;
 	private LastUpdate lastUpdate;
 	private String license = "";
-	private Location location;
+	private String locationDbId = "";
+	private String locationName = "";
+	private List<ObservationLevel> observationLevels;
 	private String observationUnitDescritpion = "";
 	private List<String> seasons;
 	private String startDate;
+	private String studyCode = "";
+	private String studyDbId = "";
 	private String studyDescription = "";
 	private String studyName = "";
 	private String studyType = "";
 	private String trialDbID = "";
 	private String trialName = "";
-	private String studyDbId = "";
 
 	public Study()
 	{
@@ -166,16 +170,6 @@ public class Study
 		this.license = license;
 	}
 
-	public Location getLocation()
-	{
-		return location;
-	}
-
-	public void setLocation(Location location)
-	{
-		this.location = location;
-	}
-
 	public String getObservationUnitDescritpion()
 	{
 		return observationUnitDescritpion;
@@ -264,5 +258,55 @@ public class Study
 	public void setStudyDbId(String studyDbId)
 	{
 		this.studyDbId = studyDbId;
+	}
+
+	public List<ExternalReference> getExternalReferences()
+	{
+		return externalReferences;
+	}
+
+	public void setExternalReferences(List<ExternalReference> externalReferences)
+	{
+		this.externalReferences = externalReferences;
+	}
+
+	public String getLocationDbId()
+	{
+		return locationDbId;
+	}
+
+	public void setLocationDbId(String locationDbId)
+	{
+		this.locationDbId = locationDbId;
+	}
+
+	public String getLocationName()
+	{
+		return locationName;
+	}
+
+	public void setLocationName(String locationName)
+	{
+		this.locationName = locationName;
+	}
+
+	public List<ObservationLevel> getObservationLevels()
+	{
+		return observationLevels;
+	}
+
+	public void setObservationLevels(List<ObservationLevel> observationLevels)
+	{
+		this.observationLevels = observationLevels;
+	}
+
+	public String getStudyCode()
+	{
+		return studyCode;
+	}
+
+	public void setStudyCode(String studyCode)
+	{
+		this.studyCode = studyCode;
 	}
 }

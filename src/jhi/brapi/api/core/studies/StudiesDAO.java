@@ -84,7 +84,8 @@ public class StudiesDAO
 		study.setActive(false);
 
 		Location location = locationDAO.getBrapiLocation(resultSet);
-		study.setLocation(location);
+		study.setLocationDbId(location.getLocationDbId());
+		study.setLocationName(location.getLocationName());
 
 		List<String> seasons = new ArrayList<>();
 		// Parse out the years
