@@ -2,6 +2,9 @@ package jhi.brapi.api.genotyping.callsets;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CallSetCallsDetail
 {
 	private Map<String, Object> additionalInfo = new HashMap<>();
