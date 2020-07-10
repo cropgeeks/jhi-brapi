@@ -22,7 +22,7 @@ public class PageTokenPagination
 
 		System.out.println("currentPageToken: " + currentPageToken + " totalPages: " + totalPages + " pageSize: " + pageSize + " desiredPageSize: " + desiredPageSize);
 
-		// If we can, generate valeus for prevPageToken and nextPageToken
+		// If we can, generate values for prevPageToken and nextPageToken
 		int currentPage = Integer.parseInt(currentPageToken);
 		if (currentPage >=1)
 			prevPageToken = String.valueOf(currentPage-1);

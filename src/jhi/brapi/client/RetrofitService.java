@@ -156,5 +156,5 @@ public interface RetrofitService
 	Call<BrapiBaseResource<VariantSet>> getVariantSetById(@Path("variantSetDbId") String variantSetDbId);
 
 	@GET("variantsets/{variantSetDbId}/calls")
-	Call<BrapiMasterDetailResourcePageToken<CallSetCalls>> getVariantSetCalls(@Path("variantSetDbId") String variantSetDbId, @Query("pageSize") Integer pageSize, @Query("currentPageToken") String currentPageToken);
+	Call<BrapiMasterDetailResourcePageToken<CallSetCalls>> getVariantSetCalls(@Path("variantSetDbId") String variantSetDbId, @Query("pageSize") Integer pageSize, @Query("pageToken") String pageToken);
 }

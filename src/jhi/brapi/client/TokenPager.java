@@ -7,12 +7,27 @@ public class TokenPager
 	private boolean isPaging = true;
 	private int pageSize = 1000;
 
+	private int totalPages;
+
 	private String pageToken;
 	private String nextPageToken;
 	private String prevPageToken;
 
 	public TokenPager()
 	{
+	}
+
+	/**
+	 * Additional constructor which enables specifying the number of elements
+	 * the Pager will ask for in its first request to a BrAPI implementation.
+	 * For further calls Pager will respect the page sizes being specified by
+	 * the BrAPI implementation it is communicating with.
+	 *
+	 * @param pageSize	The number of elements asked for in the first request
+	 */
+	public TokenPager(int pageSize)
+	{
+		this.pageSize = pageSize;
 	}
 
 	/**
@@ -27,7 +42,7 @@ public class TokenPager
 	{
 		PageTokenPagination p = metadata.getPagination();
 
-		if (p.getTotalPages() == 0 || p.getNextPageToken() == null)
+		if (p.getNextPageToken() == null)
 			isPaging = false;
 
 		else
@@ -36,6 +51,8 @@ public class TokenPager
 			pageToken = p.getCurrentPageToken();
 			nextPageToken = p.getNextPageToken();
 			prevPageToken = p.getPrevPageToken();
+
+			totalPages = p.getTotalPages();
 		}
 	}
 
@@ -68,4 +85,7 @@ public class TokenPager
 
 	public void setPrevPageToken(String prevPageToken)
 		{ this.prevPageToken = prevPageToken; }
+
+	public int getTotalPages()
+		{ return totalPages; }
 }
